@@ -1,0 +1,3 @@
+Draft for the future sandboxed Mac App Store build; do not use for the current Developer ID DMG.
+
+Verify first-run setup with the final bundled tools and model download. Test local transcription, SRT timing and cue counts, long audio chunking, language selection, translation with the final supported authentication flow, cancellation, subtitle embedding, and file preservation. Confirm sandboxed access to selected inputs and output folders, reopening files after relaunch, and behavior on macOS 14+ Apple Silicon. Translation requires access to the selected service. Record exact version/build, Mac model, macOS version and installed distribution channel.

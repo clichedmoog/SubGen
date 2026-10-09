@@ -1,5 +1,5 @@
 import XCTest
-@testable import SubtitleGenerator
+@testable import SubtitleGen
 
 final class TranscriptionEngineTests: XCTestCase {
     let engine = TranscriptionEngine()
@@ -16,6 +16,18 @@ final class TranscriptionEngineTests: XCTestCase {
 
     func testFormatSrtTimeMinutes() {
         XCTAssertEqual(engine.formatSrtTime(65.123), "00:01:05,123")
+    }
+
+    func testTimestampRoundingCarriesIntoNextMinute() {
+        XCTAssertEqual(engine.formatSrtTime(59.9999), "00:01:00,000")
+    }
+
+    func testDistantDuplicateDialogueIsNotMergedAcrossSilence() {
+        let segments: [[String: Any]] = [
+            ["start": 0.0, "end": 2.0, "text": "Hello"],
+            ["start": 60.0, "end": 62.0, "text": "Hello"],
+        ]
+        XCTAssertEqual((try? SrtDocument(engine.generateSrt(from: segments)).cues.count), 2)
     }
 
     func testFormatSrtTimeHours() {
@@ -202,7 +214,7 @@ final class TranscriptionEngineTests: XCTestCase {
 
     func testGenerateSrtWithNegativeDelayClampsToZero() {
         let segments: [[String: Any]] = [
-            ["start": 0.1, "end": 1.0, "text": "test"],
+            ["start": 0.1, "end": 2.0, "text": "test"],
         ]
         let srt = engine.generateSrt(from: segments, delay: -1.0)
         XCTAssertTrue(srt.contains("00:00:00,000"))
@@ -378,6 +390,12 @@ final class TranscriptionEngineTests: XCTestCase {
 }
 
 final class ModelTests: XCTestCase {
+    private var previousSavedFiles: Any?
+    override func setUp() { previousSavedFiles = UserDefaults.standard.object(forKey: "savedFiles") }
+    override func tearDown() {
+        if let previousSavedFiles { UserDefaults.standard.set(previousSavedFiles, forKey: "savedFiles") }
+        else { UserDefaults.standard.removeObject(forKey: "savedFiles") }
+    }
 
     func testLanguageAutoEmpty() {
         XCTAssertEqual(Language.auto.rawValue, "")
@@ -422,17 +440,14 @@ final class ModelTests: XCTestCase {
     }
 
     func testDelayImmediateIsZero() {
-        XCTAssertEqual(SubtitleDelay.immediate.seconds, 0.0)
+        XCTAssertEqual(SubtitleDelay.none.seconds, 0.0)
     }
 
-    func testTranslationModelClaudeFilter() {
-        let models = TranslationModel.models(for: .claudeApiKey)
-        XCTAssertTrue(models.allSatisfy { $0.isClaude })
-    }
-
-    func testTranslationModelOpenAIFilter() {
-        let models = TranslationModel.models(for: .openaiApiKey)
-        XCTAssertTrue(models.allSatisfy { $0.isOpenAI })
+    func testTranslationModelCodexFilter() {
+        let models = TranslationModel.models(for: .codex)
+        XCTAssertEqual(models.first, .codexDefault)
+        XCTAssertTrue(models.contains(.codexLuna))
+        XCTAssertTrue(models.allSatisfy { $0.isCodex })
     }
 
     func testTranslationModelClaudeCode() {
@@ -440,9 +455,9 @@ final class ModelTests: XCTestCase {
         XCTAssertTrue(models.allSatisfy { $0.isClaude })
     }
 
-    func testTranslationModelClaudeCodeFirstIsOpus1m() {
+    func testTranslationModelClaudeCodeFirstIsLatestOpus() {
         let models = TranslationModel.models(for: .claudeCode)
-        XCTAssertEqual(models.first, .claudeOpus1m)
+        XCTAssertEqual(models.first, .claudeOpus)
     }
 
     func testWhisperModelPath() {
