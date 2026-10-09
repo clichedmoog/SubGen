@@ -953,7 +953,7 @@ struct ContentView: View {
                     .font(.caption2).foregroundStyle(.secondary)
             }
             if chatGPT.isSigningIn {
-                HStack { ProgressView().controlSize(.small); Text("브라우저에서 로그인을 완료해주세요.").font(.caption)
+                HStack { ProgressView().controlSize(.small); Text("브라우저에서 계정을 선택하고 ChatGPT 플랜 사용을 허용한 뒤 계속을 눌러주세요. 연결은 30분간 기다립니다.").font(.caption)
                     Button("취소") { chatGPT.cancel() } }
             }
             if chatGPT.active?.signedIn == true {

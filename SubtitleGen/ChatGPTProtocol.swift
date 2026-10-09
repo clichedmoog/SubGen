@@ -48,6 +48,9 @@ enum ChatGPTOAuth {
     static let resource = "https://api.openai.com/v1"
     static let scopes = "openid profile email offline_access resource.invoke chatgpt.tokens.use.direct"
     static let planScope = "chatgpt.tokens.use.direct"
+    // Allow time for account selection, MFA and separate plan-use approval.
+    // The callback remains single-use, bound to state/PKCE and loopback only.
+    static let loginTimeout: TimeInterval = 30 * 60
 
     static func randomValue(bytes: Int = 32) throws -> String {
         var data = Data(count: bytes)
@@ -74,7 +77,7 @@ enum ChatGPTOAuth {
         init(redirect: URL, clientID: String? = nil, now: Date = Date()) throws {
             self.redirect = redirect; self.clientID = clientID
             state = try randomValue(); nonce = try randomValue(); verifier = try randomValue(bytes: 48)
-            expires = now.addingTimeInterval(300)
+            expires = now.addingTimeInterval(ChatGPTOAuth.loginTimeout)
         }
         func authorizationURL(hostID: String, email: String? = nil, idToken: String? = nil,
                               requestConsent: Bool = false) -> URL {

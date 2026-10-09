@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "listing-saved-testflight-testing-live-checks-pending",
+  "status": "build4-packaged-upload-blocked-by-xcode-account",
   "platform": "macos",
   "productName": "Subtitle Maker & Translator",
   "bundleID": "com.clichedmoog.subtitle-generator",
@@ -105,7 +105,7 @@
   },
   "macAppStore": {
     "version": "1.0",
-    "build": "3",
+    "build": "4",
     "projectPath": "SubtitleGen.xcodeproj",
     "scheme": "SubtitleGenStore",
     "entitlementsPath": "Store/Resources/SubtitleGenStore.entitlements",
@@ -121,12 +121,11 @@
     },
     "delivery": {
       "version": "1.0",
-      "build": "3",
-      "uploadStatus": "success",
-      "processingStatus": "processed",
-      "buildID": "84918c21-5e47-4841-b762-128d66d4dcd4",
+      "build": "4",
+      "uploadStatus": "failed-before-delivery",
+      "processingStatus": "not-uploaded",
       "internalOnly": false,
-      "uploadedAt": "2026-10-10T04:23:18+09:00"
+      "error": "Xcode failed to load account credentials (missing Xcode-Username); App Store Connect access for team N9LYHMUDKA required. No delivery occurred."
     },
     "reviewReadiness": {
       "metadataPersisted": true,
@@ -137,7 +136,7 @@
       "contentRightsVerified": true,
       "encryptionVerified": true,
       "releaseRuntimeVerified": false,
-      "processedBuildSelected": true
+      "processedBuildSelected": false
     },
     "translationProposal": {
       "provider": "Sign in with ChatGPT",
@@ -147,12 +146,12 @@
     },
     "verificationEvidence": {
       "selfContainedTools": "2026-10-10: unmodified FFmpeg/FFprobe 9.0 LGPL source build for ARM64/macOS 14; GPL/nonfree/external codec libraries disabled; full source/recipe in app. Pinned Whisper 1.8.4. Five signed sandbox-host tests passed, including real Whisper/Metal and MP4/MOV/M4V/MKV/WebM embedding/extraction.",
-      "sandboxRuntimeVerified": "2026-10-10: Apple Development signed Release sandbox host: 5 tests passed. Real Whisper/Metal/timestamps, bundled FFmpeg containers, loopback/Keychain and container bookmarks verified. Separate actual app external-folder grant/relaunch/SRT/video embedding QA passed.",
-      "chatGPTLocalFixtures": "2026-10-10: final SwiftPM 153 tests, 0 failures, 5 explicit opt-in skips. OAuth/refresh/JWT/model/SSE fixtures passed; live user authentication/inference remains pending.",
+      "sandboxRuntimeVerified": "2026-10-10: Apple Development signed Release 1.0 (4) sandbox host: five tests passed, real Whisper/Metal, FFmpeg containers, loopback/Keychain, bookmarks. Thread Performance Checker disabled only for test action; generated scheme restored.",
+      "chatGPTLocalFixtures": "2026-10-10: SwiftPM 154 tests, 0 failures, 5 explicit opt-in skips. Callback accepted before the 30-minute deadline and rejected at/after expiry; PKCE/state/JWT/loopback checks remain enabled. Two earlier live attempts timed out before final plan consent; live inference remains unverified.",
       "sandboxOAuthInfrastructure": "2026-10-10: Apple Development signed Debug host; loopback HTTP callback + protected Keychain write/read/local token deletion passed. store-siwc-runtime.xcresult contains 4 passing tests including real Whisper/Metal. No live OAuth credentials acquired by the agent.",
       "processingProgress": "2026-10-10: final 153-test suite passed. Actual Release UI: transcription, SRT reuse after relaunch, embedding, option changes and adding a new file after completion verified. Busy indicators observed during real transcription; distributed build animation remains pending.",
       "storeFFmpegPlan": "Completed: FFmpeg source SHA256 7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52; source/build recipe/attribution/license included and validated in exported package. Direct-distribution tools are separate.",
-      "distributionArchiveVerified": "2026-10-10: actual uploaded Release 1.0 (3), production bundle ID/team, Apple Distribution app/helpers + Mac Installer Distribution package passed strict nested signing, profiles, entitlements, licenses/corresponding source, icons and privacy-manifest verification. TestFlight installation and live translation remain pending."
+      "distributionArchiveVerified": "2026-10-10: Release 1.0 (4) archive and exported package passed production identity, nested signing, profiles, entitlements, bundled ARM64 tools/source/licenses, icons and privacy manifest verification. Actual uploaded payload still to preserve and inspect."
     },
     "localDevelopmentBuild": {
       "version": "1.0",
@@ -211,15 +210,15 @@
     },
     "localReleaseBuild": {
       "version": "1.0",
-      "build": "3",
-      "archivePath": "build/subgen-release-20261010/SubGen-1.0-3.xcarchive",
-      "packagePath": "build/subgen-release-20261010/export3/SubGen.pkg",
-      "verificationPath": "build/subgen-release-20261010/package3-verification.json",
-      "uploadPackagePath": "build/subgen-release-20261010/upload3-payload/SubGen.pkg",
-      "uploadPackageSHA256": "2d0eb9c2e83bc2b637edf778520280ffe747cc2884baf63a1a8cc4c7ea6b7844",
-      "uploadExecutableSHA256": "88f9d4b3e570162dedeab7d8e8790f453cf6ab2c43893f21eb17a36883a62fd7",
+      "build": "4",
+      "archivePath": "build/subgen-release-20261010/SubGen-1.0-4.xcarchive",
+      "packagePath": "build/subgen-release-20261010/export4/SubGen.pkg",
+      "verificationPath": "build/subgen-release-20261010/package4-verification.json",
+      "runtimeResultPath": "build/subgen-release-20261010/runtime-tests-build4.xcresult",
       "internalOnly": false,
-      "status": "uploaded-processed"
+      "status": "verified-export-upload-blocked-by-xcode-account",
+      "packageSHA256": "7afb82ba4c9cf05acd22ded75a8d0f3c64590a4619961b05eb12f1560c674bdd",
+      "executableSHA256": "cf41a91c139ef7e131704aa399a1538138fee36a1a48d4dad77745c346e54c0a"
     },
     "previousReleaseBuild2": {
       "version": "1.0",
@@ -251,6 +250,18 @@
       "status": "blocked-by-local-OS-profile-validation",
       "exitCode": 137,
       "evidence": "amfid AppleMobileFileIntegrityError -413: No matching profile found for the actual uploaded Apple Distribution payload. Package/profile/signatures passed static checks. Install through TestFlight for distributed runtime verification."
+    },
+    "previousReleaseBuild3": {
+      "version": "1.0",
+      "build": "3",
+      "archivePath": "build/subgen-release-20261010/SubGen-1.0-3.xcarchive",
+      "packagePath": "build/subgen-release-20261010/export3/SubGen.pkg",
+      "verificationPath": "build/subgen-release-20261010/package3-verification.json",
+      "uploadPackagePath": "build/subgen-release-20261010/upload3-payload/SubGen.pkg",
+      "uploadPackageSHA256": "2d0eb9c2e83bc2b637edf778520280ffe747cc2884baf63a1a8cc4c7ea6b7844",
+      "uploadExecutableSHA256": "88f9d4b3e570162dedeab7d8e8790f453cf6ab2c43893f21eb17a36883a62fd7",
+      "internalOnly": false,
+      "status": "uploaded-processed"
     }
   },
   "testflight": {
@@ -287,7 +298,7 @@
     "groupBuildCount": 3,
     "groupTesterCount": 1,
     "browserConnectionStatus": "Verified 2026-10-10: internal group lists 1.0 (3), 1.0 (2), 1.0 (1) as Testing, one invited tester.",
-    "nextUserAction": "Accept tenma@mac.com TestFlight invitation, then install Subtitle Maker & Translator 1.0 (3) in the Mac TestFlight app."
+    "nextUserAction": "Accept tenma@mac.com TestFlight invitation; console still Invited on recheck."
   },
   "copyright": "2026 Myeongseok Seo",
   "references": {
@@ -319,5 +330,16 @@
     "korea": "00+",
     "verifiedAt": "2026-10-10",
     "basis": "Local subtitle utility: no app-distributed third-party media, shared UGC/feed/chat/ads, medical or mature themes, violence, gambling. User-selected files are processed locally."
+  },
+  "liveVerification": {
+    "status": "account-selected-final-plan-consent-pending-build4-timeout-fix",
+    "consoleTaskSpace": 120,
+    "isolatedKeychain": true,
+    "sourceFixture": "Two synthetic English subtitle cues, translated to Korean; no user media uploaded",
+    "testLog": "/tmp/subgen-live-chatgpt-retry.log",
+    "sessionID": 35867,
+    "authorizationURLLogged": false,
+    "priorRegistrationReused": true,
+    "timeoutSeconds": 1800
   }
 }
