@@ -50,7 +50,7 @@
     ],
     "screenshots": 3,
     "contactFieldsFilled": true,
-    "demoAccountRequired": true,
+    "demoAccountRequired": false,
     "testFlightObservedAt": "2026-10-10",
     "privacyPublished": true
   },
@@ -82,7 +82,7 @@
     "appAccountRequired": false,
     "translationProviderLoginRequired": true,
     "demoAccountRequired": false,
-    "notes": "SubGen is a free native macOS subtitle utility for Apple Silicon (macOS 14+). The interface is currently Korean. It has no app account, subscription, in-app purchase, API-key setup or external CLI requirement. Local transcription and subtitle embedding work without ChatGPT sign-in.\n\nLOCAL WORKFLOW\n1. Click 시작 설정 (Start setup) in the upper right. FFmpeg, FFprobe and whisper.cpp are included. Choose a speech model and click installation/download. Tiny is about 78 MB and is suitable for a quick test; larger models improve accuracy. Model data is downloaded from Hugging Face into the app container.\n2. Click 파일 선택 (Choose files), or drop an audio/video file onto the main window.\n3. Expand 작업 설정 (Work settings). Choose the spoken language (자동 감지 = automatic detection), select SRT output, and leave translation languages unchecked.\n4. Click 처리 시작 (Start processing). When prompted, click 폴더 접근 허용 (Allow folder access) for the input folder so generated subtitles can be written beside the media. A matching existing SRT may be reused.\n5. The 영상에 자막 포함 output option embeds subtitles in supported video containers. The original video is replaced only after validation; failed translations preserve source subtitles.\n\nOPTIONAL TRANSLATION\nSelect a target language and click Continue with ChatGPT. This opens OpenAI authorization and asks for consent to use an eligible ChatGPT account's plan/credits. No SubGen username/password exists. Only subtitle text and translation instructions are sent to OpenAI; audio/video transcription stays on the Mac. Models are retrieved from the authorized account. This feature is subject to OpenAI account eligibility, availability and usage limits.\n\nPrivacy policy: https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md\nSupport and source: https://github.com/clichedmoog/SubGen",
+    "notes": "SubGen is a free native macOS subtitle utility for Apple Silicon (macOS 14+). The interface is currently Korean. It has no app account, subscription, in-app purchase, API-key setup or external CLI requirement. Local transcription and subtitle embedding work without ChatGPT sign-in.\n\nLOCAL WORKFLOW\n1. Click 시작 설정 (Start setup) in the upper right. FFmpeg, FFprobe and whisper.cpp are included. Choose a speech model and click installation/download. Tiny is about 78 MB and is suitable for a quick test; larger models improve accuracy. Model data is downloaded from Hugging Face into the app container.\n2. Click 파일 선택 (Choose files), or drop an audio/video file onto the main window.\n3. Expand 작업 설정 (Work settings). Choose the spoken language (자동 감지 = automatic detection), select SRT output, and leave translation languages unchecked.\n4. Click 처리 시작 (Start processing). When prompted, click 폴더 접근 허용 (Allow folder access) for the input folder so generated subtitles can be written beside the media. A matching existing SRT may be reused.\n5. The 영상에 자막 포함 output option embeds subtitles in supported video containers. The original video is replaced only after validation; failed translations preserve source subtitles.\n\nOPTIONAL TRANSLATION\nSelect a target language and click Continue with ChatGPT. This opens OpenAI authorization and asks for consent to use an eligible ChatGPT account's plan/credits. No SubGen username/password exists. Only subtitle text and translation instructions are sent to OpenAI; audio/video transcription stays on the Mac. Models are retrieved from the authorized account. This feature is subject to OpenAI account eligibility, availability and usage limits.\n\nPrivacy policy: https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md\nSupport: https://github.com/clichedmoog/SubGen/issues\nSource for this build (MIT): https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-3",
     "demoAccessVerified": false
   },
   "direct": {
@@ -129,13 +129,13 @@
       "uploadedAt": "2026-10-10T04:23:18+09:00"
     },
     "reviewReadiness": {
-      "metadataPersisted": false,
+      "metadataPersisted": true,
       "screenshotsVerified": true,
       "urlsVerified": true,
       "privacyPublished": true,
-      "ageRatingVerified": false,
+      "ageRatingVerified": true,
       "contentRightsVerified": true,
-      "encryptionVerified": false,
+      "encryptionVerified": true,
       "releaseRuntimeVerified": false,
       "processedBuildSelected": true
     },
@@ -236,7 +236,22 @@
       "uploadPackageSHA256": "93d7277c2020a6b554113dddd2bbeaefa8f8d7b8f13166a2a67a3e7a5ff15dce",
       "uploadExecutableSHA256": "8f11d9452d605a025c8f135d18015d9fefd6d5dc3ddee96bc35bbc65632a6d45"
     },
-    "externalFileVerification": "Apple Development Release QA: real model download, external WAV/SRT folder grant, queue/folder restoration after relaunch, MP4 subtitle embedding and output validation passed. Distributed TestFlight runtime remains pending."
+    "externalFileVerification": "Apple Development Release QA: real model download, external WAV/SRT folder grant, queue/folder restoration after relaunch, MP4 subtitle embedding and output validation passed. Distributed TestFlight runtime remains pending.",
+    "localUIBuild": {
+      "version": "1.0",
+      "build": "3",
+      "bundleID": "com.clichedmoog.subtitle-generator.rename-qa",
+      "signing": "Apple Development",
+      "configuration": "Release",
+      "appPath": "build/subgen-rename-qa/Build/Products/Release/SubGen.app",
+      "executableSHA256": "326a3b1c969f808154f48158748c944b8c57d22ef12f057968da7b80291af8fe",
+      "status": "actual-external-folder-ui-qa-passed-not-distributed-TestFlight"
+    },
+    "exportedRuntimeAttempt": {
+      "status": "blocked-by-local-OS-profile-validation",
+      "exitCode": 137,
+      "evidence": "amfid AppleMobileFileIntegrityError -413: No matching profile found for the actual uploaded Apple Distribution payload. Package/profile/signatures passed static checks. Install through TestFlight for distributed runtime verification."
+    }
   },
   "testflight": {
     "group": "SubtitleGen Internal",
@@ -285,11 +300,24 @@
     "appPricePolicy": "free",
     "sourcePolicy": "open-source",
     "confirmedByUserAt": "2026-10-10",
-    "storePricingChanged": false,
-    "sourcePublished": false
+    "storePricingChanged": true,
+    "sourcePublished": true,
+    "sourceBranch": "release/subgen-1.0-build-3",
+    "sourceCommit": "6b429ed",
+    "sourcePR": "https://github.com/clichedmoog/SubGen/pull/1",
+    "sourceMergedToMain": false,
+    "storePrice": "0",
+    "storePricingVerifiedAt": "2026-10-10",
+    "availabilityRegions": 175
   },
   "appCategories": {
     "primary": "PHOTO_AND_VIDEO",
     "secondary": "PRODUCTIVITY"
+  },
+  "ageRating": {
+    "global": "4+",
+    "korea": "00+",
+    "verifiedAt": "2026-10-10",
+    "basis": "Local subtitle utility: no app-distributed third-party media, shared UGC/feed/chat/ads, medical or mature themes, violence, gambling. User-selected files are processed locally."
   }
 }
