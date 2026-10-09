@@ -11,9 +11,29 @@ final class ChatGPTLiveTests: XCTestCase {
             throw XCTSkip("Requires explicit live-test opt-in and a private /tmp authorization file")
         }
         let file = URL(fileURLWithPath: path)
-        let service = ChatGPTAccountService(storage: ChatGPTKeychain(service: "com.clichedmoog.SubGen.live-qa.\(UUID().uuidString)"))
-        defer { try? FileManager.default.removeItem(at: file) }
-        let account = try await service.signIn(accountID: nil, hostID: "urn:uuid:" + UUID().uuidString.lowercased(), consent: true) { url in
+        let suite = "com.clichedmoog.SubGen.live-qa.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+        var hostID = "urn:uuid:" + UUID().uuidString.lowercased()
+        var requestConsent = true
+        // Resume this test's already-authorized registration after a callback timeout.
+        // This private file contains only registration/installation IDs, never tokens.
+        if let registrationPath = environment["SUBGEN_LIVE_REGISTRATION_FILE"], registrationPath.hasPrefix("/tmp/") {
+            let registration = try JSONDecoder().decode(LiveRegistration.self, from: Data(contentsOf: URL(fileURLWithPath: registrationPath)))
+            guard UUID(uuidString: String(registration.hostID.dropFirst(9))) != nil,
+                  registration.hostID.hasPrefix("urn:uuid:"),
+                  registration.clientID.range(of: "^[A-Za-z0-9_-]{1,256}$", options: .regularExpression) != nil else {
+                throw ChatGPTFailure.invalidIdentity
+            }
+            defaults.set(registration.clientID, forKey: "chatgpt.pendingRegistrationID")
+            hostID = registration.hostID
+            requestConsent = false
+        }
+        let service = ChatGPTAccountService(storage: ChatGPTKeychain(service: suite), defaults: defaults)
+        defer {
+            try? FileManager.default.removeItem(at: file)
+            defaults.removePersistentDomain(forName: suite)
+        }
+        let account = try await service.signIn(accountID: nil, hostID: hostID, consent: requestConsent) { url in
             try Data(url.absoluteString.utf8).write(to: file, options: .atomic)
             try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
         }
@@ -34,5 +54,10 @@ final class ChatGPTLiveTests: XCTestCase {
             _ = try? await service.signOut(accountID: account)
             throw error
         }
+    }
+
+    private struct LiveRegistration: Decodable {
+        let clientID: String
+        let hostID: String
     }
 }

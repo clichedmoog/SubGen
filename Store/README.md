@@ -49,7 +49,7 @@ python3 .agents/skills/apple-app-listing/scripts/field-sig.py \
 | 채널 | 현재 버전 | 산출물 | 상태 |
 | --- | --- | --- | --- |
 | 직접 배포 | `2026.10.09` | Developer ID 앱·공증 DMG | 로컬 검증 완료, 앱 DMG는 아직 공개하지 않음 |
-| Mac App Store | `1.0 (3)` | Apple Distribution Archive 및 Mac Installer Distribution 패키지 | 내부 TestFlight 테스트 중, 정식 심사 미제출 |
+| Mac App Store | `1.0 (4)` | Apple Distribution Archive 및 Mac Installer Distribution 패키지 검증 완료 | Xcode 계정 재인증 후 업로드 예정. 배포된 빌드 3은 내부 TestFlight 테스트 중, 정식 심사 미제출 |
 
 스토어 빌드 `1`, `2`, `3`은 업로드되어 번호를 다시 사용할 수 없습니다. 최신 앱은
 `SubGen.app` / `SubGen`이며 App Store 이름·번들 ID·Swift 모듈은 유지합니다.
@@ -89,7 +89,7 @@ Codex CLI를 사용합니다. 새 스토어 타깃은 App Sandbox를 켜고 ARM6
 스토어 조건의 검증을 대신하지 않습니다.
 
 1. **구현·빌드 확인:** `project.yml` → XcodeGen → `SubtitleGen.xcodeproj`,
-   `SubtitleGenStore` 스킴, `MAC_APP_STORE` 조건. Release `1.0 (3)`·ARM64·팀·ID 확인.
+   `SubtitleGenStore` 스킴, `MAC_APP_STORE` 조건. Release `1.0 (4)`·ARM64·팀·ID 확인.
    `Package.swift`는 직접 배포용으로 유지합니다. 새 네이티브 프로젝트는 XcodeGen으로 재생성합니다.
 2. **번들 도구와 개발 실행 확인:** 스토어 FFmpeg/FFprobe 9는 고정 SHA256의 공식
    소스에서 ARM64/macOS 14용으로 빌드합니다. GPL/nonfree 및 외부 코덱 라이브러리를

@@ -3,7 +3,7 @@ Please test transcription and subtitle translation on an Apple Silicon Mac runni
 1. Download a speech model, authorize a disposable test-media folder, and transcribe an audio or video file. Check the rotating activity indicator, elapsed audio/total time and chunk number.
 2. Reopen the app and check that the authorized folder and queue still work. Confirm that SRT files are saved next to the media.
 3. Change the transcription language, translation targets or subtitle output mode after a completed job. The file should return to Pending and its previous progress should clear. Existing files should remain.
-4. Continue with ChatGPT and approve plan usage if you wish to test translation. Verify the account's available model list and a short English-to-Korean SRT translation. Translation uses your ChatGPT plan/credits and may be limited by account availability or usage limits. Transcription works without signing in.
+4. Continue with ChatGPT, select your account, then approve ChatGPT plan usage and click Continue if you wish to test translation. The app now waits up to 30 minutes for this final consent and shows these steps while connecting. Verify the account's available model list and a short English-to-Korean SRT translation. Translation uses your ChatGPT plan/credits and may be limited by account availability or usage limits. Transcription works without signing in.
 5. During translation, check the accepted subtitle count and chunk indicator. Test cancellation, sign-out and a network interruption; failed work should preserve existing source subtitles.
 6. On disposable copies of MP4/MOV/MKV/WebM videos, test subtitle embedding and verify playback. The app replaces the input video after validating the output, so use copies for beta testing.
 

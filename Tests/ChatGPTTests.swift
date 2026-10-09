@@ -18,9 +18,19 @@ final class ChatGPTTests: XCTestCase {
                     good + "&error=access_denied", good + "#fragment"] {
             XCTAssertThrowsError(try attempt.callback(URL(string: bad)!))
         }
-        XCTAssertThrowsError(try attempt.callback(URL(string: good)!, now: Date().addingTimeInterval(301)))
+        XCTAssertNoThrow(try attempt.callback(URL(string: good)!, now: attempt.expires.addingTimeInterval(-1)))
+        XCTAssertThrowsError(try attempt.callback(URL(string: good)!, now: attempt.expires))
+        XCTAssertThrowsError(try attempt.callback(URL(string: good)!, now: attempt.expires.addingTimeInterval(1)))
         let returning = try ChatGPTOAuth.Attempt(redirect: redirect, clientID: "oaiapp_old")
         XCTAssertThrowsError(try returning.callback(URL(string: good.replacingOccurrences(of: attempt.state, with: returning.state))!))
+    }
+    func testLoginAllowsTimeForSeparatePlanConsentButStillExpires() throws {
+        let start = Date(timeIntervalSince1970: 1_000)
+        let redirect = URL(string: "http://127.0.0.1:4321/auth/callback")!
+        let attempt = try ChatGPTOAuth.Attempt(redirect: redirect, now: start)
+        let callback = URL(string: redirect.absoluteString + "?state=\(attempt.state)&code=abc&client_id=oaiapp_test")!
+        XCTAssertNoThrow(try attempt.callback(callback, now: start.addingTimeInterval(20 * 60)))
+        XCTAssertThrowsError(try attempt.callback(callback, now: start.addingTimeInterval(30 * 60)))
     }
     func testECDSAIdentityChecksSignatureAndEveryBinding() throws {
         let fixture = IdentityFixture()

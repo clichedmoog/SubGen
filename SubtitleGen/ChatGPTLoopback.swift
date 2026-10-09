@@ -36,7 +36,7 @@ final class ChatGPTLoopback: @unchecked Sendable {
                         }
                         server.newConnectionHandler = { self.accept($0) }
                         server.start(queue: self.queue)
-                        self.queue.asyncAfter(deadline: .now() + 300) {
+                        self.queue.asyncAfter(deadline: .now() + ChatGPTOAuth.loginTimeout) {
                             self.complete(.failure(ChatGPTFailure.message("ChatGPT 로그인 시간이 초과되었습니다.")))
                         }
                     } catch { self.complete(.failure(ChatGPTFailure.message("로그인 연결을 시작할 수 없습니다."))) }

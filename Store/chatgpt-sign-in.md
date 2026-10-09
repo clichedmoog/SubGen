@@ -9,7 +9,7 @@ OpenAI Docs를 ego-browser로 직접 확인했습니다. 사용자가 **무료 �
 
 ## 구현과 로컬 검증
 
-- `ChatGPTLoopback`: IPv4 loopback 전용·5분 제한·한 번만 받는 콜백. state, 중복
+- `ChatGPTLoopback`: IPv4 loopback 전용·30분 제한·한 번만 받는 콜백. state, 중복
   query, redirect와 returning client ID를 검증한 뒤 코드를 교환합니다.
 - `ChatGPTIdentity`: Security/CryptoKit RS256·ES256 서명, JWKS, issuer, audience/azp,
   만료/iat/nbf, nonce를 검증합니다. 실제 계정의 subject/issuer가 일치해야 재연결합니다.
