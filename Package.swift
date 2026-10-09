@@ -2,16 +2,20 @@
 import PackageDescription
 
 let package = Package(
-    name: "SubtitleGenerator",
+    name: "SubtitleGen",
     platforms: [.macOS(.v14)],
+    products: [
+        .executable(name: "SubGen", targets: ["SubtitleGen"])
+    ],
     targets: [
         .executableTarget(
-            name: "SubtitleGenerator",
-            path: "SubtitleGenerator"
+            name: "SubtitleGen",
+            path: "SubtitleGen",
+            exclude: ["Resources"]
         ),
         .testTarget(
-            name: "SubtitleGeneratorTests",
-            dependencies: ["SubtitleGenerator"],
+            name: "SubtitleGenTests",
+            dependencies: ["SubtitleGen"],
             path: "Tests"
         )
     ]

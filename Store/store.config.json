@@ -1,0 +1,295 @@
+{
+  "schemaVersion": 1,
+  "status": "listing-saved-testflight-testing-live-checks-pending",
+  "platform": "macos",
+  "productName": "Subtitle Maker & Translator",
+  "bundleID": "com.clichedmoog.subtitle-generator",
+  "appleID": "6820884731",
+  "appleTeam": "N9LYHMUDKA",
+  "teamName": "Myeongseok SEO",
+  "primaryLocale": "en-US",
+  "locales": [
+    "en-US"
+  ],
+  "minimumOS": "14.0",
+  "architectures": [
+    "arm64"
+  ],
+  "interfaceLanguages": [
+    "ko"
+  ],
+  "appStoreConnectUrl": "https://appstoreconnect.apple.com/apps/6820884731/distribution/info",
+  "observedConsole": {
+    "verifiedAt": "2026-10-10",
+    "platform": "macOS",
+    "version": "1.0",
+    "status": "PREPARE_FOR_SUBMISSION",
+    "releaseMode": "AFTER_APPROVAL",
+    "builds": [
+      {
+        "platform": "macOS",
+        "version": "1.0",
+        "build": "3",
+        "status": "Testing",
+        "internalOnly": false
+      },
+      {
+        "platform": "macOS",
+        "version": "1.0",
+        "build": "2",
+        "status": "Testing",
+        "internalOnly": false
+      },
+      {
+        "platform": "macOS",
+        "version": "1.0",
+        "build": "1",
+        "status": "Testing",
+        "internalOnly": true
+      }
+    ],
+    "screenshots": 3,
+    "contactFieldsFilled": true,
+    "demoAccountRequired": true,
+    "testFlightObservedAt": "2026-10-10",
+    "privacyPublished": true
+  },
+  "appInfo": {
+    "en-US": {
+      "name": "Subtitle Maker & Translator",
+      "subtitle": "Transcribe and translate SRT"
+    }
+  },
+  "listings": {
+    "en-US": {
+      "description": "Create timed SRT subtitles from video and audio on your Mac. Transcribe locally, then optionally translate subtitles using your ChatGPT plan.\n\nTRANSCRIBE ON YOUR MAC\nUse the included whisper.cpp engine with Metal acceleration. Detect the spoken language automatically or choose it yourself. Long recordings are split into audio chunks, with subtitle timing restored to the original recording. Transcription does not require a ChatGPT account.\n\nTRANSLATE WITH CHATGPT\nChoose Continue with ChatGPT and authorize plan usage. The app retrieves the models available to your account and lets you choose a model. Automatic selection follows the first model in the server's list; it does not guarantee the newest release or best translation quality. Only subtitle text and translation instructions are sent for translation. Audio and video are processed locally.\n\nKEEP CONTROL OF YOUR FILES\nReuse matching SRT files or extract supported text subtitle tracks. Work through a file queue, view progress, and cancel processing. The app checks subtitle numbering, cue counts and timestamps before accepting translations. Save SRT files or embed subtitles in supported video containers. Failed translations preserve source subtitles. An embedded video replaces the original only after output validation.\n\nSETUP AND REQUIREMENTS\nRequires macOS 14 or later and an Apple Silicon Mac. The current interface is in Korean. FFmpeg, FFprobe and Whisper are included. Download a speech model before transcription; Large v3 Turbo is approximately 1.6 GB. Authorize the input folders where subtitles will be saved.\n\nFREE AND OPEN SOURCE\nThe app is free and its own source code is available under the MIT license. Third-party tools retain their respective licenses. ChatGPT translation requires an eligible account and your approval, uses your ChatGPT plan or credits, and is subject to OpenAI availability and usage limits. The app does not include a ChatGPT subscription. Model downloads and translation require an internet connection. No separate Codex installation or API key is needed for this version.\n\nSupported inputs include MP4, MOV, MKV, M4V, AVI, WebM, FLV, M4A, WAV and MP3. Output is SRT; subtitle embedding depends on the video container. Image-based subtitle tracks are not extracted as text.",
+      "keywords": "subtitle,SRT,transcribe,transcription,translate,translation,video,audio,Whisper,caption",
+      "promotionalText": "Create timed subtitles on your Mac. Transcribe locally, optionally translate with your ChatGPT plan, and save SRT files or embed subtitles in supported video formats.",
+      "supportUrl": "https://github.com/clichedmoog/SubGen/issues",
+      "marketingUrl": "https://github.com/clichedmoog/SubGen",
+      "privacyPolicyUrl": "https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md"
+    }
+  },
+  "review": {
+    "contact": {
+      "firstName": "Myeongseok",
+      "lastName": "Seo",
+      "email": "tenma@mac.com",
+      "phone": null,
+      "phoneInConsoleVerified": true
+    },
+    "contactSource": "User requested Moa reference; same personal-team contact identity verified in Moa App Store Connect on 2026-10-10. Phone stays in ignored build/review-contact.private.json.",
+    "appAccountRequired": false,
+    "translationProviderLoginRequired": true,
+    "demoAccountRequired": false,
+    "notes": "SubGen is a free native macOS subtitle utility for Apple Silicon (macOS 14+). The interface is currently Korean. It has no app account, subscription, in-app purchase, API-key setup or external CLI requirement. Local transcription and subtitle embedding work without ChatGPT sign-in.\n\nLOCAL WORKFLOW\n1. Click 시작 설정 (Start setup) in the upper right. FFmpeg, FFprobe and whisper.cpp are included. Choose a speech model and click installation/download. Tiny is about 78 MB and is suitable for a quick test; larger models improve accuracy. Model data is downloaded from Hugging Face into the app container.\n2. Click 파일 선택 (Choose files), or drop an audio/video file onto the main window.\n3. Expand 작업 설정 (Work settings). Choose the spoken language (자동 감지 = automatic detection), select SRT output, and leave translation languages unchecked.\n4. Click 처리 시작 (Start processing). When prompted, click 폴더 접근 허용 (Allow folder access) for the input folder so generated subtitles can be written beside the media. A matching existing SRT may be reused.\n5. The 영상에 자막 포함 output option embeds subtitles in supported video containers. The original video is replaced only after validation; failed translations preserve source subtitles.\n\nOPTIONAL TRANSLATION\nSelect a target language and click Continue with ChatGPT. This opens OpenAI authorization and asks for consent to use an eligible ChatGPT account's plan/credits. No SubGen username/password exists. Only subtitle text and translation instructions are sent to OpenAI; audio/video transcription stays on the Mac. Models are retrieved from the authorized account. This feature is subject to OpenAI account eligibility, availability and usage limits.\n\nPrivacy policy: https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md\nSupport and source: https://github.com/clichedmoog/SubGen",
+    "demoAccessVerified": false
+  },
+  "direct": {
+    "version": "2026.10.09",
+    "appPath": "build/SubtitleGen.app",
+    "dmgPath": "dist/SubtitleGen-2026.10.09-arm64.dmg",
+    "manifestPath": "dist/SubtitleGen-2026.10.09-arm64.json",
+    "status": "notarized-local-artifact",
+    "publicationStatus": "not-published",
+    "localRenamePackage": {
+      "version": "2026.10.10",
+      "appPath": "build/SubGen.app",
+      "dmgPath": "dist/SubGen-2026.10.10-arm64-signed.dmg",
+      "manifestPath": "dist/SubGen-2026.10.10-arm64-signed.json",
+      "executableSHA256": "d5f5d3863fc8bb70b583aa7a8db4adf4704e56c00648c9e2d480870e1a6f4ca3",
+      "dmgSHA256": "a99dc8a516b93c340efb05d3809375ffb54583fdc8049334962faf258a4f8151",
+      "status": "signed-local-verification-not-notarized",
+      "publicationStatus": "not-published"
+    }
+  },
+  "macAppStore": {
+    "version": "1.0",
+    "build": "3",
+    "projectPath": "SubtitleGen.xcodeproj",
+    "scheme": "SubtitleGenStore",
+    "entitlementsPath": "Store/Resources/SubtitleGenStore.entitlements",
+    "releaseMode": "AFTER_APPROVAL",
+    "readiness": {
+      "selfContainedTools": true,
+      "sandboxRuntimeVerified": true,
+      "translationBackendVerified": false,
+      "securityScopedFilesVerified": true,
+      "privacyManifestVerified": true,
+      "distributionArchiveVerified": true,
+      "bundledToolSourcesVerified": true
+    },
+    "delivery": {
+      "version": "1.0",
+      "build": "3",
+      "uploadStatus": "success",
+      "processingStatus": "processed",
+      "buildID": "84918c21-5e47-4841-b762-128d66d4dcd4",
+      "internalOnly": false,
+      "uploadedAt": "2026-10-10T04:23:18+09:00"
+    },
+    "reviewReadiness": {
+      "metadataPersisted": false,
+      "screenshotsVerified": true,
+      "urlsVerified": true,
+      "privacyPublished": true,
+      "ageRatingVerified": false,
+      "contentRightsVerified": true,
+      "encryptionVerified": false,
+      "releaseRuntimeVerified": false,
+      "processedBuildSelected": true
+    },
+    "translationProposal": {
+      "provider": "Sign in with ChatGPT",
+      "status": "free-open-source-implemented-live-verification-pending",
+      "reference": "Store/chatgpt-sign-in.md",
+      "implemented": true
+    },
+    "verificationEvidence": {
+      "selfContainedTools": "2026-10-10: unmodified FFmpeg/FFprobe 9.0 LGPL source build for ARM64/macOS 14; GPL/nonfree/external codec libraries disabled; full source/recipe in app. Pinned Whisper 1.8.4. Five signed sandbox-host tests passed, including real Whisper/Metal and MP4/MOV/M4V/MKV/WebM embedding/extraction.",
+      "sandboxRuntimeVerified": "2026-10-10: Apple Development signed Release sandbox host: 5 tests passed. Real Whisper/Metal/timestamps, bundled FFmpeg containers, loopback/Keychain and container bookmarks verified. Separate actual app external-folder grant/relaunch/SRT/video embedding QA passed.",
+      "chatGPTLocalFixtures": "2026-10-10: final SwiftPM 153 tests, 0 failures, 5 explicit opt-in skips. OAuth/refresh/JWT/model/SSE fixtures passed; live user authentication/inference remains pending.",
+      "sandboxOAuthInfrastructure": "2026-10-10: Apple Development signed Debug host; loopback HTTP callback + protected Keychain write/read/local token deletion passed. store-siwc-runtime.xcresult contains 4 passing tests including real Whisper/Metal. No live OAuth credentials acquired by the agent.",
+      "processingProgress": "2026-10-10: final 153-test suite passed. Actual Release UI: transcription, SRT reuse after relaunch, embedding, option changes and adding a new file after completion verified. Busy indicators observed during real transcription; distributed build animation remains pending.",
+      "storeFFmpegPlan": "Completed: FFmpeg source SHA256 7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52; source/build recipe/attribution/license included and validated in exported package. Direct-distribution tools are separate.",
+      "distributionArchiveVerified": "2026-10-10: actual uploaded Release 1.0 (3), production bundle ID/team, Apple Distribution app/helpers + Mac Installer Distribution package passed strict nested signing, profiles, entitlements, licenses/corresponding source, icons and privacy-manifest verification. TestFlight installation and live translation remain pending."
+    },
+    "localDevelopmentBuild": {
+      "version": "1.0",
+      "build": "1",
+      "configuration": "Release",
+      "signing": "Apple Development",
+      "appPath": "build/store-development/Build/Products/Release/SubtitleGen.app",
+      "executableSHA256": "722753bd6c83ab8ffd861c8a451570566146db2a40ab82f244b47ec229ac2752",
+      "status": "source-updated-after-this-build-see-localProgressBuild"
+    },
+    "localProgressBuild": {
+      "version": "1.0",
+      "build": "1",
+      "bundleID": "com.clichedmoog.subtitle-generator.progress-qa",
+      "configuration": "Release",
+      "signing": "Apple Development",
+      "appPath": "build/progress-preview/Build/Products/Release/SubtitleGen.app",
+      "status": "local-qa-not-store-export",
+      "executableSHA256": "6033b19afae2d556c3d80311a1215978259ff867a386aa164a0dd8b55cad55d6"
+    },
+    "localTestFlightBuild": {
+      "version": "1.0",
+      "build": "1",
+      "buildNumberStatus": "confirmed-unused-in-macOS-TestFlight-before-upload-2026-10-10",
+      "archivePath": "build/testflight-20261010/SubtitleGen-1.0-1-lgpl.xcarchive",
+      "packagePath": "build/testflight-20261010/export/SubtitleGen.pkg",
+      "packageSHA256": "660b890ca40c8b4678a54bc4b7b7170b2ec6f6824f8159cae546df65bf7dc8f4",
+      "executableSHA256": "9b9de89cbafd11b099bff8b8eda3c49897956729094877bf8315149755277201",
+      "verificationPath": "build/testflight-20261010/package-verification.json",
+      "runtimeResultPath": "build/testflight-20261010/store-lgpl-runtime-verified.xcresult",
+      "internalOnly": true,
+      "status": "verified-package-not-uploaded",
+      "uploadPackagePath": "build/testflight-20261010/upload-payload/SubtitleGen.pkg",
+      "uploadPackageSHA256": "3f380f4eda27a7b1e7544521646879bd1206033d241eb36dbdf9f4a56baa0766",
+      "uploadVerificationPath": "build/testflight-20261010/upload-payload-verification.json"
+    },
+    "localRenameBuild": {
+      "appBundleName": "SubGen.app",
+      "executableName": "SubGen",
+      "swiftModuleName": "SubtitleGen",
+      "version": "1.0",
+      "build": "1",
+      "configuration": "Release",
+      "bundleID": "com.clichedmoog.subtitle-generator.rename-qa",
+      "signing": "Apple Development",
+      "appPath": "build/subgen-rename-qa/Build/Products/Release/SubGen.app",
+      "executableSHA256": "436672ecfd2c096e6b63263fe59abbc71636680684ef15c2ef239aa8988faaa6",
+      "status": "superseded-by-release-ui-qa-build-3",
+      "runtimeVerification": "5 signed sandbox-host tests passed; thread performance checker disabled only during this QA run after its report/symbolication stalled. Generated scheme restored.",
+      "runtimeResultPath": "build/subgen-rename-qa/runtime-tests-diagnostics-disabled.xcresult",
+      "nextUpload": "Select a new build number after checking ASC; 1.0 (1) is already uploaded with SubtitleGen.app.",
+      "interruptedRuntimeResults": [
+        "build/subgen-rename-qa/runtime-tests.xcresult",
+        "build/subgen-rename-qa/runtime-tests-no-thread-checker.xcresult"
+      ]
+    },
+    "localReleaseBuild": {
+      "version": "1.0",
+      "build": "3",
+      "archivePath": "build/subgen-release-20261010/SubGen-1.0-3.xcarchive",
+      "packagePath": "build/subgen-release-20261010/export3/SubGen.pkg",
+      "verificationPath": "build/subgen-release-20261010/package3-verification.json",
+      "uploadPackagePath": "build/subgen-release-20261010/upload3-payload/SubGen.pkg",
+      "uploadPackageSHA256": "2d0eb9c2e83bc2b637edf778520280ffe747cc2884baf63a1a8cc4c7ea6b7844",
+      "uploadExecutableSHA256": "88f9d4b3e570162dedeab7d8e8790f453cf6ab2c43893f21eb17a36883a62fd7",
+      "internalOnly": false,
+      "status": "uploaded-processed"
+    },
+    "previousReleaseBuild2": {
+      "version": "1.0",
+      "build": "2",
+      "archivePath": "build/subgen-release-20261010/SubGen-1.0-2.xcarchive",
+      "packagePath": "build/subgen-release-20261010/export/SubGen.pkg",
+      "verificationPath": "build/subgen-release-20261010/package-verification.json",
+      "runtimeResultPath": "build/subgen-release-20261010/runtime-tests-build2-testable.xcresult",
+      "internalOnly": false,
+      "status": "uploaded-processed",
+      "packageSHA256": "53def0db70c6234f60488339cedab76600cdbd38597b53d754dbd51eb19ec1cf",
+      "executableSHA256": "bb210d5dbb85a01772a8b74228e5c6675c0a6f32ed7b6b01ec892b9c590924b9",
+      "uploadPackagePath": "build/subgen-release-20261010/upload-payload/SubGen.pkg",
+      "uploadPackageSHA256": "93d7277c2020a6b554113dddd2bbeaefa8f8d7b8f13166a2a67a3e7a5ff15dce",
+      "uploadExecutableSHA256": "8f11d9452d605a025c8f135d18015d9fefd6d5dc3ddee96bc35bbc65632a6d45"
+    },
+    "externalFileVerification": "Apple Development Release QA: real model download, external WAV/SRT folder grant, queue/folder restoration after relaunch, MP4 subtitle embedding and output validation passed. Distributed TestFlight runtime remains pending."
+  },
+  "testflight": {
+    "group": "SubtitleGen Internal",
+    "testers": [
+      {
+        "email": "tenma@mac.com",
+        "name": "서명석",
+        "role": "Account Holder / Admin",
+        "source": "current SubtitleGen internal tester selector",
+        "status": "invited"
+      }
+    ],
+    "status": "testing",
+    "internalOnly": false,
+    "whatToTestFile": "Store/testflight-what-to-test.en-US.txt",
+    "pendingRuntimeChecks": [
+      "Live ChatGPT sign-in, models, SRT inference, refresh and revocation",
+      "Installed TestFlight build: external-folder access after relaunch, subtitle/video output and processing animation"
+    ],
+    "consoleTaskSpace": 120,
+    "uploaded": true,
+    "installedOnMac": false,
+    "clientInstalledOnMac": true,
+    "uploadStartedAt": "2026-10-09T17:03:37.432072+00:00",
+    "groupID": "71e0fabf-6fca-4642-980a-ef6034f27f5d",
+    "macInstallAutomation": "Native TestFlight client inspected: SubGen absent; invitation acceptance required.",
+    "build": "1.0 (3)",
+    "buildID": "84918c21-5e47-4841-b762-128d66d4dcd4",
+    "consoleUrl": "https://appstoreconnect.apple.com/teams/69a6de79-892a-47e3-e053-5b8c7c11a4d1/apps/6820884731/testflight/macos/84918c21-5e47-4841-b762-128d66d4dcd4",
+    "whatToTestPersisted": true,
+    "whatToTestLocale": "en-US",
+    "whatToTestSHA256": "902e20bdf2f6c2fbab956303bb89908a71abc208618a2cfbbf4e564afc059f96",
+    "groupBuildCount": 3,
+    "groupTesterCount": 1,
+    "browserConnectionStatus": "Verified 2026-10-10: internal group lists 1.0 (3), 1.0 (2), 1.0 (1) as Testing, one invited tester.",
+    "nextUserAction": "Accept tenma@mac.com TestFlight invitation, then install Subtitle Maker & Translator 1.0 (3) in the Mac TestFlight app."
+  },
+  "copyright": "2026 Myeongseok Seo",
+  "references": {
+    "guidelines": "https://developer.apple.com/app-store/review/guidelines/",
+    "screenshots": "https://developer.apple.com/help/app-store-connect/reference/app-information/screenshot-specifications/"
+  },
+  "copyStatus": "saved-listing-live-translation-verification-pending",
+  "sourceLicense": "MIT",
+  "productDecision": {
+    "appPricePolicy": "free",
+    "sourcePolicy": "open-source",
+    "confirmedByUserAt": "2026-10-10",
+    "storePricingChanged": false,
+    "sourcePublished": false
+  },
+  "appCategories": {
+    "primary": "PHOTO_AND_VIDEO",
+    "secondary": "PRODUCTIVITY"
+  }
+}

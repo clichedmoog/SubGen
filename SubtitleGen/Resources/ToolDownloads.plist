@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>whisper-cli</key>
+	<dict>
+		<key>arm64</key>
+		<dict>
+			<key>sha256</key>
+			<string>7361079edd3fc7204c68053ed1567450e20c27c3ea3f98c258c8c7ea7159a1d2</string>
+			<key>url</key>
+			<string>https://github.com/clichedmoog/SubGen/releases/download/tools-2026.10.09/whisper-cli-1.8.4-macos14-arm64.zip</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

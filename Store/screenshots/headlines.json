@@ -1,0 +1,19 @@
+{
+  "en-US": [
+    {
+      "capture": "01-transcribe.png",
+      "headline": "Create timed subtitles",
+      "detail": "Local transcription on your Mac"
+    },
+    {
+      "capture": "02-translate.png",
+      "headline": "Translate your subtitles",
+      "detail": "Optional translation with your ChatGPT plan"
+    },
+    {
+      "capture": "03-setup.png",
+      "headline": "Get ready in one place",
+      "detail": "Choose and download your speech model"
+    }
+  ]
+}

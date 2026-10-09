@@ -1,0 +1,76 @@
+{
+  "features": [
+    "refractivity"
+  ],
+  "fill": {
+    "automatic-gradient": "extended-srgb:0.30980,0.55686,0.98431,1.00000"
+  },
+  "groups": [
+    {
+      "name": "Captions",
+      "layers": [
+        {
+          "image-name": "3-captions.svg",
+          "name": "Captions",
+          "glass": false
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0
+      },
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      }
+    },
+    {
+      "name": "Glass subtitle",
+      "layers": [
+        {
+          "image-name": "2-glass-bubble.svg",
+          "name": "Glass subtitle"
+        }
+      ],
+      "blur-material": 0.15,
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.3,
+        "depth": 0.2
+      },
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.15
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.55
+      }
+    },
+    {
+      "name": "Speech",
+      "layers": [
+        {
+          "image-name": "1-speech-bubble.svg",
+          "name": "Speech"
+        }
+      ],
+      "refractivity": {
+        "enabled": true,
+        "strength": 0.15,
+        "depth": 0.1
+      },
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.18
+      },
+      "translucency": {
+        "enabled": true,
+        "value": 0.15
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}
