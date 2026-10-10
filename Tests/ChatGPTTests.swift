@@ -178,6 +178,52 @@ final class ChatGPTTests: XCTestCase {
         let failure = ChatGPTHTTP.failure(status: 403, object: ["detail": "secret bearer token transcript"], requestID: "request-1")
         XCTAssertFalse(failure.localizedDescription.contains("secret")); XCTAssertTrue(failure.localizedDescription.contains("request-1"))
     }
+    func testResponsesValidateEventsWhenMimeIsMissingOrMislabeled() async throws {
+        for headers in [[:], ["Content-Type": "text/plain; charset=utf-8"], ["Content-Type": "application/json"]] {
+            let memory = MemoryCredentials(); memory.entries = [registration()]
+            let fixture = HTTPFixture()
+            fixture.handler = { request in
+                if request.url!.path == "/v1/models" {
+                    return (200, [:], Data("{\"models\":[{\"slug\":\"test-model\",\"display_name\":\"Test\",\"visibility\":\"list\"}]}".utf8))
+                }
+                return (200, headers, Data("event: response.output_text.delta\ndata: {\"type\":\"response.output_text.delta\",\"delta\":\"안녕하세요\"}\n\ndata: {\"type\":\"response.completed\",\"response\":{\"status\":\"completed\"}}\n\n".utf8))
+            }
+            let service = ChatGPTAccountService(storage: memory, session: fixture.session)
+            let client = ChatGPTSubtitleClient(accountID: "oaiapp_test", model: "test-model", service: service, session: fixture.session)
+            let translated = try await client.translate("srt", language: .ko)
+            XCTAssertEqual(translated, "안녕하세요")
+        }
+    }
+    func testResponsesRejectJsonAndHtmlAndPauseStructuredUsageFailure() async throws {
+        for (body, expectedCode) in [
+            ("{\"error\":{\"code\":\"subscription_sharing_usage_limit_exceeded\",\"message\":\"private subtitle and token\"}}", "subscription_sharing_usage_limit_exceeded"),
+            ("{\"status\":\"completed\",\"output\":[\"private subtitle and token\"]}", "request_failed"),
+            ("<html>private subtitle and token</html>", "unexpected_response_format")
+        ] {
+            let memory = MemoryCredentials(); memory.entries = [registration()]
+            let fixture = HTTPFixture()
+            fixture.handler = { request in
+                if request.url!.path == "/v1/models" {
+                    return (200, [:], Data("{\"models\":[{\"slug\":\"test-model\",\"display_name\":\"Test\",\"visibility\":\"list\"}]}".utf8))
+                }
+                return (200, ["Content-Type": "text/event-stream", "x-request-id": "request-safe"], Data(body.utf8))
+            }
+            let service = ChatGPTAccountService(storage: memory, session: fixture.session)
+            let client = ChatGPTSubtitleClient(accountID: "oaiapp_test", model: "test-model", service: service, session: fixture.session)
+            do {
+                _ = try await client.translate("srt", language: .ko); XCTFail("Non-stream output must be rejected")
+            } catch let failure as ChatGPTFailure {
+                guard case .service(let status, let code, let id) = failure else { return XCTFail("Expected structured failure") }
+                XCTAssertEqual(status, 200); XCTAssertEqual(code, expectedCode); XCTAssertEqual(id, "request-safe")
+                XCTAssertFalse(failure.localizedDescription.contains("private"))
+            }
+            if expectedCode == "subscription_sharing_usage_limit_exceeded" {
+                let count = fixture.requests.count
+                do { _ = try await client.translate("srt", language: .ko); XCTFail("Usage-limited account must pause") } catch {}
+                XCTAssertEqual(fixture.requests.count, count)
+            }
+        }
+    }
     func testSignInValidatesPKCEAndSignedIdentityBeforePersisting() async throws {
         let memory = MemoryCredentials(), fixture = HTTPFixture(), identity = IdentityFixture()
         let state = LoginFixtureState()
