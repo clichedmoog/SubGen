@@ -49,9 +49,9 @@ python3 .agents/skills/apple-app-listing/scripts/field-sig.py \
 | 채널 | 현재 버전 | 산출물 | 상태 |
 | --- | --- | --- | --- |
 | 직접 배포 | `2026.10.09` | Developer ID 앱·공증 DMG | 로컬 검증 완료, 앱 DMG는 아직 공개하지 않음 |
-| Mac App Store | `1.0 (4)` | Apple Distribution Archive 및 Mac Installer Distribution 패키지 검증 완료 | Xcode 계정 재인증 후 업로드 예정. 배포된 빌드 3은 내부 TestFlight 테스트 중, 정식 심사 미제출 |
+| Mac App Store | `1.0 (4)` | Apple Distribution Archive 및 Mac Installer Distribution 패키지 검증 완료 | 기존 API 키로 CLI 업로드·VALID 처리 완료, 내부 TestFlight 빌드 4 테스트 중. 정식 심사 미제출 |
 
-스토어 빌드 `1`, `2`, `3`은 업로드되어 번호를 다시 사용할 수 없습니다. 최신 앱은
+스토어 빌드 `1`, `2`, `3`, `4`는 업로드되어 번호를 다시 사용할 수 없습니다. 최신 앱은
 `SubGen.app` / `SubGen`이며 App Store 이름·번들 ID·Swift 모듈은 유지합니다.
 정식 버전에는 처리된 빌드 `3`을 선택했습니다. 빌드 `1`은 내부 전용입니다.
 기존 업로드·공증 산출물은 보존하며 다음 업로드 전 ASC에서 새 번호를 확인합니다.
@@ -149,6 +149,27 @@ python3 Store/scripts/verify-testflight-package.py /path/to/SubGen.pkg
 
 현재 콘솔 빌드/계정 확인과 업로드 결과는 최신 출시 기록에 남깁니다. 내부 베타는
 스토어 리스팅 저장·정식 심사 제출·가격 변경·공개 링크 생성과 별개입니다.
+
+Xcode 로그인 대신 기존 App Store Connect 팀 API 키로 패키지를 직접 올릴 수도 있습니다.
+먼저 콘솔에서 개인 팀·활성 키·Issuer ID를 확인하고, 아래 앱 조회 결과의 ID와 bundle ID를
+비교합니다. 키 이름만으로 앱 접근 권한을 판단하지 않습니다. 키 파일은 저장소 밖의
+`~/.appstoreconnect/private_keys/AuthKey_<KEY_ID>.p8` 등에 보관합니다. `ASC_KEY_ID`와
+`ASC_ISSUER_ID`는 확인한 공개 식별자로 설정하고 `SUBGEN_PACKAGE`에는 검증한 새 빌드의
+패키지 경로를 지정합니다. 개인 키 내용이나 비밀번호를 명령/로그에 넣지 않습니다.
+
+```sh
+xcrun altool --list-apps --api-key "$ASC_KEY_ID" --api-issuer "$ASC_ISSUER_ID" \
+  --filter-apple-id 6820884731
+xcrun altool --validate-app "$SUBGEN_PACKAGE" --api-key "$ASC_KEY_ID" \
+  --api-issuer "$ASC_ISSUER_ID" --output-format json
+xcrun altool --upload-package "$SUBGEN_PACKAGE" --api-key "$ASC_KEY_ID" \
+  --api-issuer "$ASC_ISSUER_ID" --wait --output-format json
+```
+
+이 명령은 실제 업로드이며 사용자의 업로드 요청이 있을 때만 실행합니다. 빌드 번호는
+실행 전 콘솔에서 확인합니다. 업로드/처리 완료와 내부 그룹 배포/설치는 별도로 확인하며,
+불명확한 결과가 나면 상태를 조회하고 같은 패키지를 곧바로 다시 보내지 않습니다.
+설치된 도구의 옵션은 `xcrun altool --help`로 확인합니다.
 
 이 `build` 결과는 개발 서명 앱이며 스토어 패키지가 아닙니다. 샌드박스 시험은
 SwiftPM 시험과 분리해 앱을 호스트로 실행합니다. 아래 QA 식별자는 기존 앱 설정과
