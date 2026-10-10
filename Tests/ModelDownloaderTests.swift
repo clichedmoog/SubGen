@@ -52,9 +52,17 @@ server.serve_forever()
 
     func testSuccessfulDownloadAndHTTPFailureLeavePreviousModelIntact() throws {
         let downloaded = root.appendingPathComponent("downloaded")
+        let progressLock = NSLock()
+        var received: Int64 = 0
         try ModelDownloader.download(baseURL.appendingPathComponent("model"), to: downloaded,
-                                     timeout: 3, cancellation: CancellationToken())
+                                     timeout: 3, cancellation: CancellationToken(), onProgress: { count, total in
+            progressLock.lock(); defer { progressLock.unlock() }
+            received = max(received, count)
+            if count > 0 { XCTAssertEqual(total, 10) }
+        })
         XCTAssertEqual(try Data(contentsOf: downloaded), Data("model-data".utf8))
+        progressLock.lock(); let finalReceived = received; progressLock.unlock()
+        XCTAssertEqual(finalReceived, 10)
         let previous = root.appendingPathComponent("previous")
         try Data("existing-model".utf8).write(to: previous)
         XCTAssertThrowsError(try ModelDownloader.download(baseURL.appendingPathComponent("error"), to: previous,

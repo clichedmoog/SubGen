@@ -26,6 +26,15 @@ struct FileItem: Identifiable, Equatable {
         for index in files.indices where !files[index].isActive { files[index].resetForProcessing() }
     }
 
+    static func requeueFailedOrCancelled(_ files: inout [FileItem]) {
+        for index in files.indices {
+            switch files[index].status {
+            case .failed, .cancelled: files[index].resetForProcessing()
+            default: break
+            }
+        }
+    }
+
     var isActive: Bool {
         switch status {
         case .processing, .translating: return true
@@ -128,7 +137,7 @@ enum WhisperModel: String, CaseIterable, Identifiable {
     }
 
     var isCached: Bool {
-        FileManager.default.fileExists(atPath: modelPath)
+        WhisperModelInstaller.isAvailable(at: URL(fileURLWithPath: modelPath))
     }
 
     var sizeLabel: String {

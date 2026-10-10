@@ -187,12 +187,64 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
         var files = initial.0; FileItem.requeueAfterOptionsChange(&files)
         // Sparse test model meets the size check; the fixture recognizer supplies timestamped output.
         FileManager.default.createFile(atPath: options().model, contents: nil)
-        let model = try FileHandle(forWritingTo: URL(fileURLWithPath: options().model)); try model.truncate(atOffset: 10_000_000); try model.close()
+        let model = try FileHandle(forWritingTo: URL(fileURLWithPath: options().model))
+        try model.write(contentsOf: Data([0x6c, 0x6d, 0x67, 0x67])); try model.truncate(atOffset: 10_000_000); try model.close()
         let changed = try await run(files, options: options(language: "ko"))
         XCTAssertEqual(changed.0[0].status, .completed(lang: "ko")); XCTAssertEqual(changed.0[0].sourceLanguage, "ko")
         XCTAssertTrue(changed.2.contains { $0 > 0.45 && $0 < 0.55 })
         XCTAssertTrue(changed.3.contains { $0.contains("00:00:01,500 / 00:00:03,000") })
         XCTAssertTrue(FileManager.default.fileExists(atPath: directory.appendingPathComponent("movie.ko.srt").path))
         XCTAssertEqual(try String(contentsOf: directory.appendingPathComponent("movie.en.srt")), srt)
+    }
+
+    private func prepareFixtureModel() throws {
+        FileManager.default.createFile(atPath: options().model, contents: nil)
+        let model = try FileHandle(forWritingTo: URL(fileURLWithPath: options().model)); defer { try? model.close() }
+        try model.write(contentsOf: Data([0x6c, 0x6d, 0x67, 0x67])); try model.truncate(atOffset: 10_000_000)
+    }
+    private func fixtureRecognizer(srt: String) throws {
+        let script = """
+        #!/bin/sh
+        destination=''
+        progress=''
+        while [ "$#" -gt 0 ]; do
+          if [ "$1" = '-of' ]; then destination="$2"; shift; fi
+          if [ "$1" = '--print-progress' ]; then progress='yes'; fi
+          shift
+        done
+        [ "$progress" = 'yes' ] || exit 9
+        printf 'whisper_print_progress_callback: progress = 50%%\\n' >&2
+        sleep 0.2
+        cat > "$destination.srt" <<'SRT'
+        \(srt)
+        SRT
+        """
+        try script.write(toFile: whisper, atomically: true, encoding: .utf8)
+    }
+    @MainActor
+    func testBlankWhisperCueAndNativeProgressContinueThroughVideoEmbedding() async throws {
+        try prepareFixtureModel()
+        try fixtureRecognizer(srt: "1\n00:00:00,000 --> 00:00:00,000\n\n2\n00:00:00,200 --> 00:00:02,200\nHello from this subtitle.\n")
+        let result = try await run([FileItem(url: video)], options: options(embed: true))
+        XCTAssertEqual(result.0[0].status, .completed(lang: "en"))
+        XCTAssertTrue(result.2.contains { $0 > 0.49 && $0 < 0.51 })
+        XCTAssertTrue(result.3.contains { $0.contains("전사 추정") && $0.contains("00:00:01,500 / 00:00:03,000") })
+        let probe = ProcessRunner.run(ffprobe, arguments: ["-v", "error", "-select_streams", "s", "-show_entries", "stream=codec_name", "-of", "csv=p=0", video.path], timeout: 10)
+        XCTAssertTrue(probe.succeeded); XCTAssertTrue(probe.stdout.contains("mov_text"))
+    }
+    @MainActor
+    func testMalformedWhisperOutputPreservesDiagnosticAndOriginalVideo() async throws {
+        try prepareFixtureModel()
+        let invalid = "1\n00:00:02,000 --> 00:00:01,000\nDiagnostic dialogue.\n"
+        try fixtureRecognizer(srt: invalid)
+        let original = try Data(contentsOf: video)
+        let result = try await run([FileItem(url: video)], options: options(embed: true))
+        guard case .failed(let message) = result.0[0].status else { return XCTFail("Malformed timings must fail") }
+        XCTAssertTrue(message.contains("1번")); XCTAssertTrue(message.contains("보존"))
+        XCTAssertEqual(try Data(contentsOf: video), original)
+        let diagnostics = try FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil).filter { $0.lastPathComponent.hasSuffix(".diagnostic.srt") }
+        XCTAssertEqual(diagnostics.count, 1)
+        XCTAssertTrue(try String(contentsOf: XCTUnwrap(diagnostics.first)).contains("Diagnostic dialogue."))
+        XCTAssertTrue(TranscriptionEngine.sidecars(for: video).isEmpty, "Diagnostics must never be mistaken for reusable source subtitles")
     }
 }

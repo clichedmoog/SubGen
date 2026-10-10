@@ -138,7 +138,8 @@ FFmpeg 자동 다운로드와 기존 공증 DMG는 이 스토어 전용 변경�
 명시하며 해당 readiness를 컴파일/패키지 성공으로 켜지 않습니다. 테스트 안내는
 [testflight-what-to-test.en-US.txt](testflight-what-to-test.en-US.txt)에 있습니다.
 
-`testFlightInternalTestingOnly=true`로 로컬 App Store export를 생성하고, 업로드 전에
+최신 후보는 정식 심사에서도 선택할 수 있도록 `testFlightInternalTestingOnly=false`로
+로컬 App Store export를 생성합니다. 업로드 전에
 아래 명령으로 패키지 서명·프로파일·앱/도구 신원·소스·아이콘을 검사합니다.
 이 검사는 최종 서비스/개인정보 검증이나 실제 설치를 완료로 표시하지 않습니다.
 

@@ -38,10 +38,15 @@ class TranscriptionEngine: ObservableObject {
     private var workProgress = ProcessingProgress()
     private var runID = UUID()
     private let binaryResolver: (String) -> String?
+    private let prepareModel: (URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void
     private var onFileDetailUpdate: ((UUID, String, Double?) -> Void)?
 
-    init(binaryResolver: @escaping (String) -> String? = { ToolResolver.find($0) }) {
+    init(binaryResolver: @escaping (String) -> String? = { ToolResolver.find($0) },
+         prepareModel: @escaping (URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void = {
+             try WhisperModelInstaller.ensureAvailable(at: $0, cancellation: $1, onProgress: $2)
+         }) {
         self.binaryResolver = binaryResolver
+        self.prepareModel = prepareModel
     }
     private var shouldCancel: Bool {
         stateLock.lock(); defer { stateLock.unlock() }
@@ -218,6 +223,18 @@ class TranscriptionEngine: ObservableObject {
                                 if self.sourceFileID == file.id { self.currentStatus = detail }
                                 self.publishProgress(file.id)
                             }
+                        }, onModelDownload: { received, total in
+                            DispatchQueue.main.async {
+                                guard self.runID == run else { return }
+                                let detail = "음성인식 모델 다운로드 중 · " + WhisperModelInstaller.downloadDetail(received: received, total: total)
+                                self.workProgress.update(file.id) {
+                                    $0.detail = detail
+                                    $0.phaseFraction = total.flatMap { $0 > 0 ? min(1, max(0, Double(received) / Double($0))) : nil }
+                                }
+                                self.eta = ""
+                                if self.sourceFileID == file.id { self.currentStatus = detail }
+                                self.publishProgress(file.id)
+                            }
                         })
                     DispatchQueue.main.async {
                         self.workProgress.update(file.id) { $0.sourceReady(language: source.language) }
@@ -391,7 +408,8 @@ class TranscriptionEngine: ObservableObject {
     }
 
     func prepareSource(file: FileItem, whisper: String, ffmpeg: String, ffprobe: String, options: Options, token: CancellationToken,
-                       onProgress: @escaping (Double, String) -> Void = { _, _ in }) throws -> SourceSubtitle {
+                       onProgress: @escaping (Double, String) -> Void = { _, _ in },
+                       onModelDownload: @escaping WhisperModelInstaller.Progress = { _, _ in }) throws -> SourceSubtitle {
         let matching = Self.sourceSidecars(for: file, language: options.language)
         if let existing = matching.first {
             guard (try? SrtDocument(String(contentsOf: existing.url, encoding: .utf8))) != nil else {
@@ -410,8 +428,10 @@ class TranscriptionEngine: ObservableObject {
             return SourceSubtitle(url: destination, language: track.language, created: true)
         }
         guard info.audioCount > 0 else { throw PipelineFailure("전사할 오디오 트랙이 없습니다") }
-        guard (try? SafeFileReplacement.Snapshot(URL(fileURLWithPath: options.model)).size) ?? 0 >= 10_000_000 else {
-            throw PipelineFailure("모델 파일이 없거나 불완전합니다. 모델을 다운로드해주세요.")
+        do { try prepareModel(URL(fileURLWithPath: options.model), token, onModelDownload) }
+        catch {
+            if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
+            throw PipelineFailure("음성인식 모델 준비 실패: \(error.localizedDescription)")
         }
         let fm = FileManager.default
         let temp = fm.temporaryDirectory.appendingPathComponent("transcription-\(UUID().uuidString)")
@@ -448,22 +468,20 @@ class TranscriptionEngine: ObservableObject {
             var args = ["-m", options.model, "-f", wav.path, "-l", language, "-t", String(min(10, ProcessInfo.processInfo.activeProcessorCount)),
                 "--beam-size", String(options.sensitivity.beamSize), "--best-of", String(options.sensitivity.bestOf),
                 "--no-speech-thold", String(options.sensitivity.noSpeechThreshold), "--logprob-thold", String(options.sensitivity.logprobThreshold),
-                "--entropy-thold", String(options.sensitivity.entropyThreshold), "--output-srt", "-of", output.path]
-            let vad = fm.homeDirectoryForCurrentUser.appendingPathComponent(".cache/whisper-cpp/ggml-silero-v6.2.0.bin")
+                "--entropy-thold", String(options.sensitivity.entropyThreshold), "--print-progress", "--output-srt", "-of", output.path]
+            let vad = URL(fileURLWithPath: options.model).deletingLastPathComponent().appendingPathComponent("ggml-silero-v6.2.0.bin")
             if (try? SafeFileReplacement.Snapshot(vad).size) ?? 0 > 100_000 {
                 args += ["--vad", "--vad-model", vad.path, "--vad-threshold", String(options.sensitivity.vadThreshold)]
             }
-            let reportTime: (Double) -> Void = { position in
+            let reportTime: (Double, Bool) -> Void = { position, estimated in
                 let elapsed = min(info.duration, max(chunk.start, position))
                 onProgress(elapsed / info.duration,
-                    "전사 \(SrtDocument.format(elapsed)) / \(SrtDocument.format(info.duration)) · 청크 \(index + 1)/\(chunks.count) · \(language)")
+                    "전사\(estimated ? " 추정" : "") \(SrtDocument.format(elapsed)) / \(SrtDocument.format(info.duration)) · 청크 \(index + 1)/\(chunks.count) · \(language)")
             }
-            reportTime(chunk.start)
+            reportTime(chunk.start, false)
             let result = ProcessRunner.run(whisper, arguments: args, timeout: max(300, chunk.duration * 4), cancellation: token) { line in
-                let pattern = #"\d{2}:\d{2}:\d{2}\.\d{3}\]"#
-                if let range = line.range(of: pattern, options: .regularExpression),
-                   let end = SrtDocument.timestamp(String(line[range].dropLast()).replacingOccurrences(of: ".", with: ",")) {
-                    reportTime(min(chunk.start + end, chunk.start + chunk.duration))
+                if let position = AudioPreparation.transcriptionPosition(in: line, chunk: chunk) {
+                    reportTime(position.seconds, position.estimated)
                 }
             }
             try checked(result, stage: "\(index + 1)번째 청크 음성 인식 실패")
@@ -472,13 +490,21 @@ class TranscriptionEngine: ObservableObject {
             }
             let text = String(decoding: raw, as: UTF8.self)
             if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                guard let document = try? SrtDocument(text) else { throw PipelineFailure("\(index + 1)번째 청크의 SRT 형식이 올바르지 않습니다") }
-                cues += document.shifted(by: chunk.start).cues.map {
-                    SrtDocument.Cue(number: $0.number, start: $0.start, end: min($0.end, chunk.start + chunk.duration), text: $0.text)
+                let document: WhisperSrtDocument
+                do { document = try WhisperSrtDocument(text, duration: chunk.duration) }
+                catch {
+                    let diagnostic = file.url.deletingPathExtension().appendingPathExtension("whisper-chunk-\(index + 1)-\(UUID().uuidString).diagnostic.srt")
+                    let preserved = (try? raw.write(to: diagnostic, options: .withoutOverwriting)) != nil
+                    let detail = preserved ? " 전사 SRT 원문을 \(diagnostic.lastPathComponent)에 보존했습니다." : ""
+                    throw PipelineFailure("\(index + 1)번째 청크 전사 결과를 읽지 못했습니다. \(error.localizedDescription)\(detail)")
+                }
+                if document.omittedCount > 0 { logDebug("Whisper chunk \(index + 1): omitted \(document.omittedCount) empty/zero-duration/out-of-range segments") }
+                cues += document.cues.map {
+                    SrtDocument.Cue(number: $0.number, start: $0.start + chunk.start, end: $0.end + chunk.start, text: $0.text)
                 }
             }
             logDebug("Chunk \(index + 1)/\(chunks.count) extracted at \(chunk.start)s: \(cues.count) cumulative cues")
-            reportTime(chunk.start + chunk.duration)
+            reportTime(chunk.start + chunk.duration, false)
         }
         guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
         let segments: [[String: Any]] = cues.map { ["start": $0.start, "end": $0.end, "text": $0.text] }
@@ -596,7 +622,7 @@ class TranscriptionEngine: ObservableObject {
     func calculateFileEta() -> String {
         guard let id = sourceFileID, let work = workProgress.files[id],
               work.sourceFraction > 0.05, work.sourceFraction < 1 else { return "" }
-        let elapsed = Date().timeIntervalSince(fileStartTime)
+        let elapsed = Date().timeIntervalSince(work.transcriptionStartedAt ?? fileStartTime)
         guard elapsed >= 2 else { return "" }
         let remaining = (elapsed / work.sourceFraction) - elapsed
         guard remaining > 0 else { return "" }

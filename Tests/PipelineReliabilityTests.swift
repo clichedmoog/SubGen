@@ -3,6 +3,18 @@ import Darwin
 @testable import SubtitleGen
 
 final class ProcessRunnerTests: XCTestCase {
+    func testShortProgressLineIsDeliveredWhileChildIsStillRunning() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let acknowledged = root.appendingPathComponent("progress-ack")
+        // The child cannot exit until its short, flushed progress line is observed.
+        let result = ProcessRunner.run("/bin/sh", arguments: ["-c", "printf '전사 50%%\\r' >&2; while [ ! -f \"$1\" ]; do sleep 0.02; done", "fixture", acknowledged.path], timeout: 2) { line in
+            if line == "전사 50%\r" { try? Data().write(to: acknowledged) }
+        }
+        XCTAssertTrue(result.succeeded, "Progress must be delivered before EOF: \(result.diagnostic)")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: acknowledged.path))
+    }
     func testDrainsLargeStdoutAndStderrWithoutProgressCallback() {
         let result = ProcessRunner.run("/bin/sh", arguments: ["-c", "head -c 262144 /dev/zero; head -c 262144 /dev/zero >&2"], timeout: 5)
         XCTAssertTrue(result.succeeded, result.diagnostic)
@@ -210,6 +222,17 @@ final class FilePreservationTests: XCTestCase {
 }
 
 final class AudioPreparationTests: XCTestCase {
+    func testProgressPercentUsesOriginalChunkPositionAndReservesCompletion() {
+        let chunk = AudioPreparation.Chunk(start: 1800, duration: 600)
+        let half = AudioPreparation.transcriptionPosition(in: "whisper_print_progress_callback: progress =  50%\n", chunk: chunk)
+        XCTAssertEqual(half?.seconds, 2100); XCTAssertEqual(half?.estimated, true)
+        let done = AudioPreparation.transcriptionPosition(in: "whisper_print_progress_callback: progress = 100%", chunk: chunk)
+        XCTAssertEqual(done?.seconds, 2394)
+        XCTAssertNil(AudioPreparation.transcriptionPosition(in: "whisper_print_progress_callback: progress = 150%", chunk: chunk))
+        XCTAssertNil(AudioPreparation.transcriptionPosition(in: "Transcript says progress = 50%", chunk: chunk))
+        let timed = AudioPreparation.transcriptionPosition(in: "[00:00:00.000 --> 00:03:00.000] hello", chunk: chunk)
+        XCTAssertEqual(timed?.seconds, 1980); XCTAssertEqual(timed?.estimated, false)
+    }
     func testChunkCoverageAndLastDuration() {
         XCTAssertEqual(AudioPreparation.chunks(duration: 3705), [
             .init(start: 0, duration: 1800), .init(start: 1800, duration: 1800), .init(start: 3600, duration: 105)])
