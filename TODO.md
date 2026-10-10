@@ -99,6 +99,6 @@ Whisper 설치 파일: `dist/whisper-cli-1.8.4-macos14-arm64.zip`.
 
 - [x] 파이프 로그가 EOF까지 대기하는 문제 재현/수정, Whisper 진행률 + 처리 오디오/전체 길이 추정 표시
 - [x] Whisper 빈·0초 구간 정규화 후 SRT 생성/영상 내장, 진짜 형식 오류의 원문 보존
-- [x] 통합 회귀 171개 통과 (opt-in 5개 제외)
+- [x] 통합 회귀 171개: 166개 통과·opt-in 5개 제외·실패 0
 
 - [x] 통합 수정 Release 샌드박스 5개 및 새 App Store 패키지 서명/프로파일/도구 검증
