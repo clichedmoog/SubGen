@@ -364,7 +364,7 @@
     "storePricingChanged": true,
     "sourcePublished": true,
     "sourceBranch": "release/subgen-1.0-build-3",
-    "sourceCommit": "f9cf001",
+    "sourceCommit": "dfc0bf8c1573347623bd1b40f10e468131f575ac",
     "sourcePR": "https://github.com/clichedmoog/SubGen/pull/1",
     "sourceMergedToMain": false,
     "storePrice": "0",
