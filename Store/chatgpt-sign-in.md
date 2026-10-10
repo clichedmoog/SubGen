@@ -2,10 +2,10 @@
 
 OpenAI Docs를 ego-browser로 직접 확인했습니다. 사용자가 **무료 오픈소스** 배포를
 선택했고 앱 소스에 MIT 라이선스를 적용했습니다. OAuth·계정별 모델 목록·번역 UI와
-네이티브 Responses 클라이언트를 구현했습니다. **실제 사용자 로그인·추론은 아직
-검증하지 않았으며** `translationBackendVerified`는 false입니다. 공개 저장소에 이
+네이티브 Responses 클라이언트를 구현했습니다. **실제 사용자 로그인·모델 목록 조회는 통과했고 추론은 MIME 검사에서 실패했습니다.
+수정 후 번역 성공 여부는 아직 검증하지 않았으며** `translationBackendVerified`는 false입니다. 공개 저장소에 이
 변경을 공개 기본 브랜치에 병합하지 않았습니다. 영문 리스팅과 개인정보 선언은
-콘솔에 저장했습니다. 실제 서비스 검증은 계속 대기입니다.
+콘솔에 저장했습니다. 실제 번역 완료·해제 및 TestFlight 설치 검증은 계속 대기입니다.
 
 ## 구현과 로컬 검증
 
@@ -101,3 +101,12 @@ workspace 정책에 따라 권한이 달라질 수 있으므로 모든 ChatGPT �
 - [실패 처리](https://developers.openai.com/siwc/token-sharing-open-source/errors-and-recovery)
 - [Preview 제한](https://developers.openai.com/siwc/token-sharing-open-source/preview-limitations)
 - [사용 상태와 동의 화면](https://developers.openai.com/siwc/ui-ux-guidelines)
+
+## 실제 연결 확인 및 응답 처리 수정 — 2026-10-10
+
+사용자 로그인 최종 승인 후 loopback·PKCE·JWKS/JWT·플랜 scope 검증과 실제 계정 모델
+목록 조회를 통과했습니다. 추론은 성공 HTTP 응답의 Content-Type 검사가 거부하여
+실패했습니다. 헤더 값을 포함한 실제 응답은 기록하지 않았으므로 서버 형식을 단정하지
+않습니다. JSON 오류와 SSE를 본문 형식으로 구분하고, SSE 이벤트와 response.completed를
+검증하도록 수정했습니다. JSON 결과나 HTML, 잘린 이벤트는 성공으로 수락하지 않습니다.
+실제 번역·타임스탬프·원격 해제는 수정 후 다시 확인해야 합니다.

@@ -147,11 +147,12 @@
     "verificationEvidence": {
       "selfContainedTools": "2026-10-10: unmodified FFmpeg/FFprobe 9.0 LGPL source build for ARM64/macOS 14; GPL/nonfree/external codec libraries disabled; full source/recipe in app. Pinned Whisper 1.8.4. Five signed sandbox-host tests passed, including real Whisper/Metal and MP4/MOV/M4V/MKV/WebM embedding/extraction.",
       "sandboxRuntimeVerified": "2026-10-10: Apple Development signed Release 1.0 (4) sandbox host: five tests passed, real Whisper/Metal, FFmpeg containers, loopback/Keychain, bookmarks. Thread Performance Checker disabled only for test action; generated scheme restored.",
-      "chatGPTLocalFixtures": "2026-10-10: SwiftPM 154 tests, 0 failures, 5 explicit opt-in skips. Callback accepted before the 30-minute deadline and rejected at/after expiry; PKCE/state/JWT/loopback checks remain enabled. Two earlier live attempts timed out before final plan consent; live inference remains unverified.",
+      "chatGPTLocalFixtures": "2026-10-10: 156 tests, 0 failures, 5 explicit opt-in skips. SSE completion validated independently of missing/mislabeled MIME; JSON/HTML rejected and structured usage failures pause new requests. Live translation after fix remains pending.",
       "sandboxOAuthInfrastructure": "2026-10-10: Apple Development signed Debug host; loopback HTTP callback + protected Keychain write/read/local token deletion passed. store-siwc-runtime.xcresult contains 4 passing tests including real Whisper/Metal. No live OAuth credentials acquired by the agent.",
       "processingProgress": "2026-10-10: final 153-test suite passed. Actual Release UI: transcription, SRT reuse after relaunch, embedding, option changes and adding a new file after completion verified. Busy indicators observed during real transcription; distributed build animation remains pending.",
       "storeFFmpegPlan": "Completed: FFmpeg source SHA256 7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52; source/build recipe/attribution/license included and validated in exported package. Direct-distribution tools are separate.",
-      "distributionArchiveVerified": "2026-10-10: Release 1.0 (4) archive and exported package passed production identity, nested signing, profiles, entitlements, bundled ARM64 tools/source/licenses, icons and privacy manifest verification. Actual uploaded payload still to preserve and inspect."
+      "distributionArchiveVerified": "2026-10-10: Release 1.0 (4) archive and exported package passed production identity, nested signing, profiles, entitlements, bundled ARM64 tools/source/licenses, icons and privacy manifest verification. Actual uploaded payload still to preserve and inspect.",
+      "liveChatGPT": "2026-10-10: live OAuth, signed identity, granted plan scopes and account-specific catalog passed. Actual inference failed at the MIME gate; translation and revocation still need verification. No tokens/authorization URLs logged."
     },
     "localDevelopmentBuild": {
       "version": "1.0",
@@ -314,7 +315,7 @@
     "storePricingChanged": true,
     "sourcePublished": true,
     "sourceBranch": "release/subgen-1.0-build-3",
-    "sourceCommit": "6b429ed",
+    "sourceCommit": "f9cf001",
     "sourcePR": "https://github.com/clichedmoog/SubGen/pull/1",
     "sourceMergedToMain": false,
     "storePrice": "0",
@@ -332,14 +333,19 @@
     "basis": "Local subtitle utility: no app-distributed third-party media, shared UGC/feed/chat/ads, medical or mature themes, violence, gambling. User-selected files are processed locally."
   },
   "liveVerification": {
-    "status": "account-selected-final-plan-consent-pending-build4-timeout-fix",
+    "status": "oauth-models-passed-stream-fix-awaiting-live-reconnection",
     "consoleTaskSpace": 120,
     "isolatedKeychain": true,
     "sourceFixture": "Two synthetic English subtitle cues, translated to Korean; no user media uploaded",
-    "testLog": "/tmp/subgen-live-chatgpt-retry.log",
-    "sessionID": 35867,
+    "testLog": "/tmp/subgen-live-chatgpt-stream.log",
+    "sessionID": 8858,
     "authorizationURLLogged": false,
     "priorRegistrationReused": true,
-    "timeoutSeconds": 1800
+    "timeoutSeconds": 1800,
+    "signInVerified": true,
+    "modelCatalogVerified": true,
+    "inferenceVerified": false,
+    "revocationVerified": false,
+    "failure": "Successful OAuth/JWT/scope validation and account model catalog. Responses rejected by previous strict Content-Type gate. No translated SRT saved; cleanup attempted. Actual response format to reverify after parser fix."
   }
 }

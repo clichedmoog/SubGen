@@ -37,21 +37,26 @@ final class ChatGPTLiveTests: XCTestCase {
             try Data(url.absoluteString.utf8).write(to: file, options: .atomic)
             try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: file.path)
         }
+        print("SUBGEN_LIVE: signed identity and plan scopes accepted")
         do {
             let models = try await service.models(accountID: account, force: true)
             let model = try XCTUnwrap(models.first)
+            print("SUBGEN_LIVE: account model catalog available (\(models.count) models)")
             let source = "1\n00:00:00,000 --> 00:00:02,000\nWelcome to our subtitle test.\n\n2\n00:00:02,500 --> 00:00:04,000\nPlease keep both timestamps unchanged.\n"
             let translated = try await ChatGPTSubtitleClient(accountID: account, model: model.slug, service: service).translate(source, language: .ko)
             let document = try SrtDocument(translated)
             XCTAssertTrue(document.matchesTiming(of: try SrtDocument(source)))
             XCTAssertTrue(document.cues.contains { $0.text.range(of: "[가-힣]", options: .regularExpression) != nil })
             XCTAssertNotEqual(translated, source)
+            print("SUBGEN_LIVE: Korean SRT translated; cue timing preserved")
             let revoked = try await service.signOut(accountID: account)
             XCTAssertTrue(revoked, "Local credentials cleared, but OpenAI revocation was not confirmed")
             let accounts = try await service.accounts()
             XCTAssertEqual(accounts.first?.signedIn, false)
+            print("SUBGEN_LIVE: remote revocation confirmed; local credentials cleared")
         } catch {
-            _ = try? await service.signOut(accountID: account)
+            let revoked = try? await service.signOut(accountID: account)
+            print("SUBGEN_LIVE: cleanup revocation confirmed=\(revoked == true)")
             throw error
         }
     }

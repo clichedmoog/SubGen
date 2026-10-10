@@ -35,12 +35,36 @@ struct ChatGPTSubtitleClient {
                 throw ChatGPTHTTP.failure(status: http.statusCode, object: object["error"] as? [String: Any] ?? object,
                                           requestID: http.value(forHTTPHeaderField: "x-request-id"))
             }
-            guard http.value(forHTTPHeaderField: "Content-Type")?.lowercased().hasPrefix("text/event-stream") == true else {
-                throw ChatGPTFailure.message("ChatGPT 서버가 번역 스트림을 반환하지 않았습니다.")
+            // Direct routing can label a streamed response differently. Validate the
+            // actual event framing and terminal event instead of trusting MIME alone.
+            // A JSON admission/error response must never become translated output.
+            var iterator = bytes.makeAsyncIterator()
+            var prefix = Data()
+            while let byte = try await iterator.next() {
+                try Task.checkCancellation()
+                prefix.append(byte)
+                if ![9, 10, 13, 32].contains(byte) { break }
+                guard prefix.count < 4_096 else { throw ChatGPTFailure.message("ChatGPT 응답 형식이 올바르지 않습니다.") }
+            }
+            let requestID = http.value(forHTTPHeaderField: "x-request-id") ?? http.value(forHTTPHeaderField: "openai-request-id")
+            if prefix.last == 123 { // JSON object, regardless of Content-Type
+                var body = prefix
+                while body.count < 65_536, let byte = try await iterator.next() {
+                    try Task.checkCancellation(); body.append(byte)
+                }
+                let object = (try? JSONSerialization.jsonObject(with: body)) as? [String: Any] ?? [:]
+                throw ChatGPTHTTP.failure(status: http.statusCode, object: object["error"] as? [String: Any] ?? object,
+                                          requestID: requestID)
+            }
+            guard let initial = prefix.last, [100, 101, 58, 105, 114].contains(initial) else {
+                throw ChatGPTHTTP.failure(status: http.statusCode, object: ["code": "unexpected_response_format"], requestID: requestID)
             }
             var stream = ChatGPTResponseStream()
             var lines = ChatGPTEventLines()
-            for try await byte in bytes {
+            for byte in prefix {
+                if let line = try lines.consume(byte) { try stream.consume(line: line) }
+            }
+            while let byte = try await iterator.next() {
                 try Task.checkCancellation()
                 if let line = try lines.consume(byte) { try stream.consume(line: line) }
                 if stream.completed { return try stream.finish() }
