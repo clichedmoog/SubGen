@@ -15,12 +15,15 @@ Do not copy another app's contacts, testers, ad configuration or privacy answers
 
 SwiftPM (`Package.swift`) builds the direct-distribution app. Both variants use
 `SubGen.app` with executable `SubGen`; source/module names remain `SubtitleGen`.
-Uploaded TestFlight 1.0 (1) used `SubtitleGen.app`; latest 1.0 (3) uses `SubGen.app`
+Uploaded TestFlight 1.0 (1) used `SubtitleGen.app`; latest 1.0 (4) uses `SubGen.app`
 and is Testing in the internal group. The updated build 4 candidate includes automatic model download, streaming progress and
 Whisper SRT normalization; regression suite (171 total, 166 passed, five opt-in skips),
 five signed Release sandbox tests and package checks passed. The previous build 4 upload failed before delivery because
-Xcode could not load its account credentials. The new candidate is not uploaded.
-Check ASC before retrying; builds 1, 2 and 3 cannot be reused. The native store
+Xcode could not load its account credentials. The new candidate was successfully
+validated/uploaded by altool with an existing API key verified against the personal
+team/issuer and exact app. Official API confirmed macOS 1.0 (4), VALID,
+IN_BETA_TESTING, group membership and persisted en-US test notes.
+Check ASC before a new upload; builds 1, 2, 3 and 4 cannot be reused. The native store
 target is generated from `project.yml` with XcodeGen; use `SubtitleGen.xcodeproj`
 and the `SubtitleGenStore` scheme. Run `scripts/prepare-store-tools.py` before
 building to stage pinned ARM64 helpers. Store model downloads use URLSession;

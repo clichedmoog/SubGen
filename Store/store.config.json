@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "model-progress-srt-fixes-packaged-awaiting-upload-credentials-and-current-console-check",
+  "status": "testflight-build-4-testing-live-inference-and-updated-runtime-pending",
   "platform": "macos",
   "productName": "Subtitle Maker & Translator",
   "bundleID": "com.clichedmoog.subtitle-generator",
@@ -26,6 +26,14 @@
     "status": "PREPARE_FOR_SUBMISSION",
     "releaseMode": "AFTER_APPROVAL",
     "builds": [
+      {
+        "platform": "macOS",
+        "version": "1.0",
+        "build": "4",
+        "status": "Testing",
+        "internalOnly": false,
+        "verification": "Official API VALID/IN_BETA_TESTING and existing internal-group build membership"
+      },
       {
         "platform": "macOS",
         "version": "1.0",
@@ -122,10 +130,25 @@
     "delivery": {
       "version": "1.0",
       "build": "4",
-      "uploadStatus": "failed-before-delivery",
-      "processingStatus": "not-uploaded",
+      "uploadStatus": "succeeded",
+      "processingStatus": "VALID",
       "internalOnly": false,
-      "error": "Xcode failed to load account credentials (missing Xcode-Username); App Store Connect access for team N9LYHMUDKA required. No delivery occurred."
+      "route": "xcrun altool --upload-package with verified existing personal-team API key",
+      "serverValidation": "altool --validate-app passed with no errors",
+      "validationLog": "/tmp/subgen-api-package-validation.log",
+      "uploadLog": "/tmp/subgen-api-build4-upload.log",
+      "packagePath": "build/subgen-release-20261010/export4-progress-srt-candidate/SubGen.pkg",
+      "packageSHA256": "156ea238d8bd12b006b80cf0a2325df9565f938dcd2d1b47ef8bd95fb5f9df3b",
+      "authenticationEvidence": "Console active key and Issuer ID matched the personal team; altool --list-apps verified app ID 6820884731 and production bundle ID. No new key created; private key contents were not logged.",
+      "deliveryID": "f3f2913a-0196-48ec-9ed2-bf49e4ad10c9",
+      "uploadedAt": "2026-10-10T20:04:06+09:00",
+      "uploadedPackagePath": "build/subgen-release-20261010/export4-progress-srt-candidate/SubGen.pkg",
+      "uploadedPackageSHA256": "156ea238d8bd12b006b80cf0a2325df9565f938dcd2d1b47ef8bd95fb5f9df3b",
+      "buildID": "f3f2913a-0196-48ec-9ed2-bf49e4ad10c9",
+      "internalBuildState": "IN_BETA_TESTING",
+      "transferSucceededAt": "2026-10-10T20:02:48+09:00",
+      "statusVerificationLog": "/tmp/subgen-api-build4-delivery-status.log",
+      "testflightVerificationPath": "build/subgen-release-20261010/testflight4-api-verification.json"
     },
     "reviewReadiness": {
       "metadataPersisted": true,
@@ -154,7 +177,8 @@
       "distributionArchiveVerified": "2026-10-10: combined model/progress/SRT and ChatGPT stream fixes in new candidate 1.0 (4). Exported Mac App Store package passed production identity, nested Apple Distribution signing, profiles, entitlements, bundled ARM64 tools/source/licenses, icons and privacy manifest verification. package4-progress-srt-verification.json. Archive inspection lists pending translationBackendVerified; no runtime gate marked complete by package checks. Not uploaded.",
       "liveChatGPT": "2026-10-10: live OAuth, signed identity, granted plan scopes and account-specific catalog passed. Actual inference failed at the MIME gate; translation and revocation still need verification. No tokens/authorization URLs logged.",
       "automaticModelDownload": "2026-10-10: 163 SwiftPM tests, zero failures, 5 explicit opt-in skips, plus 5 Apple Development signed Release sandbox-host tests passed. Empty model folder downloaded real Tiny model via URLSession, reported byte progress, then real Whisper/Metal transcription/timestamps succeeded. SRT/text-track reuse bypasses downloads; cancellation/failure/concurrent changes preserve files. Not yet in installed TestFlight build 3.",
-      "whisperSrtNormalization": "2026-10-10: pinned whisper.cpp output_srt emits every segment, including empty and zero-duration ones. Strict SrtDocument previously rejected the whole chunk. Recognizer-only parser drops nondisplayable segments, clips chunk boundaries, sorts/renumbers before strict final SRT validation. Original/translated user SRT validation remains strict. Genuine bad timings retain the raw recognition SRT beside media and show cue/reason; original video is untouched on failure. User original failed chunk was deleted by old temporary-folder cleanup, so its exact offending cue has not been observed."
+      "whisperSrtNormalization": "2026-10-10: pinned whisper.cpp output_srt emits every segment, including empty and zero-duration ones. Strict SrtDocument previously rejected the whole chunk. Recognizer-only parser drops nondisplayable segments, clips chunk boundaries, sorts/renumbers before strict final SRT validation. Original/translated user SRT validation remains strict. Genuine bad timings retain the raw recognition SRT beside media and show cue/reason; original video is untouched on failure. User original failed chunk was deleted by old temporary-folder cleanup, so its exact offending cue has not been observed.",
+      "cliUpload": "2026-10-10: existing API key verified active under the intended personal team/issuer, then altool list-apps verified this exact app/bundle. altool validate-app and upload-package --wait succeeded for the unchanged inspected package. Delivery UUID, VALID processing, macOS 1.0 (4) and IN_BETA_TESTING verified. Internal group already contains build 4 through access-to-all-builds; en-US What to Test PATCH followed by exact readback succeeded. No private keys/tokens logged or new credentials created."
     },
     "localDevelopmentBuild": {
       "version": "1.0",
@@ -214,13 +238,13 @@
     "localReleaseBuild": {
       "version": "1.0",
       "build": "4",
-      "buildNumberStatus": "previously-selected-unused-build-4-current-ASC-recheck-required-before-upload",
+      "buildNumberStatus": "confirmed-unused-in-macOS-TestFlight-before-API-upload-2026-10-10",
       "archivePath": "build/subgen-release-20261010/SubGen-1.0-4-progress-srt-candidate.xcarchive",
       "packagePath": "build/subgen-release-20261010/export4-progress-srt-candidate/SubGen.pkg",
       "verificationPath": "build/subgen-release-20261010/package4-progress-srt-verification.json",
       "runtimeResultPath": "build/subgen-progress-srt-qa/runtime-tests.xcresult",
       "internalOnly": false,
-      "status": "combined-fixes-package-verified-not-uploaded",
+      "status": "uploaded-processed-internal-testing",
       "packageSHA256": "156ea238d8bd12b006b80cf0a2325df9565f938dcd2d1b47ef8bd95fb5f9df3b",
       "executableSHA256": "23cad1d225e4c17713588f1e8b7d9d133c1ee7d72cded9a29ab5313dc7301919",
       "includedFixes": [
@@ -234,7 +258,9 @@
         "Xcode account credentials unavailable on previous upload attempt",
         "Live ChatGPT inference/revocation",
         "Updated TestFlight distributed runtime"
-      ]
+      ],
+      "uploadPackagePath": "build/subgen-release-20261010/export4-progress-srt-candidate/SubGen.pkg",
+      "uploadPackageSHA256": "156ea238d8bd12b006b80cf0a2325df9565f938dcd2d1b47ef8bd95fb5f9df3b"
     },
     "previousReleaseBuild2": {
       "version": "1.0",
@@ -310,6 +336,14 @@
       "status": "superseded-by-source-fixes-not-uploaded",
       "packageSHA256": "7afb82ba4c9cf05acd22ded75a8d0f3c64590a4619961b05eb12f1560c674bdd",
       "executableSHA256": "cf41a91c139ef7e131704aa399a1538138fee36a1a48d4dad77745c346e54c0a"
+    },
+    "previousUploadCredentialFailure": {
+      "version": "1.0",
+      "build": "4",
+      "uploadStatus": "failed-before-delivery",
+      "processingStatus": "not-uploaded",
+      "internalOnly": false,
+      "error": "Xcode failed to load account credentials (missing Xcode-Username); App Store Connect access for team N9LYHMUDKA required. No delivery occurred."
     }
   },
   "testflight": {
@@ -319,8 +353,8 @@
         "email": "<private-apple-id>",
         "name": "서명석",
         "role": "Account Holder / Admin",
-        "source": "current SubtitleGen internal tester selector",
-        "status": "invited"
+        "source": "2026-10-10 official API: verified member of existing internal group; INSTALLED state does not establish new build 4 installation",
+        "status": "installed"
       }
     ],
     "status": "testing",
@@ -334,21 +368,29 @@
     "uploaded": true,
     "installedOnMac": true,
     "clientInstalledOnMac": true,
-    "uploadStartedAt": "2026-10-09T17:03:37.432072+00:00",
+    "uploadStartedAt": "2026-10-10T20:02:41+09:00",
     "groupID": "71e0fabf-6fca-4642-980a-ef6034f27f5d",
-    "macInstallAutomation": "Native TestFlight client inspected: SubGen absent; invitation acceptance required.",
-    "build": "1.0 (3)",
-    "buildID": "84918c21-5e47-4841-b762-128d66d4dcd4",
-    "consoleUrl": "https://appstoreconnect.apple.com/teams/<team-id>/apps/6820884731/testflight/macos/84918c21-5e47-4841-b762-128d66d4dcd4",
+    "macInstallAutomation": "Existing production TestFlight installation 1.0 (3) verified locally; updated build 4 installation/runtime awaits user testing.",
+    "build": "1.0 (4)",
+    "buildID": "f3f2913a-0196-48ec-9ed2-bf49e4ad10c9",
+    "consoleUrl": "https://appstoreconnect.apple.com/teams/<team-id>/apps/6820884731/testflight/macos/f3f2913a-0196-48ec-9ed2-bf49e4ad10c9",
     "whatToTestPersisted": true,
     "whatToTestLocale": "en-US",
-    "whatToTestSHA256": "902e20bdf2f6c2fbab956303bb89908a71abc208618a2cfbbf4e564afc059f96",
-    "groupBuildCount": 3,
+    "whatToTestSHA256": "0c8086cc40374df8b5e4166d25a1eaf123c6eae8cb2a0acd5e6d094712068b48",
+    "groupBuildCount": 4,
     "groupTesterCount": 1,
-    "browserConnectionStatus": "Verified 2026-10-10: internal group lists 1.0 (3), 1.0 (2), 1.0 (1) as Testing, one invited tester.",
-    "nextUserAction": "Installed build 3 needs an update containing lazy model download; no repeat invitation request based on the earlier console snapshot.",
+    "browserConnectionStatus": "Current app/team/build-number and active API key verified using ego-browser before upload. Repeated Page.getFrameTree timeouts prevented final console rendering; official API verified exact macOS build 4, internal group membership/state and persisted en-US test notes.",
+    "nextUserAction": "Open TestFlight and update SubGen to 1.0 (4); test automatic model download, moving transcription progress and subtitle embedding. Installed build 3 does not contain the fixes.",
     "installedBuild": "1.0 (3)",
-    "localInstallationEvidence": "2026-10-10: /Applications/SubGen.app production bundle ID, version 1.0 (3), team N9LYHMUDKA, TestFlight Beta Distribution signature and Store receipt verified; running PID 80585. User screenshot reports missing model failure. Console tester status has not yet been rechecked."
+    "localInstallationEvidence": "2026-10-10: /Applications/SubGen.app production bundle ID, version 1.0 (3), team N9LYHMUDKA, TestFlight Beta Distribution signature and Store receipt verified; running PID 80585. User screenshot reports missing model failure. Console tester status has not yet been rechecked. 2026-10-10 official API recheck: tester state INSTALLED; updated build 4 installation not yet verified.",
+    "previousBuild": {
+      "build": "1.0 (3)",
+      "buildID": "84918c21-5e47-4841-b762-128d66d4dcd4",
+      "consoleUrl": "https://appstoreconnect.apple.com/teams/<team-id>/apps/6820884731/testflight/macos/84918c21-5e47-4841-b762-128d66d4dcd4"
+    },
+    "internalBuildState": "IN_BETA_TESTING",
+    "updatedBuildInstalledOnMac": false,
+    "verificationMethod": "Verified existing API key, installed altool and official App Store Connect API"
   },
   "copyright": "2026 Myeongseok Seo",
   "references": {

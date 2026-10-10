@@ -22,11 +22,12 @@ python3 Store/scripts/store.py prepare --output /tmp/subtitlegen-release-prepara
 ```
 
 공증된 DMG는 직접 배포용입니다. 스토어판은 ARM64 도구를 번들하고 샌드박스를 사용합니다.
-현재 배포된 `1.0 (3)`은 `SubGen.app` 이름으로 내부 TestFlight에서 테스트 중입니다.
+현재 배포된 `1.0 (4)`는 `SubGen.app` 이름으로 내부 TestFlight에서 테스트 중입니다.
 로그인 대기 개선에 이어 모델 자동 다운로드, 전사 중간 시간/추정 진행률, Whisper의
 빈·0초 SRT 구간 처리를 수정했습니다. 회귀 171개 중 166개 통과·5개 제외·실패 0,
 서명된 Release 샌드박스 5개 통과를 확인했고 수정 배포 패키지의 서명·프로파일·번들 도구 검증도 마쳤습니다.
-새 TestFlight 업로드 전 Xcode 계정 재인증과 현재 빌드 번호 확인이 필요합니다.
+기존 App Store Connect API 키의 CLI 검증/업로드와 VALID 처리, 내부 그룹 배포 및
+영문 테스트 안내 저장을 확인했습니다. 이 Mac의 설치 확인은 빌드 3이며 빌드 4 업데이트가 필요합니다.
 실제 앱의 모델 다운로드·전사·외부 폴더 권한 재사용·영상 자막 내장을 확인했습니다.
 개인정보처리방침과 App Privacy도 게시했고 영문 리스팅·스크린샷 3장을 저장했습니다.
 실제 ChatGPT 로그인·번역과 설치된 TestFlight 배포판 확인이 남아 있어 정식 심사는
