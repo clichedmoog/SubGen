@@ -40,10 +40,28 @@ final class FFmpegIntegrationTests: XCTestCase {
     func testEmbeddedSubtitleCanBeRecoveredAsSrtWithoutTranscription() throws {
         XCTAssertTrue(try engine.embed(source, language: "en", into: video, ffmpeg: ffmpeg, ffprobe: ffprobe, token: token))
         try FileManager.default.removeItem(at: source)
-        let prepared = try engine.prepareSource(file: FileItem(url: video), whisper: "/not-used", ffmpeg: ffmpeg, ffprobe: ffprobe, options: options, token: token)
+        let lazyEngine = TranscriptionEngine(prepareModel: { _, _, _ in XCTFail("Embedded subtitles must not download a speech model") })
+        let prepared = try lazyEngine.prepareSource(file: FileItem(url: video), whisper: "/not-used", ffmpeg: ffmpeg, ffprobe: ffprobe, options: options, token: token)
         XCTAssertEqual(prepared.language, "en")
         XCTAssertTrue(try String(contentsOf: prepared.url).contains("Hello from the embedded subtitle."))
         XCTAssertTrue(prepared.created)
+    }
+
+    func testExistingSrtSkipsModelAndCancelledModelPreparationPreservesMedia() throws {
+        let lazyEngine = TranscriptionEngine(prepareModel: { _, token, progress in
+            progress(10, 100); token.cancel(); throw ModelDownloader.Failure.cancelled
+        })
+        // No download or recognizer is needed while an exact matching SRT exists.
+        let existing = try lazyEngine.prepareSource(file: FileItem(url: video), whisper: "/not-used", ffmpeg: ffmpeg, ffprobe: ffprobe, options: options, token: token)
+        XCTAssertFalse(existing.created); XCTAssertFalse(token.isCancelled)
+        try FileManager.default.removeItem(at: source)
+        let before = try Data(contentsOf: video)
+        var progressSeen = false
+        XCTAssertThrowsError(try lazyEngine.prepareSource(file: FileItem(url: video), whisper: "/not-used", ffmpeg: ffmpeg, ffprobe: ffprobe, options: options, token: token,
+            onModelDownload: { _, _ in progressSeen = true }))
+        XCTAssertTrue(progressSeen); XCTAssertTrue(token.isCancelled)
+        XCTAssertEqual(try Data(contentsOf: video), before)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: source.path))
     }
 
     func testFailedEmbeddingPreservesOriginalAndSourceSrt() throws {

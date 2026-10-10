@@ -25,7 +25,9 @@
 		98EDCC21972DBDB98535D254 /* ChatGPTLoopback.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABC803EB882A30EF5F1DFD4 /* ChatGPTLoopback.swift */; };
 		9B69034FAFF438F9C844C79E /* AppDistribution.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF3636C216CA91CDA1E13AB /* AppDistribution.swift */; };
 		A02B68BED45E90BD8FA66874 /* SandboxRuntimeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2327BDFE3AD44DA12BC236E0 /* SandboxRuntimeTests.swift */; };
+		AA20B7CA288A345146CA2908 /* WhisperModelInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC46D0391A7C11E237A76024 /* WhisperModelInstaller.swift */; };
 		AB5013101331891618482589 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = EBAF866F128A80D4E3E8CFA6 /* AppIcon.icon */; };
+		B12C5F75AFA3783EDD150E4F /* WhisperSrtDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27CBE7B63158E09D25C409CB /* WhisperSrtDocument.swift */; };
 		B500CF2072685CDC641ADACD /* TranslationEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D151F5B22085DE0B48ECB6B /* TranslationEngine.swift */; };
 		C034C33529A4EB57DF08E046 /* ChatGPTSubtitleClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87572945D4A73B0F0B8B84D /* ChatGPTSubtitleClient.swift */; };
 		C59769287F582333F6987474 /* Licenses in Resources */ = {isa = PBXBuildFile; fileRef = 1E5311903D04A1DC4E5A8651 /* Licenses */; };
@@ -56,6 +58,7 @@
 		1731C10902DE2CD8440CE1F5 /* SubtitleGenStoreRuntimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubtitleGenStoreRuntimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E5311903D04A1DC4E5A8651 /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Licenses; path = SubtitleGen/Resources/Licenses; sourceTree = SOURCE_ROOT; };
 		2327BDFE3AD44DA12BC236E0 /* SandboxRuntimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SandboxRuntimeTests.swift; sourceTree = "<group>"; };
+		27CBE7B63158E09D25C409CB /* WhisperSrtDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperSrtDocument.swift; sourceTree = "<group>"; };
 		2A383A93436FAD630D09E6B6 /* SubGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SubGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D1114BE785397AF3ACCFF4A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		45DFA9E8A09EF3B8A81558C3 /* ProcessRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessRunner.swift; sourceTree = "<group>"; };
@@ -78,6 +81,7 @@
 		AFF3636C216CA91CDA1E13AB /* AppDistribution.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDistribution.swift; sourceTree = "<group>"; };
 		B323A1AA526044EFE8758310 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		B9D1279D8C8BDBFA3E9797B4 /* AudioPreparation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPreparation.swift; sourceTree = "<group>"; };
+		BC46D0391A7C11E237A76024 /* WhisperModelInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperModelInstaller.swift; sourceTree = "<group>"; };
 		E179BA5D8D1F88B4CC010317 /* README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		E67888C7EC188DF1E1000102 /* ModelDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelDownloader.swift; sourceTree = "<group>"; };
 		E87572945D4A73B0F0B8B84D /* ChatGPTSubtitleClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatGPTSubtitleClient.swift; sourceTree = "<group>"; };
@@ -123,6 +127,8 @@
 				095AACEFF36B230EDFEB1B90 /* ToolResolver.swift */,
 				8E9C944DFEBA388EAB5676C6 /* TranscriptionEngine.swift */,
 				4D151F5B22085DE0B48ECB6B /* TranslationEngine.swift */,
+				BC46D0391A7C11E237A76024 /* WhisperModelInstaller.swift */,
+				27CBE7B63158E09D25C409CB /* WhisperSrtDocument.swift */,
 			);
 			path = SubtitleGen;
 			sourceTree = "<group>";
@@ -340,6 +346,8 @@
 				449BCDCCF0DFD245A14D9B1C /* ToolResolver.swift in Sources */,
 				244CBC6A6A7CA26B072575DE /* TranscriptionEngine.swift in Sources */,
 				B500CF2072685CDC641ADACD /* TranslationEngine.swift in Sources */,
+				AA20B7CA288A345146CA2908 /* WhisperModelInstaller.swift in Sources */,
+				B12C5F75AFA3783EDD150E4F /* WhisperSrtDocument.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

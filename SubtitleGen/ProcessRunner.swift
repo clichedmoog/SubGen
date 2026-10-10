@@ -136,7 +136,17 @@ enum ProcessRunner {
             DispatchQueue.global(qos: .utility).async {
                 defer { readers.leave() }
                 var pending = Data()
-                while let data = try? pipe.fileHandleForReading.read(upToCount: 16384), !data.isEmpty {
+                var buffer = [UInt8](repeating: 0, count: 16384)
+                while true {
+                    // FileHandle.read(upToCount:) can wait for the requested count
+                    // or EOF on pipes. One POSIX read delivers currently available
+                    // bytes, so short progress lines arrive while the child runs.
+                    let count = buffer.withUnsafeMutableBytes {
+                        Darwin.read(pipe.fileHandleForReading.fileDescriptor, $0.baseAddress!, $0.count)
+                    }
+                    if count < 0, errno == EINTR { continue }
+                    guard count > 0 else { break }
+                    let data = Data(buffer.prefix(count))
                     capture.append(data, isError: isError)
                     if let onOutput {
                         pending.append(data)

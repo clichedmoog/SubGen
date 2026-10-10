@@ -18,6 +18,7 @@ struct ContentView: View {
     @AppStorage("authMethod") private var authMethod: AuthMethod = .claudeCode
     @AppStorage("translationModel") private var translationModel: TranslationModel = .claudeOpus
     @State private var isDownloadingModel = false
+    @State private var modelDownloadDetail = "연결 중…"
     @State private var modelDownloadToken: CancellationToken?
     @State private var isDropTargeted = false
     @AppStorage("initialSetupCompleted") private var initialSetupCompleted = false
@@ -195,7 +196,7 @@ struct ContentView: View {
             HStack {
                 if isSettingUp || isDownloadingModel || toolChecker.isInstalling {
                     ProgressView().controlSize(.small)
-                    Text(isDownloadingModel ? "음성인식 모델 다운로드 중…" : "필요한 도구 설치 중…")
+                    Text(isDownloadingModel ? "음성인식 모델 다운로드 중 · \(modelDownloadDetail)" : "필요한 도구 설치 중…")
                         .font(.caption)
                     Spacer()
                     Button("설치 중단") { cancelSetup() }
@@ -222,6 +223,8 @@ struct ContentView: View {
     }
 
     private func requestProcessing() {
+        guard !engine.isProcessing, !isDownloadingModel, !toolChecker.isInstalling else { return }
+        FileItem.requeueFailedOrCancelled(&files)
         if toolChecker.allInstalled {
             // Existing source subtitles can be processed without a speech model;
             // the engine checks that dependency only if transcription is needed.
@@ -534,7 +537,7 @@ struct ContentView: View {
                                         ProgressView()
                                             .controlSize(.small)
                                         Button("중단") { modelDownloadToken?.cancel() }.controlSize(.mini)
-                                        Text("다운로드 중...")
+                                        Text("다운로드 중 · \(modelDownloadDetail)")
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     } else {
@@ -832,25 +835,20 @@ struct ContentView: View {
         let token = CancellationToken()
         modelDownloadToken = token
         isDownloadingModel = true
+        modelDownloadDetail = "연결 중…"
         let model = selectedModel
         DispatchQueue.global().async {
             var succeeded = false
             let fm = FileManager.default
             let modelDir = URL(fileURLWithPath: model.modelPath).deletingLastPathComponent()
             do {
-                try fm.createDirectory(at: modelDir, withIntermediateDirectories: true)
-                let staged = modelDir.appendingPathComponent(".\(model.rawValue)-\(UUID().uuidString)")
-                defer { try? fm.removeItem(at: staged) }
-                try ModelDownloader.download(URL(string: model.downloadURL)!, to: staged, timeout: 7200, cancellation: token)
-                guard try SafeFileReplacement.Snapshot(staged).size >= 10_000_000 else {
-                    throw NSError(domain: "ModelDownload", code: 1, userInfo: [NSLocalizedDescriptionKey: "다운로드한 모델이 너무 작습니다."])
+                try WhisperModelInstaller.ensureAvailable(at: URL(fileURLWithPath: model.modelPath), cancellation: token) { received, total in
+                    let detail = WhisperModelInstaller.downloadDetail(received: received, total: total)
+                    DispatchQueue.main.async { modelDownloadDetail = detail }
                 }
-                let destination = URL(fileURLWithPath: model.modelPath)
-                if fm.fileExists(atPath: destination.path) {
-                    try SafeFileReplacement.replace(destination, with: staged, expected: SafeFileReplacement.Snapshot(destination))
-                } else { try fm.moveItem(at: staged, to: destination) }
                 let vad = modelDir.appendingPathComponent("ggml-silero-v6.2.0.bin")
                 if !fm.fileExists(atPath: vad.path) {
+                    DispatchQueue.main.async { modelDownloadDetail = "추가 음성 감지 모델 준비 중…" }
                     let stagedVad = modelDir.appendingPathComponent(".vad-\(UUID().uuidString)")
                     defer { try? fm.removeItem(at: stagedVad) }
                     try? ModelDownloader.download(URL(string: "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin")!, to: stagedVad, timeout: 330, cancellation: token)

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "build4-packaged-upload-blocked-by-xcode-account",
+  "status": "model-progress-srt-fixes-packaged-awaiting-upload-credentials-and-current-console-check",
   "platform": "macos",
   "productName": "Subtitle Maker & Translator",
   "bundleID": "com.clichedmoog.subtitle-generator",
@@ -146,13 +146,15 @@
     },
     "verificationEvidence": {
       "selfContainedTools": "2026-10-10: unmodified FFmpeg/FFprobe 9.0 LGPL source build for ARM64/macOS 14; GPL/nonfree/external codec libraries disabled; full source/recipe in app. Pinned Whisper 1.8.4. Five signed sandbox-host tests passed, including real Whisper/Metal and MP4/MOV/M4V/MKV/WebM embedding/extraction.",
-      "sandboxRuntimeVerified": "2026-10-10: Apple Development signed Release 1.0 (4) sandbox host: five tests passed, real Whisper/Metal, FFmpeg containers, loopback/Keychain, bookmarks. Thread Performance Checker disabled only for test action; generated scheme restored.",
-      "chatGPTLocalFixtures": "2026-10-10: 156 tests, 0 failures, 5 explicit opt-in skips. SSE completion validated independently of missing/mislabeled MIME; JSON/HTML rejected and structured usage failures pause new requests. Live translation after fix remains pending.",
+      "sandboxRuntimeVerified": "2026-10-10: combined model/progress/SRT fixes passed five Apple Development signed Release sandbox-host tests; real Tiny download into an empty model directory, Whisper/Metal, FFmpeg containers, loopback/Keychain and bookmarks. build/subgen-progress-srt-qa/runtime-tests.xcresult. QA-only performance checker override removed by XcodeGen before candidate archive. Distributed TestFlight verification is pending.",
+      "chatGPTLocalFixtures": "2026-10-10: complete suite 171 tests, 0 failures, 5 explicit opt-in skips. SSE framing/completion and structured failures covered by local fixtures; live translation after stream fix remains pending.",
       "sandboxOAuthInfrastructure": "2026-10-10: Apple Development signed Debug host; loopback HTTP callback + protected Keychain write/read/local token deletion passed. store-siwc-runtime.xcresult contains 4 passing tests including real Whisper/Metal. No live OAuth credentials acquired by the agent.",
-      "processingProgress": "2026-10-10: final 153-test suite passed. Actual Release UI: transcription, SRT reuse after relaunch, embedding, option changes and adding a new file after completion verified. Busy indicators observed during real transcription; distributed build animation remains pending.",
+      "processingProgress": "2026-10-10: reproduced short pipe output held until EOF with a child/acknowledgement handshake. POSIX reads now deliver short UTF-8/CR lines while the child is running. Whisper --print-progress enabled; decoder percentages mapped to original chunk time and labeled estimated; timestamp events stay exact. No 100% from native estimates before output validation. 171 tests passed (5 explicit opt-in skips), including video embedding with malformed benign recognizer segments. Download time excluded from transcription ETA.",
       "storeFFmpegPlan": "Completed: FFmpeg source SHA256 7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52; source/build recipe/attribution/license included and validated in exported package. Direct-distribution tools are separate.",
-      "distributionArchiveVerified": "2026-10-10: Release 1.0 (4) archive and exported package passed production identity, nested signing, profiles, entitlements, bundled ARM64 tools/source/licenses, icons and privacy manifest verification. Actual uploaded payload still to preserve and inspect.",
-      "liveChatGPT": "2026-10-10: live OAuth, signed identity, granted plan scopes and account-specific catalog passed. Actual inference failed at the MIME gate; translation and revocation still need verification. No tokens/authorization URLs logged."
+      "distributionArchiveVerified": "2026-10-10: combined model/progress/SRT and ChatGPT stream fixes in new candidate 1.0 (4). Exported Mac App Store package passed production identity, nested Apple Distribution signing, profiles, entitlements, bundled ARM64 tools/source/licenses, icons and privacy manifest verification. package4-progress-srt-verification.json. Archive inspection lists pending translationBackendVerified; no runtime gate marked complete by package checks. Not uploaded.",
+      "liveChatGPT": "2026-10-10: live OAuth, signed identity, granted plan scopes and account-specific catalog passed. Actual inference failed at the MIME gate; translation and revocation still need verification. No tokens/authorization URLs logged.",
+      "automaticModelDownload": "2026-10-10: 163 SwiftPM tests passed (5 explicit opt-in skips), plus 5 Apple Development signed Release sandbox-host tests passed. Empty model folder downloaded real Tiny model via URLSession, reported byte progress, then real Whisper/Metal transcription/timestamps succeeded. SRT/text-track reuse bypasses downloads; cancellation/failure/concurrent changes preserve files. Not yet in installed TestFlight build 3.",
+      "whisperSrtNormalization": "2026-10-10: pinned whisper.cpp output_srt emits every segment, including empty and zero-duration ones. Strict SrtDocument previously rejected the whole chunk. Recognizer-only parser drops nondisplayable segments, clips chunk boundaries, sorts/renumbers before strict final SRT validation. Original/translated user SRT validation remains strict. Genuine bad timings retain the raw recognition SRT beside media and show cue/reason; original video is untouched on failure. User original failed chunk was deleted by old temporary-folder cleanup, so its exact offending cue has not been observed."
     },
     "localDevelopmentBuild": {
       "version": "1.0",
@@ -212,14 +214,27 @@
     "localReleaseBuild": {
       "version": "1.0",
       "build": "4",
-      "archivePath": "build/subgen-release-20261010/SubGen-1.0-4.xcarchive",
-      "packagePath": "build/subgen-release-20261010/export4/SubGen.pkg",
-      "verificationPath": "build/subgen-release-20261010/package4-verification.json",
-      "runtimeResultPath": "build/subgen-release-20261010/runtime-tests-build4.xcresult",
+      "buildNumberStatus": "previously-selected-unused-build-4-current-ASC-recheck-required-before-upload",
+      "archivePath": "build/subgen-release-20261010/SubGen-1.0-4-progress-srt-candidate.xcarchive",
+      "packagePath": "build/subgen-release-20261010/export4-progress-srt-candidate/SubGen.pkg",
+      "verificationPath": "build/subgen-release-20261010/package4-progress-srt-verification.json",
+      "runtimeResultPath": "build/subgen-progress-srt-qa/runtime-tests.xcresult",
       "internalOnly": false,
-      "status": "verified-export-upload-blocked-by-xcode-account",
-      "packageSHA256": "7afb82ba4c9cf05acd22ded75a8d0f3c64590a4619961b05eb12f1560c674bdd",
-      "executableSHA256": "cf41a91c139ef7e131704aa399a1538138fee36a1a48d4dad77745c346e54c0a"
+      "status": "combined-fixes-package-verified-not-uploaded",
+      "packageSHA256": "156ea238d8bd12b006b80cf0a2325df9565f938dcd2d1b47ef8bd95fb5f9df3b",
+      "executableSHA256": "23cad1d225e4c17713588f1e8b7d9d133c1ee7d72cded9a29ab5313dc7301919",
+      "includedFixes": [
+        "automatic-model-download",
+        "streaming-transcription-progress",
+        "Whisper-SRT-normalization",
+        "ChatGPT-response-framing"
+      ],
+      "pending": [
+        "Current ASC build number recheck before upload",
+        "Xcode account credentials unavailable on previous upload attempt",
+        "Live ChatGPT inference/revocation",
+        "Updated TestFlight distributed runtime"
+      ]
     },
     "previousReleaseBuild2": {
       "version": "1.0",
@@ -263,6 +278,38 @@
       "uploadExecutableSHA256": "88f9d4b3e570162dedeab7d8e8790f453cf6ab2c43893f21eb17a36883a62fd7",
       "internalOnly": false,
       "status": "uploaded-processed"
+    },
+    "localAutomaticModelBuild": {
+      "version": "1.0",
+      "build": "4",
+      "bundleID": "com.clichedmoog.subtitle-generator.auto-model-qa",
+      "appPath": "build/subgen-auto-model-qa/Build/Products/Release/SubGen.app",
+      "runtimeResultPath": "build/subgen-auto-model-qa/runtime-tests-final.xcresult",
+      "signing": "Apple Development",
+      "status": "signed-release-sandbox-verified-not-TestFlight-update"
+    },
+    "localProgressSrtBuild": {
+      "version": "1.0",
+      "build": "4",
+      "bundleID": "com.clichedmoog.subtitle-generator.progress-srt-qa",
+      "configuration": "Release",
+      "signing": "Apple Development",
+      "appPath": "build/subgen-progress-srt-qa/Build/Products/Release/SubGen.app",
+      "runtimeResultPath": "build/subgen-progress-srt-qa/runtime-tests.xcresult",
+      "status": "five-signed-release-sandbox-tests-passed-not-TestFlight-update",
+      "verification": "Combined automatic model download, real Tiny/Whisper/Metal, FFmpeg embedding/extraction, loopback/Keychain and bookmark host tests passed. Performance checker disabled only in the QA test action; generated scheme restored before archive."
+    },
+    "previousTimeoutOnlyReleaseBuild4": {
+      "version": "1.0",
+      "build": "4",
+      "archivePath": "build/subgen-release-20261010/SubGen-1.0-4.xcarchive",
+      "packagePath": "build/subgen-release-20261010/export4/SubGen.pkg",
+      "verificationPath": "build/subgen-release-20261010/package4-verification.json",
+      "runtimeResultPath": "build/subgen-release-20261010/runtime-tests-build4.xcresult",
+      "internalOnly": false,
+      "status": "superseded-by-source-fixes-not-uploaded",
+      "packageSHA256": "7afb82ba4c9cf05acd22ded75a8d0f3c64590a4619961b05eb12f1560c674bdd",
+      "executableSHA256": "cf41a91c139ef7e131704aa399a1538138fee36a1a48d4dad77745c346e54c0a"
     }
   },
   "testflight": {
@@ -285,7 +332,7 @@
     ],
     "consoleTaskSpace": 120,
     "uploaded": true,
-    "installedOnMac": false,
+    "installedOnMac": true,
     "clientInstalledOnMac": true,
     "uploadStartedAt": "2026-10-09T17:03:37.432072+00:00",
     "groupID": "71e0fabf-6fca-4642-980a-ef6034f27f5d",
@@ -299,7 +346,9 @@
     "groupBuildCount": 3,
     "groupTesterCount": 1,
     "browserConnectionStatus": "Verified 2026-10-10: internal group lists 1.0 (3), 1.0 (2), 1.0 (1) as Testing, one invited tester.",
-    "nextUserAction": "Accept <private-apple-id> TestFlight invitation; console still Invited on recheck."
+    "nextUserAction": "Installed build 3 needs an update containing lazy model download; no repeat invitation request based on the earlier console snapshot.",
+    "installedBuild": "1.0 (3)",
+    "localInstallationEvidence": "2026-10-10: /Applications/SubGen.app production bundle ID, version 1.0 (3), team N9LYHMUDKA, TestFlight Beta Distribution signature and Store receipt verified; running PID 80585. User screenshot reports missing model failure. Console tester status has not yet been rechecked."
   },
   "copyright": "2026 Myeongseok Seo",
   "references": {

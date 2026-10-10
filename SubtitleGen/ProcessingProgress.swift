@@ -15,6 +15,7 @@ struct ProcessingProgress {
         var detail = "준비 중..."
         var phaseFraction: Double?
         var startedAt = Date()
+        var transcriptionStartedAt: Date?
 
         var fraction: Double {
             if case .completed = terminal { return 1 }
@@ -33,6 +34,7 @@ struct ProcessingProgress {
         mutating func source(_ fraction: Double, detail: String) {
             guard Self.clamp(fraction) >= sourceFraction else { return }
             sourceFraction = max(sourceFraction, Self.clamp(fraction)); phaseFraction = sourceFraction; self.detail = detail
+            if transcriptionStartedAt == nil, detail.hasPrefix("전사 ") { transcriptionStartedAt = Date() }
         }
         mutating func sourceReady(language: String) { sourceFraction = 1; targets.remove(language) }
         mutating func translation(language: String, completed: Int, total: Int) {

@@ -31,9 +31,7 @@ final class SandboxRuntimeTests: XCTestCase {
         try ModelDownloader.download(URL(string: "https://raw.githubusercontent.com/ggml-org/whisper.cpp/v1.8.4/samples/jfk.wav")!,
                                      to: audio, timeout: 60, cancellation: CancellationToken())
         let model = root.appendingPathComponent("ggml-tiny.bin")
-        try ModelDownloader.download(URL(string: WhisperModel.tiny.downloadURL)!, to: model,
-                                     timeout: 300, cancellation: CancellationToken())
-        XCTAssertGreaterThan(try SafeFileReplacement.Snapshot(model).size, 10_000_000)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: model.path))
         var tools: [String: String] = [:]
         for name in ["ffmpeg", "ffprobe", "whisper-cli"] {
             let tool = try XCTUnwrap(ToolResolver.find(name), "Bundled \(name) failed its execution probe")
@@ -45,15 +43,8 @@ final class SandboxRuntimeTests: XCTestCase {
         let wav = root.appendingPathComponent("prepared.wav")
         let extracted = ProcessRunner.run(tools["ffmpeg"]!, arguments: ["-y", "-i", audio.path, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", wav.path], timeout: 30)
         XCTAssertTrue(extracted.succeeded, extracted.diagnostic)
-        let output = root.appendingPathComponent("output")
-        let speech = ProcessRunner.run(tools["whisper-cli"]!, arguments: ["-m", model.path, "-f", wav.path, "-l", "auto", "-osrt", "-of", output.path], timeout: 120)
-        XCTAssertTrue(speech.succeeded, speech.diagnostic)
-        let document = try SrtDocument(String(contentsOf: output.appendingPathExtension("srt")))
-        XCTAssertFalse(document.cues.isEmpty)
-        XCTAssertTrue(document.cues.map(\.text).joined(separator: " ").lowercased().contains("country"))
-        XCTAssertNotNil(AudioPreparation.detectLanguage(speech.output))
-        XCTAssertTrue(speech.output.contains("Metal"), "Exercise the bundled Metal-enabled engine")
         var fractions: [Double] = [], messages: [String] = []
+        var downloadedBytes: Int64 = 0
         let progressLock = NSLock()
         let engine = TranscriptionEngine()
         let options = TranscriptionEngine.Options(model: model.path, embedSubtitle: false, keepSrtFile: true,
@@ -63,11 +54,24 @@ final class SandboxRuntimeTests: XCTestCase {
             onProgress: { fraction, message in
                 progressLock.lock(); defer { progressLock.unlock() }
                 fractions.append(fraction); messages.append(message)
+            }, onModelDownload: { received, _ in
+                progressLock.lock(); defer { progressLock.unlock() }
+                downloadedBytes = max(downloadedBytes, received)
             })
+        XCTAssertTrue(WhisperModelInstaller.isAvailable(at: model))
+        XCTAssertGreaterThan(downloadedBytes, 10_000_000, "Missing model must download before transcription in the sandbox")
         XCTAssertEqual(prepared.language, "en")
         XCTAssertEqual(fractions.last, 1)
         XCTAssertTrue(fractions.contains { $0 > 0 && $0 < 1 }, "Real Whisper timestamps should report partial progress")
         XCTAssertTrue(messages.contains { $0.hasPrefix("전사 ") && $0.contains("청크 1/1") })
+        let output = root.appendingPathComponent("output")
+        let speech = ProcessRunner.run(tools["whisper-cli"]!, arguments: ["-m", model.path, "-f", wav.path, "-l", "auto", "-osrt", "-of", output.path], timeout: 120)
+        XCTAssertTrue(speech.succeeded, speech.diagnostic)
+        let document = try SrtDocument(String(contentsOf: output.appendingPathExtension("srt")))
+        XCTAssertFalse(document.cues.isEmpty)
+        XCTAssertTrue(document.cues.map(\.text).joined(separator: " ").lowercased().contains("country"))
+        XCTAssertNotNil(AudioPreparation.detectLanguage(speech.output))
+        XCTAssertTrue(speech.output.contains("Metal"), "Exercise the bundled Metal-enabled engine")
     }
 
     func testStoreStorageUsesTheAppContainer() throws {
