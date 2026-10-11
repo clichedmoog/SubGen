@@ -1,7 +1,7 @@
 # Privacy Policy / 개인정보 처리방침
 
 **SubGen — Subtitle Maker & Translator**  
-Developer: Myeongseok Seo · Last updated: October 10, 2026
+Developer: Myeongseok Seo · Last updated: October 12, 2026
 
 ## English
 
@@ -11,7 +11,7 @@ SubGen transcribes audio on your Mac with whisper.cpp and processes media with F
 
 ### Optional ChatGPT translation
 
-Translation is optional. Transcription works without a ChatGPT account. If you choose translation, you authorize an eligible ChatGPT account through OpenAI. Subtitle text, the target language and translation instructions are sent directly to OpenAI. OpenAI also handles account authentication, account and authorization identifiers, the email address used for login, and a random identifier for this app installation. These requests are associated with your authorized account and support authentication, translation and service security. Translation uses your ChatGPT plan or credits and is subject to OpenAI's availability and usage limits.
+Translation is optional. Transcription works without a ChatGPT account. If you choose translation, you authorize an eligible ChatGPT account through OpenAI. Subtitle text, the target language and translation instructions are sent directly to OpenAI. OpenAI also handles account authentication, account and authorization identifiers, the email address used for login, and a random identifier for this app installation. These requests are associated with your authorized account and support authentication, translation and service security. Translation uses your ChatGPT plan or credits and is subject to OpenAI's availability and usage limits. On macOS 26 or later you can instead choose Apple Translation, which translates subtitles on your Mac with Apple's Translation framework; SubGen does not send subtitle text anywhere for that option.
 
 Requests disable response storage with `store: false`. This does not mean that OpenAI retains no data, or override your account's data controls, OpenAI's service terms or its privacy practices. See [OpenAI's privacy policy](https://openai.com/policies/privacy-policy/), [data controls](https://help.openai.com/en/articles/7730893-data-controls-faq), and the [Sign in with ChatGPT documentation](https://developers.openai.com/siwc).
 
@@ -41,7 +41,7 @@ SubGen은 whisper.cpp로 이 Mac에서 음성을 전사하고 FFmpeg·FFprobe로
 
 ### 선택적 ChatGPT 번역
 
-번역은 선택 사항이며 전사는 ChatGPT 계정 없이 사용할 수 있습니다. 번역을 선택하면 OpenAI를 통해 적격 ChatGPT 계정의 사용 권한을 허용합니다. 자막 텍스트, 대상 언어와 번역 지시를 OpenAI로 직접 보냅니다. 계정 인증·권한 식별자, 로그인에 사용하는 이메일 주소와 앱 설치별 무작위 식별자도 OpenAI가 처리합니다. 이 요청은 인증, 번역 및 서비스 보안을 위해 허용한 계정에 연결됩니다. 번역은 ChatGPT 플랜이나 크레딧을 사용하며 OpenAI의 제공 범위와 사용량 제한이 적용됩니다.
+번역은 선택 사항이며 전사는 ChatGPT 계정 없이 사용할 수 있습니다. 번역을 선택하면 OpenAI를 통해 적격 ChatGPT 계정의 사용 권한을 허용합니다. 자막 텍스트, 대상 언어와 번역 지시를 OpenAI로 직접 보냅니다. 계정 인증·권한 식별자, 로그인에 사용하는 이메일 주소와 앱 설치별 무작위 식별자도 OpenAI가 처리합니다. 이 요청은 인증, 번역 및 서비스 보안을 위해 허용한 계정에 연결됩니다. 번역은 ChatGPT 플랜이나 크레딧을 사용하며 OpenAI의 제공 범위와 사용량 제한이 적용됩니다. macOS 26 이상에서는 Apple 번역을 선택할 수 있으며, 이 경우 Apple Translation 프레임워크로 Mac에서 번역하고 SubGen은 자막 텍스트를 외부로 보내지 않습니다.
 
 번역 요청에는 `store: false`를 설정합니다. 이 설정은 OpenAI가 어떤 데이터도 보관하지 않는다는 뜻이 아니며, 계정의 데이터 제어 설정·서비스 약관·개인정보 처리방침을 대체하지 않습니다. 위 영문 항목의 OpenAI 링크를 참고해주세요. SubGen에는 개발자가 운영하는 번역 서버, 광고, 분석 SDK나 진단 자동 전송 기능이 없습니다. 앱을 사용하는 동안 개발자가 영상·음성·자막이나 ChatGPT 인증 정보를 받지 않습니다.
 
