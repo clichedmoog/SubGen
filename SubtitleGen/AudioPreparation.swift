@@ -33,6 +33,18 @@ enum AudioPreparation {
         return (String(output[language]), probability)
     }
 
+    /// Speech intervals whisper.cpp logs after VAD filtering, in seconds from the chunk start.
+    static func speechSegments(in output: String) -> [ClosedRange<Double>] {
+        let pattern = #"^whisper_vad_segments_from_probs: VAD segment \d+: start = (\d+(?:\.\d+)?), end = (\d+(?:\.\d+)?)"#
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: .anchorsMatchLines) else { return [] }
+        return regex.matches(in: output, range: NSRange(output.startIndex..., in: output)).compactMap { match in
+            guard let start = Range(match.range(at: 1), in: output).flatMap({ Double(output[$0]) }),
+                  let end = Range(match.range(at: 2), in: output).flatMap({ Double(output[$0]) }),
+                  start.isFinite, end.isFinite, end > start else { return nil }
+            return start...end
+        }
+    }
+
     static func extract(source: URL, chunk: Chunk, destination: URL, ffmpeg: String, cancellation: CancellationToken) -> ProcessResult {
         ProcessRunner.run(ffmpeg, arguments: ["-nostdin", "-v", "error", "-y", "-ss", String(chunk.start), "-i", source.path,
             "-t", String(chunk.duration), "-vn", "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", destination.path],

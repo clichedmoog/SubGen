@@ -244,7 +244,7 @@ def plan(c, channel, output):
     if errors:
         raise ValueError('\n'.join(errors))
     store = c['macAppStore']
-    archive = output / 'SubtitleGen.xcarchive'
+    archive = output / 'SubGen.xcarchive'
     options = output / 'ExportOptions.plist'
     return '\n'.join([
         '#!/bin/bash', 'set -euo pipefail', 'cd ' + shlex.quote(str(ROOT)),

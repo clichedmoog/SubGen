@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "8D056597581013A18786E691"
+               BlueprintIdentifier = "D40F18283A7A939D8E4510EF"
                BuildableName = "SubGen.app"
-               BlueprintName = "SubtitleGenStore"
-               ReferencedContainer = "container:SubtitleGen.xcodeproj">
+               BlueprintName = "SubGen"
+               ReferencedContainer = "container:SubGen.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -32,10 +32,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D056597581013A18786E691"
+            BlueprintIdentifier = "D40F18283A7A939D8E4510EF"
             BuildableName = "SubGen.app"
-            BlueprintName = "SubtitleGenStore"
-            ReferencedContainer = "container:SubtitleGen.xcodeproj">
+            BlueprintName = "SubGen"
+            ReferencedContainer = "container:SubGen.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <Testables>
@@ -44,10 +44,10 @@
             parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "7865DED6DFBA03376A2F7407"
-               BuildableName = "SubtitleGenStoreRuntimeTests.xctest"
-               BlueprintName = "SubtitleGenStoreRuntimeTests"
-               ReferencedContainer = "container:SubtitleGen.xcodeproj">
+               BlueprintIdentifier = "6A2D29E28C78F05DF5D1392D"
+               BuildableName = "SubGenRuntimeTests.xctest"
+               BlueprintName = "SubGenRuntimeTests"
+               ReferencedContainer = "container:SubGen.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -68,10 +68,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D056597581013A18786E691"
+            BlueprintIdentifier = "D40F18283A7A939D8E4510EF"
             BuildableName = "SubGen.app"
-            BlueprintName = "SubtitleGenStore"
-            ReferencedContainer = "container:SubtitleGen.xcodeproj">
+            BlueprintName = "SubGen"
+            ReferencedContainer = "container:SubGen.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -87,10 +87,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "8D056597581013A18786E691"
+            BlueprintIdentifier = "D40F18283A7A939D8E4510EF"
             BuildableName = "SubGen.app"
-            BlueprintName = "SubtitleGenStore"
-            ReferencedContainer = "container:SubtitleGen.xcodeproj">
+            BlueprintName = "SubGen"
+            ReferencedContainer = "container:SubGen.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>

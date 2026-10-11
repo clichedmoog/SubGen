@@ -137,7 +137,7 @@ enum WhisperModel: String, CaseIterable, Identifiable {
     }
 
     var isCached: Bool {
-        WhisperModelInstaller.isAvailable(at: URL(fileURLWithPath: modelPath))
+        WhisperModelInstaller.isReady(model: URL(fileURLWithPath: modelPath))
     }
 
     var sizeLabel: String {
@@ -254,11 +254,12 @@ enum Sensitivity: String, CaseIterable, Identifiable {
         }
     }
 
+    // Silero speech probability. Values below 0.35 treated continuous background music as speech.
     var vadThreshold: Double {
         switch self {
-        case .sensitive: return 0.02
-        case .normal: return 0.2
-        case .accurate: return 0.3
+        case .sensitive: return 0.35
+        case .normal: return 0.5
+        case .accurate: return 0.6
         }
     }
 
@@ -377,6 +378,20 @@ enum TranslationLanguage: String, CaseIterable, Identifiable {
         case .es: return "Spanish"
         case .pt: return "Portuguese"
         case .ru: return "Russian"
+        }
+    }
+}
+
+/// Store translation backends. ChatGPT stays first; Apple Translation needs no account.
+enum TranslationProvider: String, CaseIterable, Identifiable {
+    case chatGPT, apple
+
+    var id: String { rawValue }
+
+    var label: String {
+        switch self {
+        case .chatGPT: return "ChatGPT"
+        case .apple: return "Apple 번역 (기기 내)"
         }
     }
 }

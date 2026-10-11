@@ -145,9 +145,11 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
             subtitleDelay: 0, sensitivity: .normal, language: language, translationTargets: targets, authMethod: .codex, translationModel: "")
     }
     @MainActor
-    private func run(_ files: [FileItem], options: TranscriptionEngine.Options) async throws -> ([FileItem], Double, [Double], [String]) {
+    private func run(_ files: [FileItem], options: TranscriptionEngine.Options,
+                     prepareModel: ((URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void)? = nil) async throws -> ([FileItem], Double, [Double], [String]) {
         var queue = files, observations: [Double] = [], details: [String] = []
-        let engine = TranscriptionEngine(binaryResolver: { [self] name in name == "whisper-cli" ? whisper : (name == "ffmpeg" ? ffmpeg : ffprobe) })
+        let resolver: (String) -> String? = { [self] name in name == "whisper-cli" ? whisper : (name == "ffmpeg" ? ffmpeg : ffprobe) }
+        let engine = prepareModel.map { TranscriptionEngine(binaryResolver: resolver, prepareModel: $0) } ?? TranscriptionEngine(binaryResolver: resolver)
         let done = expectation(description: "pipeline completed")
         engine.process(getFiles: { queue }, options: options, onFileUpdate: { id, status, elapsed in
             guard let index = queue.firstIndex(where: { $0.id == id }) else { return }
@@ -185,10 +187,8 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
         try srt.write(to: directory.appendingPathComponent("movie.en.srt"), atomically: true, encoding: .utf8)
         let initial = try await run([FileItem(url: video)], options: options())
         var files = initial.0; FileItem.requeueAfterOptionsChange(&files)
-        // Sparse test model meets the size check; the fixture recognizer supplies timestamped output.
-        FileManager.default.createFile(atPath: options().model, contents: nil)
-        let model = try FileHandle(forWritingTo: URL(fileURLWithPath: options().model))
-        try model.write(contentsOf: Data([0x6c, 0x6d, 0x67, 0x67])); try model.truncate(atOffset: 10_000_000); try model.close()
+        // Sparse test models meet the size checks; the fixture recognizer supplies timestamped output.
+        try prepareFixtureModel()
         let changed = try await run(files, options: options(language: "ko"))
         XCTAssertEqual(changed.0[0].status, .completed(lang: "ko")); XCTAssertEqual(changed.0[0].sourceLanguage, "ko")
         XCTAssertTrue(changed.2.contains { $0 > 0.45 && $0 < 0.55 })
@@ -197,14 +197,18 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
         XCTAssertEqual(try String(contentsOf: directory.appendingPathComponent("movie.en.srt")), srt)
     }
 
-    private func prepareFixtureModel() throws {
+    private func prepareFixtureModel(vad: Bool = true) throws {
         FileManager.default.createFile(atPath: options().model, contents: nil)
         let model = try FileHandle(forWritingTo: URL(fileURLWithPath: options().model)); defer { try? model.close() }
         try model.write(contentsOf: Data([0x6c, 0x6d, 0x67, 0x67])); try model.truncate(atOffset: 10_000_000)
+        guard vad else { return }
+        var data = Data([0x6c, 0x6d, 0x67, 0x67, 0x0a, 0, 0, 0]); data += Data("silero-16k".utf8); data += Data(count: 200_000)
+        try data.write(to: WhisperModelInstaller.vadURL(nextTo: URL(fileURLWithPath: options().model)))
     }
-    private func fixtureRecognizer(srt: String) throws {
+    private func fixtureRecognizer(srt: String, log: String = "") throws {
         let script = """
         #!/bin/sh
+        printf '%s\\n' "$@" > "$(dirname "$0")/whisper-arguments.txt"
         destination=''
         progress=''
         while [ "$#" -gt 0 ]; do
@@ -214,6 +218,9 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
         done
         [ "$progress" = 'yes' ] || exit 9
         printf 'whisper_print_progress_callback: progress = 50%%\\n' >&2
+        cat >&2 <<'LOG'
+        \(log)
+        LOG
         sleep 0.2
         cat > "$destination.srt" <<'SRT'
         \(srt)
@@ -231,6 +238,39 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
         XCTAssertTrue(result.3.contains { $0.contains("전사 추정") && $0.contains("00:00:01,500 / 00:00:03,000") })
         let probe = ProcessRunner.run(ffprobe, arguments: ["-v", "error", "-select_streams", "s", "-show_entries", "stream=codec_name", "-of", "csv=p=0", video.path], timeout: 10)
         XCTAssertTrue(probe.succeeded); XCTAssertTrue(probe.stdout.contains("mov_text"))
+    }
+    @MainActor
+    func testTranscriptionUsesVadWithSpeechThreshold() async throws {
+        try prepareFixtureModel()
+        try fixtureRecognizer(srt: "1\n00:00:00,200 --> 00:00:02,200\nHello from this subtitle.\n")
+        let result = try await run([FileItem(url: video)], options: options())
+        XCTAssertEqual(result.0[0].status, .completed(lang: "en"))
+        let arguments = try String(contentsOf: directory.appendingPathComponent("whisper-arguments.txt")).components(separatedBy: "\n")
+        let vad = WhisperModelInstaller.vadURL(nextTo: URL(fileURLWithPath: options().model)).path
+        XCTAssertTrue(arguments.contains("--vad"))
+        XCTAssertEqual(arguments.firstIndex(of: "--vad-model").map { arguments[$0 + 1] }, vad)
+        XCTAssertEqual(arguments.firstIndex(of: "--vad-threshold").map { arguments[$0 + 1] }, "0.5")
+    }
+    @MainActor
+    func testWhisperCueStartsAtReportedSpeechInsteadOfPrecedingSilence() async throws {
+        try prepareFixtureModel()
+        try fixtureRecognizer(srt: "1\n00:00:00,000 --> 00:00:02,600\nHello from this subtitle.\n",
+            log: "whisper_vad_segments_from_probs: VAD segment 0: start = 1.20, end = 2.40 (duration: 1.20)")
+        let result = try await run([FileItem(url: video)], options: options())
+        XCTAssertEqual(result.0[0].status, .completed(lang: "en"))
+        let source = try String(contentsOf: directory.appendingPathComponent("movie.en.srt"))
+        XCTAssertEqual(try SrtDocument(source).cues.count, 1)
+        XCTAssertTrue(source.contains("00:00:01,200 --> 00:00:02,400"), source)
+    }
+    @MainActor
+    func testMissingVadFailsInsteadOfTranscribingWithoutSpeechDetection() async throws {
+        try prepareFixtureModel(vad: false)
+        try fixtureRecognizer(srt: "1\n00:00:00,000 --> 00:00:02,200\nHello from this subtitle.\n")
+        let result = try await run([FileItem(url: video)], options: options(), prepareModel: { _, _, _ in })
+        guard case .failed(let message) = result.0[0].status else { return XCTFail("Missing VAD must not produce untrimmed subtitles") }
+        XCTAssertTrue(message.contains("음성 구간 감지"), message)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appendingPathComponent("whisper-arguments.txt").path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appendingPathComponent("movie.en.srt").path))
     }
     @MainActor
     func testMalformedWhisperOutputPreservesDiagnosticAndOriginalVideo() async throws {

@@ -131,4 +131,19 @@ final class SandboxRuntimeTests: XCTestCase {
         for url in restored { XCTAssertEqual(try Data(contentsOf: url), Data("audio".utf8)) }
         // This validates persistence in the container, not external-folder permission after relaunch.
     }
+    func testAppleTranslationPreservesSubtitleStructureWhenLanguagePackInstalled() async throws {
+        guard #available(macOS 26.0, *) else { throw XCTSkip("Apple Translation requires macOS 26") }
+        guard await AppleSubtitleTranslator.status(source: "en", target: .ko) == .installed else {
+            throw XCTSkip("English to Korean Apple Translation language pack is not installed")
+        }
+        let source = "1\n00:00:01,000 --> 00:00:02,500\nGood morning.\n\n2\n00:00:03,000 --> 00:00:04,200\nThe train leaves at noon.\n"
+        let translator = try XCTUnwrap(AppleSubtitleTranslator(source: "en", target: .ko))
+        let result = await withCheckedContinuation { continuation in
+            DispatchQueue.global().async { continuation.resume(returning: translator.request(source, cancellation: CancellationToken())) }
+        }
+        XCTAssertTrue(result.succeeded, result.diagnostic)
+        let translated = try SrtDocument(result.stdout), original = try SrtDocument(source)
+        XCTAssertTrue(translated.matchesTiming(of: original))
+        XCTAssertNotEqual(translated.cues.map(\.text), original.cues.map(\.text))
+    }
 }

@@ -13,6 +13,26 @@ enum WhisperModelInstaller {
         return (try? handle.read(upToCount: 4)) == Data([0x6c, 0x6d, 0x67, 0x67])
     }
 
+    static let vadSource = URL(string: "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin")!
+
+    static func vadURL(nextTo model: URL) -> URL {
+        model.deletingLastPathComponent().appendingPathComponent(vadSource.lastPathComponent)
+    }
+
+    static func isVadAvailable(at url: URL) -> Bool {
+        guard (try? SafeFileReplacement.Snapshot(url).size) ?? 0 >= 100_000,
+              let handle = try? FileHandle(forReadingFrom: url) else { return false }
+        defer { try? handle.close() }
+        // GGML magic, then the length-prefixed model type written by whisper.cpp's Silero converter.
+        guard let header = try? handle.read(upToCount: 14), header.count == 14 else { return false }
+        return header.prefix(4) == Data([0x6c, 0x6d, 0x67, 0x67]) && header.suffix(6) == Data("silero".utf8)
+    }
+
+    /// Without VAD, whisper.cpp starts cues where the preceding silence or music begins.
+    static func isReady(model: URL) -> Bool {
+        isAvailable(at: model) && isVadAvailable(at: vadURL(nextTo: model))
+    }
+
     static func ensureAvailable(at destination: URL, cancellation: CancellationToken,
                                 onProgress: @escaping Progress = { _, _ in },
                                 download: Download = { source, staged, token, progress in
@@ -24,15 +44,33 @@ enum WhisperModelInstaller {
         guard let model = WhisperModel(rawValue: destination.lastPathComponent), let source = URL(string: model.downloadURL) else {
             throw ModelDownloader.Failure.transfer("선택한 음성인식 모델의 다운로드 정보를 찾을 수 없습니다.")
         }
+        try install(source, to: destination, isValid: isAvailable, invalid: "다운로드한 음성인식 모델이 불완전하거나 형식이 올바르지 않습니다.",
+                    cancellation: cancellation, onProgress: onProgress, download: download)
+    }
+
+    static func ensureVadAvailable(nextTo model: URL, cancellation: CancellationToken,
+                                   download: Download = { source, staged, token, progress in
+                                       try ModelDownloader.download(source, to: staged, timeout: 330,
+                                                                    cancellation: token, onProgress: progress)
+                                   }) throws {
+        guard !cancellation.isCancelled else { throw ModelDownloader.Failure.cancelled }
+        let destination = vadURL(nextTo: model)
+        if isVadAvailable(at: destination) { return }
+        try install(vadSource, to: destination, isValid: isVadAvailable, invalid: "다운로드한 음성 구간 감지 모델이 불완전하거나 형식이 올바르지 않습니다.",
+                    cancellation: cancellation, onProgress: { _, _ in }, download: download)
+    }
+
+    private static func install(_ source: URL, to destination: URL, isValid: (URL) -> Bool, invalid: String,
+                                cancellation: CancellationToken, onProgress: @escaping Progress, download: Download) throws {
         let fm = FileManager.default
         let expected = try? SafeFileReplacement.Snapshot(destination)
         try fm.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
-        let staged = destination.deletingLastPathComponent().appendingPathComponent(".\(model.rawValue)-\(UUID().uuidString)")
+        let staged = destination.deletingLastPathComponent().appendingPathComponent(".\(destination.lastPathComponent)-\(UUID().uuidString)")
         defer { try? fm.removeItem(at: staged) }
         onProgress(0, nil)
         try download(source, staged, cancellation, onProgress)
         guard !cancellation.isCancelled else { throw ModelDownloader.Failure.cancelled }
-        guard isAvailable(at: staged) else { throw ModelDownloader.Failure.transfer("다운로드한 음성인식 모델이 불완전하거나 형식이 올바르지 않습니다.") }
+        guard isValid(staged) else { throw ModelDownloader.Failure.transfer(invalid) }
         if let expected {
             try SafeFileReplacement.replace(destination, with: staged, expected: expected)
         } else {

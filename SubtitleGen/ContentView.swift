@@ -32,6 +32,8 @@ struct ContentView: View {
     @StateObject private var engine = TranscriptionEngine()
     #if MAC_APP_STORE
     @StateObject private var chatGPT = ChatGPTAccountController()
+    @AppStorage("store.translationProvider") private var translationProvider: TranslationProvider = .chatGPT
+    @StateObject private var appleTranslation = AppleTranslationCoordinator()
     #endif
 
     var body: some View {
@@ -73,6 +75,10 @@ struct ContentView: View {
             chatGPT.reload()
             #endif
         }
+        #if MAC_APP_STORE
+        .modifier(AppleTranslationPreparationModifier(coordinator: appleTranslation))
+        .onChange(of: translationProvider) { _, _ in requeueForChangedOptions() }
+        #endif
         .sheet(isPresented: $showSetup) { setupSection }
         .onChange(of: files.map(\.url)) { _, _ in
             FileItem.save(files)
@@ -839,22 +845,15 @@ struct ContentView: View {
         let model = selectedModel
         DispatchQueue.global().async {
             var succeeded = false
-            let fm = FileManager.default
-            let modelDir = URL(fileURLWithPath: model.modelPath).deletingLastPathComponent()
+            let modelURL = URL(fileURLWithPath: model.modelPath)
             do {
-                try WhisperModelInstaller.ensureAvailable(at: URL(fileURLWithPath: model.modelPath), cancellation: token) { received, total in
+                try WhisperModelInstaller.ensureAvailable(at: modelURL, cancellation: token) { received, total in
                     let detail = WhisperModelInstaller.downloadDetail(received: received, total: total)
                     DispatchQueue.main.async { modelDownloadDetail = detail }
                 }
-                let vad = modelDir.appendingPathComponent("ggml-silero-v6.2.0.bin")
-                if !fm.fileExists(atPath: vad.path) {
-                    DispatchQueue.main.async { modelDownloadDetail = "추가 음성 감지 모델 준비 중…" }
-                    let stagedVad = modelDir.appendingPathComponent(".vad-\(UUID().uuidString)")
-                    defer { try? fm.removeItem(at: stagedVad) }
-                    try? ModelDownloader.download(URL(string: "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v6.2.0.bin")!, to: stagedVad, timeout: 330, cancellation: token)
-                    if !token.isCancelled, (try? SafeFileReplacement.Snapshot(stagedVad).size) ?? 0 > 100_000 {
-                        try fm.moveItem(at: stagedVad, to: vad)
-                    }
+                if !WhisperModelInstaller.isVadAvailable(at: WhisperModelInstaller.vadURL(nextTo: modelURL)) {
+                    DispatchQueue.main.async { modelDownloadDetail = "음성 구간 감지 모델 준비 중…" }
+                    try WhisperModelInstaller.ensureVadAvailable(nextTo: modelURL, cancellation: token)
                 }
                 succeeded = !token.isCancelled
             } catch {
@@ -886,11 +885,25 @@ struct ContentView: View {
         engine.resetProgress()
     }
 
-    private func startProcessing() {
+    private func startProcessing(applePrepared: Bool = false) {
         #if MAC_APP_STORE
-        if !selectedTranslations.isEmpty && !chatGPT.canTranslate {
-            engine.currentStatus = "번역하려면 ChatGPT 로그인·플랜 사용 권한·모델 선택을 확인해주세요."
-            return
+        if !selectedTranslations.isEmpty {
+            switch translationProvider {
+            case .chatGPT where !chatGPT.canTranslate:
+                engine.currentStatus = "번역하려면 ChatGPT 로그인·플랜 사용 권한·모델 선택을 확인해주세요."
+                return
+            case .apple where !applePrepared:
+                guard !appleTranslation.isPreparing else { return }
+                engine.currentStatus = "Apple 번역 언어 팩 확인 중..."
+                Task {
+                    await appleTranslation.prepare(source: language.rawValue, targets: selectedTranslations) { ready in
+                        if ready { startProcessing(applePrepared: true) }
+                        else { engine.currentStatus = appleTranslation.message ?? "Apple 번역을 준비하지 못했습니다." }
+                    }
+                }
+                return
+            default: break
+            }
         }
         #endif
         if AppDistribution.isStore, !SandboxFileAccess.shared.authorizeOutputDirectories(for: files.filter { $0.status == .pending }.map(\.url)) {
@@ -911,6 +924,12 @@ struct ContentView: View {
         #if MAC_APP_STORE
         options.chatGPTAccountID = chatGPT.activeID
         options.chatGPTModel = chatGPT.resolvedModel
+        options.translationProvider = translationProvider
+        engine.appleLanguagePack = translationProvider == .apple ? { [appleTranslation] source, target, token in
+            AppleTranslationCoordinator.waitForLanguagePack(cancellation: token) {
+                await appleTranslation.ensureInstalled(source: source, target: target)
+            }
+        } : nil
         #endif
         engine.process(getFiles: { self.files }, options: options, onFileUpdate: { id, status, elapsed in
             if let index = files.firstIndex(where: { $0.id == id }) {
@@ -935,46 +954,54 @@ struct ContentView: View {
     #if MAC_APP_STORE
     private var chatGPTOptions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            if !chatGPT.accounts.isEmpty {
-                Picker("계정", selection: Binding(get: { chatGPT.activeID ?? "" }, set: { chatGPT.select($0) })) {
-                    ForEach(chatGPT.accounts) { account in
-                        Text(account.label + (account.signedIn ? "" : " (로그아웃)")).tag(account.id)
-                    }
-                }.disabled(chatGPT.busy)
+            Picker("번역 방식", selection: $translationProvider) {
+                ForEach(TranslationProvider.allCases) { Text($0.label).tag($0) }
             }
-            if chatGPT.active?.signedIn != true || chatGPT.active?.planEnabled != true {
-                Text("번역할 자막 텍스트를 OpenAI로 보냅니다. 음성 전사는 이 Mac에서 처리합니다.")
-                    .font(.caption).foregroundStyle(.secondary)
-                Button("Continue with ChatGPT") { chatGPT.signIn(consent: chatGPT.active?.signedIn == true) }
-                    .buttonStyle(.borderedProminent).tint(.primary).disabled(chatGPT.busy)
-                Text("사용 가능한 ChatGPT 플랜이 필요합니다. 앱 자체는 무료입니다.")
-                    .font(.caption2).foregroundStyle(.secondary)
-            }
-            if chatGPT.isSigningIn {
-                HStack { ProgressView().controlSize(.small); Text("브라우저에서 계정을 선택하고 ChatGPT 플랜 사용을 허용한 뒤 계속을 눌러주세요. 연결은 30분간 기다립니다.").font(.caption)
-                    Button("취소") { chatGPT.cancel() } }
-            }
-            if chatGPT.active?.signedIn == true {
-                HStack {
-                    Button("로그아웃") { chatGPT.signOut() }
-                    Button("다른 계정 연결") { chatGPT.signIn(newAccount: true) }
-                }.controlSize(.small).disabled(chatGPT.busy)
-            }
-            if chatGPT.active?.planEnabled == true && chatGPT.active?.signedIn == true {
-                Picker("모델", selection: $chatGPT.selectedModel) {
-                    Text("자동").tag("")
-                    ForEach(chatGPT.models) { Text($0.display_name).tag($0.slug) }
-                }.disabled(chatGPT.busy || chatGPT.models.isEmpty)
-                    .help("자동은 서버 목록의 첫 번째 모델을 사용합니다. 최신 출시 순서나 번역 품질 순위를 뜻하지 않습니다.")
-                HStack {
-                    Text("Using ChatGPT plan").font(.caption)
-                    Link("Manage usage", destination: ChatGPTAccountController.usageURL).font(.caption)
-                    Button { chatGPT.refreshModels() } label: { Image(systemName: "arrow.clockwise") }
-                        .help("모델 새로고침 · 사용량 제한 후 다시 시도").disabled(chatGPT.busy)
+            .pickerStyle(.segmented)
+            if translationProvider == .chatGPT {
+                if !chatGPT.accounts.isEmpty {
+                    Picker("계정", selection: Binding(get: { chatGPT.activeID ?? "" }, set: { chatGPT.select($0) })) {
+                        ForEach(chatGPT.accounts) { account in
+                            Text(account.label + (account.signedIn ? "" : " (로그아웃)")).tag(account.id)
+                        }
+                    }.disabled(chatGPT.busy)
                 }
-            }
-            if let error = chatGPT.error {
-                Text(error).font(.caption).foregroundStyle(.red).textSelection(.enabled)
+                if chatGPT.active?.signedIn != true || chatGPT.active?.planEnabled != true {
+                    Text("번역할 자막 텍스트를 OpenAI로 보냅니다. 음성 전사는 이 Mac에서 처리합니다.")
+                        .font(.caption).foregroundStyle(.secondary)
+                    Button("Continue with ChatGPT") { chatGPT.signIn(consent: chatGPT.active?.signedIn == true) }
+                        .buttonStyle(.borderedProminent).tint(.primary).disabled(chatGPT.busy)
+                    Text("사용 가능한 ChatGPT 플랜이 필요합니다. 앱 자체는 무료입니다.")
+                        .font(.caption2).foregroundStyle(.secondary)
+                }
+                if chatGPT.isSigningIn {
+                    HStack { ProgressView().controlSize(.small); Text("브라우저에서 계정을 선택하고 ChatGPT 플랜 사용을 허용한 뒤 계속을 눌러주세요. 연결은 30분간 기다립니다.").font(.caption)
+                        Button("취소") { chatGPT.cancel() } }
+                }
+                if chatGPT.active?.signedIn == true {
+                    HStack {
+                        Button("로그아웃") { chatGPT.signOut() }
+                        Button("다른 계정 연결") { chatGPT.signIn(newAccount: true) }
+                    }.controlSize(.small).disabled(chatGPT.busy)
+                }
+                if chatGPT.active?.planEnabled == true && chatGPT.active?.signedIn == true {
+                    Picker("모델", selection: $chatGPT.selectedModel) {
+                        Text("자동").tag("")
+                        ForEach(chatGPT.models) { Text($0.display_name).tag($0.slug) }
+                    }.disabled(chatGPT.busy || chatGPT.models.isEmpty)
+                        .help("자동은 서버 목록의 첫 번째 모델을 사용합니다. 최신 출시 순서나 번역 품질 순위를 뜻하지 않습니다.")
+                    HStack {
+                        Text("Using ChatGPT plan").font(.caption)
+                        Link("Manage usage", destination: ChatGPTAccountController.usageURL).font(.caption)
+                        Button { chatGPT.refreshModels() } label: { Image(systemName: "arrow.clockwise") }
+                            .help("모델 새로고침 · 사용량 제한 후 다시 시도").disabled(chatGPT.busy)
+                    }
+                }
+                if let error = chatGPT.error {
+                    Text(error).font(.caption).foregroundStyle(.red).textSelection(.enabled)
+                }
+            } else {
+                AppleTranslationOptionsView(coordinator: appleTranslation, source: language.rawValue, targets: selectedTranslations)
             }
             Divider()
             FlowLayout(spacing: 8) {
@@ -984,7 +1011,7 @@ struct ContentView: View {
                         .toggleStyle(.checkbox).font(.body)
                 }
             }
-            Text("번역 언어를 선택하지 않으면 로그인 없이 전사할 수 있습니다.")
+            Text(translationProvider == .apple ? "번역 언어를 선택하지 않으면 전사만 합니다." : "번역 언어를 선택하지 않으면 로그인 없이 전사할 수 있습니다.")
                 .font(.caption2).foregroundStyle(.secondary)
         }
         .sheet(isPresented: $chatGPT.showWelcome) {

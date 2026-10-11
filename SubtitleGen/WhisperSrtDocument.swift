@@ -43,4 +43,19 @@ struct WhisperSrtDocument {
             }
         omittedCount = omitted
     }
+
+    /// whisper.cpp maps a segment that spans several VAD regions back across the silence
+    /// between them, so a cue can start long before its speech. Clip each cue to the speech
+    /// it overlaps while keeping it readable within its recognized interval.
+    static func trim(_ cues: [SrtDocument.Cue], toSpeech speech: [ClosedRange<Double>],
+                     minimumDuration: Double = 1) -> [SrtDocument.Cue] {
+        cues.map { cue in
+            let overlapping = speech.filter { min(cue.end, $0.upperBound) > max(cue.start, $0.lowerBound) }
+            guard let first = overlapping.map(\.lowerBound).min(), let last = overlapping.map(\.upperBound).max() else { return cue }
+            var start = max(cue.start, first), end = min(cue.end, last)
+            let minimum = min(minimumDuration, cue.end - cue.start)
+            if end - start < minimum { end = min(cue.end, start + minimum); start = end - minimum }
+            return .init(number: cue.number, start: start, end: end, text: cue.text)
+        }
+    }
 }

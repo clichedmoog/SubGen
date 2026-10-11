@@ -1,4 +1,4 @@
-name: SubtitleGen
+name: SubGen
 options:
   deploymentTarget:
     macOS: "14.0"
@@ -12,7 +12,7 @@ settings:
     CODE_SIGN_STYLE: Automatic
     ENABLE_USER_SCRIPT_SANDBOXING: NO
 targets:
-  SubtitleGenStore:
+  SubGen:
     type: application
     productName: SubGen
     platform: macOS
@@ -34,10 +34,10 @@ targets:
         PRODUCT_MODULE_NAME: SubtitleGen
         PRODUCT_BUNDLE_IDENTIFIER: com.clichedmoog.subtitle-generator
         MARKETING_VERSION: "1.0"
-        CURRENT_PROJECT_VERSION: "4"
+        CURRENT_PROJECT_VERSION: "7"
         INFOPLIST_FILE: Store/Resources/Info.plist
         GENERATE_INFOPLIST_FILE: NO
-        CODE_SIGN_ENTITLEMENTS: Store/Resources/SubtitleGenStore.entitlements
+        CODE_SIGN_ENTITLEMENTS: Store/Resources/SubGen.entitlements
         ENABLE_APP_SANDBOX: YES
         ENABLE_HARDENED_RUNTIME: YES
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: ["$(inherited)", MAC_APP_STORE]
@@ -50,14 +50,14 @@ targets:
     scheme:
       gatherCoverageData: false
       testTargets:
-        - SubtitleGenStoreRuntimeTests
-  SubtitleGenStoreRuntimeTests:
+        - SubGenRuntimeTests
+  SubGenRuntimeTests:
     type: bundle.unit-test
     platform: macOS
     sources:
       - path: Store/Tests
     dependencies:
-      - target: SubtitleGenStore
+      - target: SubGen
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.clichedmoog.subtitle-generator.runtime-tests

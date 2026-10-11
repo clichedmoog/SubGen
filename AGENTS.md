@@ -1,7 +1,7 @@
 # SubtitleGen release work
 
 Read `README.md`, `CLAUDE.md`, `Store/README.md`, `Store/store.config.json` and
-`Store/releases/2026-10-10.md` before listing, build or submission work.
+`Store/releases/2026-10-12.md` before listing, build or submission work.
 Use the repository-owned skills:
 
 - `.agents/skills/apple-app-build-prod/SKILL.md`
@@ -24,8 +24,8 @@ validated/uploaded by altool with an existing API key verified against the perso
 team/issuer and exact app. Official API confirmed macOS 1.0 (4), VALID,
 IN_BETA_TESTING, group membership and persisted en-US test notes.
 Check ASC before a new upload; builds 1, 2, 3 and 4 cannot be reused. The native store
-target is generated from `project.yml` with XcodeGen; use `SubtitleGen.xcodeproj`
-and the `SubtitleGenStore` scheme. Run `scripts/prepare-store-tools.py` before
+target is generated from `project.yml` with XcodeGen; use `SubGen.xcodeproj`
+and the `SubGen` scheme. Run `scripts/prepare-store-tools.py` before
 building to stage pinned ARM64 helpers. Store model downloads use URLSession;
 executable downloads and external CLI translation are disabled in that variant.
 The notarized Developer ID app/DMG cannot be uploaded as a Mac App Store build.

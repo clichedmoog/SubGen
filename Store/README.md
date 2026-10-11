@@ -13,7 +13,7 @@ Mirror의 앱 공용 스킬 세 개를 `.agents/skills/`에 가져왔습니다. 
 | 공개 출시 | 같은 submit 스킬 | `승인된 스토어 버전을 공개 출시해줘` |
 
 앱 식별자·영문 문구·심사 자료·배포 상태의 원본은 [store.config.json](store.config.json),
-현재 확인 결과는 [최신 출시 기록](releases/2026-10-10.md)입니다. 자료 준비, 콘솔 저장,
+현재 확인 결과는 [최신 출시 기록](releases/2026-10-12.md)입니다. 자료 준비, 콘솔 저장,
 업로드, 처리 완료, 테스트, 심사 제출, 승인, 공개 출시를 각각 기록합니다.
 
 ## 한 번에 준비하기
@@ -88,8 +88,8 @@ Codex CLI를 사용합니다. 새 스토어 타깃은 App Sandbox를 켜고 ARM6
 현재 공증 DMG를 그대로 스토어에 제출하는 경로는 준비되지 않았습니다. 공증은 이
 스토어 조건의 검증을 대신하지 않습니다.
 
-1. **구현·빌드 확인:** `project.yml` → XcodeGen → `SubtitleGen.xcodeproj`,
-   `SubtitleGenStore` 스킴, `MAC_APP_STORE` 조건. Release `1.0 (4)`·ARM64·팀·ID 확인.
+1. **구현·빌드 확인:** `project.yml` → XcodeGen → `SubGen.xcodeproj`,
+   `SubGen` 스킴, `MAC_APP_STORE` 조건. Release `1.0 (4)`·ARM64·팀·ID 확인.
    `Package.swift`는 직접 배포용으로 유지합니다. 새 네이티브 프로젝트는 XcodeGen으로 재생성합니다.
 2. **번들 도구와 개발 실행 확인:** 스토어 FFmpeg/FFprobe 9는 고정 SHA256의 공식
    소스에서 ARM64/macOS 14용으로 빌드합니다. GPL/nonfree 및 외부 코덱 라이브러리를
@@ -121,8 +121,8 @@ Codex CLI를 사용합니다. 새 스토어 타깃은 App Sandbox를 켜고 ARM6
 ```sh
 python3 scripts/prepare-store-tools.py
 xcodegen generate
-xcodebuild -list -project SubtitleGen.xcodeproj
-xcodebuild -project SubtitleGen.xcodeproj -scheme SubtitleGenStore \
+xcodebuild -list -project SubGen.xcodeproj
+xcodebuild -project SubGen.xcodeproj -scheme SubGen \
   -configuration Release -destination 'generic/platform=macOS' \
   -derivedDataPath build/store-development -allowProvisioningUpdates build
 ```
@@ -177,7 +177,7 @@ SwiftPM 시험과 분리해 앱을 호스트로 실행합니다. 아래 QA 식�
 이미 보유한 같은 팀의 Apple Development 인증서를 사용합니다.
 
 ```sh
-xcodebuild -project SubtitleGen.xcodeproj -scheme SubtitleGenStore \
+xcodebuild -project SubGen.xcodeproj -scheme SubGen \
   -configuration Debug -destination 'platform=macOS,arch=arm64' \
   -derivedDataPath build/store-runtime-tests \
   PRODUCT_BUNDLE_IDENTIFIER=com.clichedmoog.subtitle-generator.store-qa \

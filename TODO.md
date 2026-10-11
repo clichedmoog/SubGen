@@ -62,7 +62,7 @@
 - [x] 기존 Claude 아이콘 워커 종료
 - [x] Luna xhigh / Astra medium / Opus xhigh / Opus max의 독립 서브 워크트리 시작
 - [x] 애플 최신 macOS·Mac App Store 아이콘 조사 기반 후보 4종 수집·비교
-  - `design/icon-comparison/comparison.png`, 각 PNG·ICNS·SVG·보고서와 검증된 실행 설정 보관. 추천: Opus xhigh.
+  - 후보 비교 산출물(`design/icon-comparison/`)은 선택 후 2026-10-11 정리. 추천: Opus xhigh.
   - 원본 서브 워크트리 4개 보존, 완료한 워커 터미널 종료.
 - [x] Claude의 날짜 고정 모델을 최신 계열 별칭으로 전환하고 저장된 설정 이전
 - [x] Codex 권장 모델 자동 선택과 Sol/Luna/Astra 직접 선택, 사용자 설정 유지 모드 제공
@@ -74,7 +74,6 @@
 - [x] 새 아이콘의 DMG 재생성·Apple 공증·직접 마운트·서명과 리소스 일치 검증
 
 공증 완료 패키지: `dist/SubtitleGen-2026.10.09-arm64.dmg`.
-이전 서명 전용 패키지는 `dist/SubtitleGen-2026.10.09-arm64-signed.dmg`에 보존.
 Whisper 설치 파일: `dist/whisper-cli-1.8.4-macos14-arm64.zip`.
 
 ## 진행 표시 수정 (2026-10-10)
@@ -106,3 +105,17 @@ Whisper 설치 파일: `dist/whisper-cli-1.8.4-macos14-arm64.zip`.
 - [x] 통합 수정 Release 샌드박스 5개 및 새 App Store 패키지 서명/프로파일/도구 검증
 
 - [x] 실제 성공한 API 키 CLI 업로드/상태/공식 API 후속 검증 경로를 프로젝트·공용 제출 스킬에 반영
+
+## 자막 시작 시점 수정과 1.0 (5) (2026-10-12)
+
+- [x] 음성 전 자막 표시 재현: VAD 모델 미설치·낮은 임계값·VAD 구간 사이 침묵 포함
+- [x] VAD 필수 설치·없으면 실패, 임계값 0.35/0.5/0.6, VAD 음성 구간으로 큐 자르기
+- [x] 회귀 180개(opt-in 5개 제외)·Store 12개·샌드박스 5개, 실제 27분 영상 비교
+- [x] 1.0 (5) 업로드·VALID·내부 그룹 테스트·테스트 안내·심사 버전 빌드 5 선택
+- [x] 이 Mac의 TestFlight 1.0 (5)에서 음악 구간 전 자막 표시 해결 확인 (사용자)
+- [x] 실제 ChatGPT 번역 확인 (사용자)
+- [x] 심사자 번역 접근 방법: Apple 번역(기기 내) 두 번째 방식 추가, 1.0 (6) TestFlight 배포
+- [x] 자동 감지 언어의 언어 팩을 번역 직전에 요청·대기 후 번역 (1.0 (7) TestFlight)
+- [x] TestFlight 후보에서 Apple 번역 실제 확인 (사용자)
+- [ ] 심사 빌드 소스 공개·심사 메모 소스 링크 갱신 후 정식 심사 제출
+

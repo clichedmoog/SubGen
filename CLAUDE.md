@@ -20,7 +20,7 @@ macOS 14+ SwiftUI app, SwiftPM executable `SubGen` and module `SubtitleGen`. App
 - `FFmpegDistribution`: pinned architecture-specific static binaries and SHA256. Keep URLs/hashes aligned with `scripts/bundle-ffmpeg.sh`.
 - `ToolArchiveInstaller`: prebuilt ZIP installation with native architecture, SHA256, Developer ID team and execution checks. Preserve existing tools on failure/cancellation/concurrent changes. `WhisperDistribution` reads `Resources/ToolDownloads.plist`; publish the corresponding ZIP before distributing a fresh-user app.
 - `ProcessRunner`: concurrently drain stdout/stderr; large stdin is asynchronous; return launch/nonzero/timeout/cancel failures. `CancellationToken` owns all processes per file. Do not use waitUntilExit before draining pipes.
-- `AudioPreparation`: actual sample/chunk WAV extraction. Never combine whisper language detection or VAD with offsets into a full audio file. Restore the chunk start time in parsed cues.
+- `AudioPreparation`: actual sample/chunk WAV extraction. Never combine whisper language detection or VAD with offsets into a full audio file. Restore the chunk start time in parsed cues. Transcription requires the Silero VAD model beside the speech model (never skip VAD silently); clip cues to the VAD speech segments whisper.cpp logs, or cues start in the preceding silence/music.
 - `SrtDocument`: parse every cue and validate exact source/translation numbers, counts and timings. Normal dialogue is allowed to contain words such as sorry/cannot.
 - `TranscriptionEngine`: dynamic queue, file UUID callbacks, per-file cancellation, up to two background translation files. Existing sidecars need exact filename matches. Text subtitle tracks are extracted before translation.
 - `TranslationEngine`: up to two languages per file, 200 cues per chunk, three attempts, 600-second request timeout. Prompt through stdin in an isolated temporary directory. Translation failures must propagate to file status.
@@ -40,11 +40,11 @@ Preserve existing user changes. Use commit messages `type(scope): subject` when 
 ## Listing and release coordination
 
 Start at AGENTS.md and Store/README.md; read Store/store.config.json and
-Store/releases/2026-10-10.md. Use the three project-owned apple-app skills.
+Store/releases/2026-10-12.md. Use the three project-owned apple-app skills.
 SwiftPM/Developer ID notarized DMGs are direct distribution; Mac App Store
 requires a separate verified native app target, sandbox, self-contained tools
 and compatible translation backend. The native target now exists: generate
-SubtitleGen.xcodeproj from project.yml with XcodeGen; use SubtitleGenStore.
+SubGen.xcodeproj from project.yml with XcodeGen; use the SubGen scheme.
 Stage pinned tools using scripts/prepare-store-tools.py before native builds.
 Store external CLI execution is disabled. Read Store/chatgpt-sign-in.md for
 the implemented OAuth backend and pending live verification. The user chose

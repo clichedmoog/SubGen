@@ -49,7 +49,7 @@ class StoreWorkflowTests(unittest.TestCase):
             entitlements = root / 'Store.entitlements'
             entitlements.write_bytes(plistlib.dumps({'com.apple.security.app-sandbox': True}))
             config = self.config['macAppStore']
-            config.update(projectPath=str(project), scheme='SubtitleGen', entitlementsPath=str(entitlements))
+            config.update(projectPath=str(project), scheme='SubGen', entitlementsPath=str(entitlements))
             config['readiness'].update({key: True for key in store.BUILD_CHECKS})
             config['readiness']['distributionArchiveVerified'] = False
             text = store.plan(self.config, 'app-store', root / 'export')

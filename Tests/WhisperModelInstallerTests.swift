@@ -66,6 +66,47 @@ final class WhisperModelInstallerTests: XCTestCase {
         }))
         XCTAssertEqual(try Data(contentsOf: destination), changed); try assertNoStaging()
     }
+    private func writeVad(to url: URL) throws {
+        var data = Data([0x6c, 0x6d, 0x67, 0x67, 0x0a, 0, 0, 0]); data += Data("silero-16k".utf8)
+        data += Data(count: 200_000); try data.write(to: url)
+    }
+    func testVadModelInstallsNextToSpeechModelOnce() throws {
+        let vad = WhisperModelInstaller.vadURL(nextTo: destination)
+        XCTAssertEqual(vad.deletingLastPathComponent(), destination.deletingLastPathComponent())
+        XCTAssertFalse(WhisperModelInstaller.isVadAvailable(at: vad))
+        var requests = 0
+        let download: WhisperModelInstaller.Download = { source, staged, _, _ in
+            requests += 1
+            XCTAssertEqual(source.lastPathComponent, vad.lastPathComponent)
+            try self.writeVad(to: staged)
+        }
+        try WhisperModelInstaller.ensureVadAvailable(nextTo: destination, cancellation: CancellationToken(), download: download)
+        try WhisperModelInstaller.ensureVadAvailable(nextTo: destination, cancellation: CancellationToken(), download: download)
+        XCTAssertTrue(WhisperModelInstaller.isVadAvailable(at: vad)); XCTAssertEqual(requests, 1); try assertNoStaging()
+    }
+    func testFailedOrInvalidVadTransferThrowsInsteadOfSilentlyDisablingVad() throws {
+        for scenario in 0..<2 {
+            XCTAssertThrowsError(try WhisperModelInstaller.ensureVadAvailable(nextTo: destination, cancellation: CancellationToken(), download: { _, staged, _, _ in
+                if scenario == 0 { throw ModelDownloader.Failure.http(503) }
+                try Data("<html>not a model</html>".utf8).write(to: staged)
+            }))
+            XCTAssertFalse(WhisperModelInstaller.isVadAvailable(at: WhisperModelInstaller.vadURL(nextTo: destination)))
+            try assertNoStaging()
+        }
+    }
+    func testSpeechModelIsNotReadyWithoutVad() throws {
+        try writeModel(to: destination)
+        XCTAssertTrue(WhisperModelInstaller.isAvailable(at: destination))
+        XCTAssertFalse(WhisperModelInstaller.isReady(model: destination))
+        try writeVad(to: WhisperModelInstaller.vadURL(nextTo: destination))
+        XCTAssertTrue(WhisperModelInstaller.isReady(model: destination))
+    }
+    func testVadThresholdsDoNotClassifyBackgroundMusicAsSpeech() {
+        // A narrated video with continuous music started the first cue at 0.16s with 0.2 and
+        // 0.35s with 0.3; 0.35 and above matched the narration onset at 11.59s.
+        XCTAssertEqual(Sensitivity.normal.vadThreshold, 0.5)
+        for sensitivity in Sensitivity.allCases { XCTAssertGreaterThanOrEqual(sensitivity.vadThreshold, 0.35) }
+    }
     func testAlreadyCancelledRequestDoesNotDownload() {
         let token = CancellationToken(); token.cancel()
         XCTAssertThrowsError(try WhisperModelInstaller.ensureAvailable(at: destination, cancellation: token, download: { _, _, _, _ in

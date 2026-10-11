@@ -12,7 +12,7 @@ Mirror의 공용 `apple-app-build-prod`, `apple-app-listing`, `apple-app-submit`
 이 저장소의 `.agents/skills/`에 연결했습니다. [AGENTS.md](AGENTS.md)와
 [Store/README.md](Store/README.md)가 작업 진입점이며, 영문 문구·앱 식별자·준비 상태는
 [Store/store.config.json](Store/store.config.json), 실제 확인 결과는
-[최신 출시 기록](Store/releases/2026-10-10.md)에 있습니다.
+[최신 출시 기록](Store/releases/2026-10-12.md)에 있습니다.
 
 ```sh
 python3 Store/scripts/store.py check
@@ -118,7 +118,7 @@ Whisper 다운로드 설정은 `SubtitleGen/Resources/ToolDownloads.plist`에 �
 
 앱 아이콘은 Opus xhigh의 겹친 말풍선 형태에 iPhone 미러링을 참고한 Mirroring Blue 색상을 적용했습니다. SVG 원본·1024px 미리보기·네이티브 `AppIcon.icon`은 `SubtitleGen/Resources/IconSource/`에 있습니다. `bash scripts/generate-app-icon.sh`는 16/32px 전용 원본을 포함한 ICNS를 재생성합니다. Xcode 27 이상의 `bash scripts/compile-app-icon.sh /path/to/SubGen.app`은 Liquid Glass의 밝은·어두운·색조 레이어를 `Assets.car`로 컴파일하고 앱의 아이콘 정보를 연결합니다. 배포 빌드에서 자동 실행하며 ICNS도 함께 보존합니다.
 
-최초 아이콘 후보 4종은 [아이콘 비교](design/icon-comparison/README.md)에 보존합니다. 선택한 Opus xhigh의 색상 3종 비교·원본·검증 기록은 [색상 수정](design/icon-colour-revision/README.md)에 있습니다. 현재 DMG에는 최신 번역 모델 선택과 새 네이티브 아이콘을 반영합니다.
+선택한 Opus xhigh의 색상 3종 비교·원본·검증 기록은 [색상 수정](design/icon-colour-revision/README.md)에 있습니다. 현재 DMG에는 최신 번역 모델 선택과 새 네이티브 아이콘을 반영합니다.
 
 ## 도구 선택·설치
 

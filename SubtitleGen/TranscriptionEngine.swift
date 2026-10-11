@@ -40,10 +40,13 @@ class TranscriptionEngine: ObservableObject {
     private let binaryResolver: (String) -> String?
     private let prepareModel: (URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void
     private var onFileDetailUpdate: ((UUID, String, Double?) -> Void)?
+    /// Store Apple Translation: blocks a translation worker until the pack for (source, target) is installed or refused.
+    var appleLanguagePack: ((String, TranslationLanguage, CancellationToken) -> AppleLanguagePackResult)?
 
     init(binaryResolver: @escaping (String) -> String? = { ToolResolver.find($0) },
          prepareModel: @escaping (URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void = {
              try WhisperModelInstaller.ensureAvailable(at: $0, cancellation: $1, onProgress: $2)
+             try WhisperModelInstaller.ensureVadAvailable(nextTo: $0, cancellation: $1)
          }) {
         self.binaryResolver = binaryResolver
         self.prepareModel = prepareModel
@@ -57,6 +60,44 @@ class TranscriptionEngine: ObservableObject {
     private var totalFileCount: Int { workProgress.files.count }
     private var dockProgressView: DockProgressView?
 
+    /// Apple Translation needs installed language packs. An auto-detected source language is only known here,
+    /// so missing packs are requested and awaited before translating instead of failing.
+    func readyAppleTargets(_ targets: [TranslationLanguage], source: String, token: CancellationToken,
+                           onStatus: (String) -> Void) -> (ready: [TranslationLanguage], failures: [String]) {
+        guard let ensure = appleLanguagePack else { return (targets, []) }
+        var ready: [TranslationLanguage] = [], failures: [String] = []
+        for target in targets {
+            guard target.rawValue != source else { ready.append(target); continue }
+            onStatus("Apple 번역 \(target.label) 언어 팩 준비 중 · 다운로드 확인 창이 뜨면 허용해주세요")
+            switch ensure(source, target, token) {
+            case .ready: ready.append(target)
+            case .failed(let message): failures.append("\(target.label) 번역 실패: \(message)")
+            }
+        }
+        return (ready, failures)
+    }
+
+    /// External CLIs are disabled in the sandboxed app; ChatGPT or Apple Translation translate instead.
+    func storeTranslator(options: Options, sourceLanguage: String, token: CancellationToken) throws -> TranslationEngine {
+        switch options.translationProvider {
+        case .apple:
+            guard #available(macOS 26.0, *) else { throw PipelineFailure("Apple 번역은 macOS 26 이상에서 사용할 수 있습니다.") }
+            return TranslationEngine(authMethod: options.authMethod, cancellation: token, request: { srt, language in
+                guard let translator = AppleSubtitleTranslator(source: sourceLanguage, target: language) else {
+                    return ProcessResult(failure: .service("Apple 번역이 이 언어 조합을 지원하지 않습니다. ChatGPT 번역을 사용해주세요.", retryable: false))
+                }
+                return translator.request(srt, cancellation: token)
+            })
+        case .chatGPT:
+            guard let account = options.chatGPTAccountID, let model = options.chatGPTModel else {
+                throw PipelineFailure("번역할 ChatGPT 계정과 모델을 선택해주세요.")
+            }
+            let client = ChatGPTSubtitleClient(accountID: account, model: model)
+            return TranslationEngine(authMethod: options.authMethod, cancellation: token,
+                request: { client.request($0, language: $1, cancellation: token) })
+        }
+    }
+
     struct Options {
         var model: String
         var embedSubtitle: Bool
@@ -69,6 +110,7 @@ class TranscriptionEngine: ObservableObject {
         var translationModel: String
         var chatGPTAccountID: String? = nil
         var chatGPTModel: String? = nil
+        var translationProvider: TranslationProvider = .chatGPT
     }
 
     private func updateDockProgress() {
@@ -433,6 +475,10 @@ class TranscriptionEngine: ObservableObject {
             if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
             throw PipelineFailure("음성인식 모델 준비 실패: \(error.localizedDescription)")
         }
+        let vad = WhisperModelInstaller.vadURL(nextTo: URL(fileURLWithPath: options.model))
+        guard WhisperModelInstaller.isVadAvailable(at: vad) else {
+            throw PipelineFailure("음성 구간 감지 모델이 없어 자막 시간을 맞출 수 없습니다. 시작 설정에서 모델을 다시 설치해주세요.")
+        }
         let fm = FileManager.default
         let temp = fm.temporaryDirectory.appendingPathComponent("transcription-\(UUID().uuidString)")
         try fm.createDirectory(at: temp, withIntermediateDirectories: true)
@@ -465,14 +511,11 @@ class TranscriptionEngine: ObservableObject {
             let wav = temp.appendingPathComponent("chunk.wav")
             try checked(AudioPreparation.extract(source: file.url, chunk: chunk, destination: wav, ffmpeg: ffmpeg, cancellation: token), stage: "청크 오디오 추출 실패")
             let output = temp.appendingPathComponent("chunk")
-            var args = ["-m", options.model, "-f", wav.path, "-l", language, "-t", String(min(10, ProcessInfo.processInfo.activeProcessorCount)),
+            let args = ["-m", options.model, "-f", wav.path, "-l", language, "-t", String(min(10, ProcessInfo.processInfo.activeProcessorCount)),
                 "--beam-size", String(options.sensitivity.beamSize), "--best-of", String(options.sensitivity.bestOf),
                 "--no-speech-thold", String(options.sensitivity.noSpeechThreshold), "--logprob-thold", String(options.sensitivity.logprobThreshold),
-                "--entropy-thold", String(options.sensitivity.entropyThreshold), "--print-progress", "--output-srt", "-of", output.path]
-            let vad = URL(fileURLWithPath: options.model).deletingLastPathComponent().appendingPathComponent("ggml-silero-v6.2.0.bin")
-            if (try? SafeFileReplacement.Snapshot(vad).size) ?? 0 > 100_000 {
-                args += ["--vad", "--vad-model", vad.path, "--vad-threshold", String(options.sensitivity.vadThreshold)]
-            }
+                "--entropy-thold", String(options.sensitivity.entropyThreshold), "--print-progress", "--output-srt", "-of", output.path,
+                "--vad", "--vad-model", vad.path, "--vad-threshold", String(options.sensitivity.vadThreshold)]
             let reportTime: (Double, Bool) -> Void = { position, estimated in
                 let elapsed = min(info.duration, max(chunk.start, position))
                 onProgress(elapsed / info.duration,
@@ -499,7 +542,9 @@ class TranscriptionEngine: ObservableObject {
                     throw PipelineFailure("\(index + 1)번째 청크 전사 결과를 읽지 못했습니다. \(error.localizedDescription)\(detail)")
                 }
                 if document.omittedCount > 0 { logDebug("Whisper chunk \(index + 1): omitted \(document.omittedCount) empty/zero-duration/out-of-range segments") }
-                cues += document.cues.map {
+                let speech = AudioPreparation.speechSegments(in: result.stderr)
+                if speech.isEmpty { logDebug("Whisper chunk \(index + 1): no VAD speech segments reported; cue times not trimmed") }
+                cues += WhisperSrtDocument.trim(document.cues, toSpeech: speech).map {
                     SrtDocument.Cue(number: $0.number, start: $0.start + chunk.start, end: $0.end + chunk.start, text: $0.text)
                 }
             }
@@ -581,15 +626,15 @@ class TranscriptionEngine: ObservableObject {
                     onLangComplete(lang.rawValue)
                 } else { pending.append(lang) }
             }
+            if AppDistribution.isStore, options.translationProvider == .apple, !pending.isEmpty {
+                let prepared = readyAppleTargets(pending, source: source.language, token: token, onStatus: onStatusUpdate)
+                pending = prepared.ready
+                failures += prepared.failures
+            }
             if !pending.isEmpty {
                 let translator: TranslationEngine
                 if AppDistribution.isStore {
-                    guard let account = options.chatGPTAccountID, let model = options.chatGPTModel else {
-                        throw PipelineFailure("번역할 ChatGPT 계정과 모델을 선택해주세요.")
-                    }
-                    let client = ChatGPTSubtitleClient(accountID: account, model: model)
-                    translator = TranslationEngine(authMethod: options.authMethod, cancellation: token,
-                        request: { client.request($0, language: $1, cancellation: token) })
+                    translator = try storeTranslator(options: options, sourceLanguage: source.language, token: token)
                 } else {
                     translator = TranslationEngine(authMethod: options.authMethod, translationModel: options.translationModel, cancellation: token)
                 }
