@@ -139,6 +139,10 @@ final class AppleTranslationCoordinator: ObservableObject {
         return box.get() ?? .failed("작업이 중단되었습니다")
     }
 
+    /// System Settings › General › Language & Region, where macOS lists, adds and removes translation languages.
+    /// Packs are shared by all apps and the Translation framework has no removal API.
+    static let languageSettingsURL = URL(string: "x-apple.systempreferences:com.apple.Localization-Settings.extension")!
+
     private static let unsupportedOS = "Apple 번역은 macOS 26 이상에서 사용할 수 있습니다."
     private static func unsupportedPair(_ target: TranslationLanguage) -> String {
         "Apple 번역이 \(target.label) 번역을 지원하지 않습니다. ChatGPT 번역을 사용하거나 번역 언어를 바꿔주세요."

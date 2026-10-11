@@ -95,6 +95,15 @@ final class AppleTranslationCoordinatorTests: XCTestCase {
     }
 }
 
+final class AppleLanguageSettingsLinkTests: XCTestCase {
+    func testManageLinkOpensLanguageAndRegionSettings() {
+        // Language packs are shared system resources; macOS has no API to remove them, so the app links here.
+        let url = AppleTranslationCoordinator.languageSettingsURL
+        XCTAssertEqual(url.scheme, "x-apple.systempreferences")
+        XCTAssertEqual(url.absoluteString, "x-apple.systempreferences:com.apple.Localization-Settings.extension")
+    }
+}
+
 final class AppleLanguagePackBridgeTests: XCTestCase {
     func testWorkerThreadReceivesTheMainActorResult() {
         let done = expectation(description: "bridge returns")

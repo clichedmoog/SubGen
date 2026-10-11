@@ -71,10 +71,17 @@ struct AppleTranslationOptionsView: View {
                 if let message = coordinator.message {
                     Text(message).font(.caption).foregroundStyle(.red).textSelection(.enabled)
                 }
+                Link("언어 팩 확인·삭제 (시스템 설정)", destination: AppleTranslationCoordinator.languageSettingsURL)
+                    .font(.caption2)
+                    .help("언어 및 지역 › 번역 언어에서 받은 언어를 확인하거나 삭제합니다. 다른 앱과 함께 쓰는 macOS 언어 팩입니다.")
             }
         }
         .task(id: "\(source)|\(targets.map(\.rawValue).sorted().joined(separator: ","))") {
             await coordinator.refresh(source: source, targets: targets)
+        }
+        // Packs may have been added or removed in System Settings while the app was in the background.
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            Task { await coordinator.refresh(source: source, targets: targets) }
         }
     }
 }

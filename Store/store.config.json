@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "testflight-build-7-user-verified-review-submission-pending",
+  "status": "build-8-uploaded-review-resubmission-pending",
   "platform": "macos",
   "productName": "Subtitle Maker & Translator",
   "bundleID": "com.clichedmoog.subtitle-generator",
@@ -23,9 +23,17 @@
     "verifiedAt": "2026-10-12",
     "platform": "macOS",
     "version": "1.0",
-    "status": "PREPARE_FOR_SUBMISSION",
+    "status": "WAITING_FOR_REVIEW",
     "releaseMode": "AFTER_APPROVAL",
     "builds": [
+      {
+        "platform": "macOS",
+        "version": "1.0",
+        "build": "8",
+        "status": "Testing",
+        "internalOnly": false,
+        "verification": "Official API VALID/IN_BETA_TESTING, internal-group membership and selected for App Store version 1.0"
+      },
       {
         "platform": "macOS",
         "version": "1.0",
@@ -114,7 +122,7 @@
     "appAccountRequired": false,
     "translationProviderLoginRequired": false,
     "demoAccountRequired": false,
-    "notes": "SubGen is a free native macOS subtitle utility for Apple Silicon (macOS 14+). The interface is currently Korean. It has no app account, subscription, in-app purchase, API-key setup or external CLI requirement. Local transcription and subtitle embedding work without ChatGPT sign-in.\n\nLOCAL WORKFLOW\n1. Click 시작 설정 (Start setup) in the upper right. FFmpeg, FFprobe and whisper.cpp are included. Choose a speech model and click installation/download. Tiny is about 78 MB and is suitable for a quick test; larger models improve accuracy. Model data is downloaded from Hugging Face into the app container.\n2. Click 파일 선택 (Choose files), or drop an audio/video file onto the main window.\n3. Expand 작업 설정 (Work settings). Choose the spoken language (자동 감지 = automatic detection), select SRT output, and leave translation languages unchecked.\n4. Click 처리 시작 (Start processing). When prompted, click 폴더 접근 허용 (Allow folder access) for the input folder so generated subtitles can be written beside the media. A matching existing SRT may be reused.\n5. The 영상에 자막 포함 output option embeds subtitles in supported video containers. The original video is replaced only after validation; failed translations preserve source subtitles.\n\nOPTIONAL TRANSLATION (no account needed)\nOn macOS 26 or later, expand 작업 설정, choose 번역 방식 → Apple 번역 (기기 내), set the spoken language (for example English), check a target language such as 한국어, then click 처리 시작. If macOS asks to download translation languages, approve it. Translation runs on the Mac with Apple's Translation framework; subtitles are not sent to the developer or any translation service.\n\nAlternatively choose ChatGPT and click Continue with ChatGPT. This opens OpenAI authorization and asks for consent to use an eligible ChatGPT account's plan/credits. Only subtitle text and translation instructions are sent to OpenAI. This option is subject to OpenAI account eligibility, availability and usage limits.\n\nPrivacy policy: https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md\nSupport: https://github.com/clichedmoog/SubGen/issues\nSource for this build (MIT): https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-3",
+    "notes": "SubGen is a free native macOS subtitle utility for Apple Silicon (macOS 14+). The interface is currently Korean. It has no app account, subscription, in-app purchase, API-key setup or external CLI requirement. Local transcription and subtitle embedding work without ChatGPT sign-in.\n\nLOCAL WORKFLOW\n1. Click 시작 설정 (Start setup) in the upper right. FFmpeg, FFprobe and whisper.cpp are included. Choose a speech model and click installation/download. Tiny is about 78 MB and is suitable for a quick test; larger models improve accuracy. Model data is downloaded from Hugging Face into the app container.\n2. Click 파일 선택 (Choose files), or drop an audio/video file onto the main window.\n3. Expand 작업 설정 (Work settings). Choose the spoken language (자동 감지 = automatic detection), select SRT output, and leave translation languages unchecked.\n4. Click 처리 시작 (Start processing). When prompted, click 폴더 접근 허용 (Allow folder access) for the input folder so generated subtitles can be written beside the media. A matching existing SRT may be reused.\n5. The 영상에 자막 포함 output option embeds subtitles in supported video containers. The original video is replaced only after validation; failed translations preserve source subtitles.\n\nOPTIONAL TRANSLATION (no account needed)\nOn macOS 26 or later, expand 작업 설정, choose 번역 방식 → Apple 번역 (기기 내), set the spoken language (for example English), check a target language such as 한국어, then click 처리 시작. If macOS asks to download translation languages, approve it. Translation runs on the Mac with Apple's Translation framework; subtitles are not sent to the developer or any translation service.\n\nAlternatively choose ChatGPT and click Continue with ChatGPT. This opens OpenAI authorization and asks for consent to use an eligible ChatGPT account's plan/credits. Only subtitle text and translation instructions are sent to OpenAI. This option is subject to OpenAI account eligibility, availability and usage limits.\n\nPrivacy policy: https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md\nSupport: https://github.com/clichedmoog/SubGen/issues\nSource for this build (MIT): https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-7",
     "demoAccessVerified": true,
     "demoAccessEvidence": "2026-10-12: Apple Translation (macOS 26+) translates without any account, so reviewers can test translation without ChatGPT; the user reported Apple Translation working on the TestFlight candidate. ChatGPT remains optional."
   },
@@ -138,7 +146,7 @@
   },
   "macAppStore": {
     "version": "1.0",
-    "build": "7",
+    "build": "8",
     "projectPath": "SubGen.xcodeproj",
     "scheme": "SubGen",
     "entitlementsPath": "Store/Resources/SubGen.entitlements",
@@ -154,21 +162,21 @@
     },
     "delivery": {
       "version": "1.0",
-      "build": "7",
+      "build": "8",
       "uploadStatus": "succeeded",
       "processingStatus": "processed",
       "processingState": "VALID",
       "internalOnly": false,
       "route": "xcrun altool --upload-package with verified existing personal-team API key",
       "serverValidation": "altool --validate-app passed with no errors",
-      "packagePath": "build/subgen-release-20261012/export7/SubGen.pkg",
-      "packageSHA256": "aec5b63303086f80d8c82be887c97dcd4b56f7d59bb534c28bed5dcd41e73527",
-      "deliveryID": "d513861f-cfe2-42f7-aab8-617718311530",
-      "buildID": "d513861f-cfe2-42f7-aab8-617718311530",
+      "packagePath": "build/subgen-release-20261012/export8/SubGen.pkg",
+      "packageSHA256": "8ebefde846d8d5a47f70e9a237a2c25db52da3559046aaedb37ca090d06e9e2f",
+      "deliveryID": "0f412f02-5ef6-4bae-ab7b-41569461e395",
+      "buildID": "0f412f02-5ef6-4bae-ab7b-41569461e395",
       "internalBuildState": "IN_BETA_TESTING",
-      "archiveInspectionPath": "build/subgen-release-20261012/archive7-inspection.json",
-      "packageVerificationPath": "build/subgen-release-20261012/package7-verification.json",
-      "testflightVerificationPath": "build/subgen-release-20261012/testflight7-api-verification.json",
+      "archiveInspectionPath": "build/subgen-release-20261012/archive8-inspection.json",
+      "packageVerificationPath": "build/subgen-release-20261012/package8-verification.json",
+      "testflightVerificationPath": "build/subgen-release-20261012/testflight8-api-verification.json",
       "weakLinkEvidence": "Release archive links Translation and _Translation_SwiftUI as LC_LOAD_WEAK_DYLIB"
     },
     "reviewReadiness": {
@@ -202,7 +210,7 @@
       "cliUpload": "2026-10-10: existing API key verified active under the intended personal team/issuer, then altool list-apps verified this exact app/bundle. altool validate-app and upload-package --wait succeeded for the unchanged inspected package. Delivery UUID, VALID processing, macOS 1.0 (4) and IN_BETA_TESTING verified. Internal group already contains build 4 through access-to-all-builds; en-US What to Test PATCH followed by exact readback succeeded. No private keys/tokens logged or new credentials created.",
       "subtitleTiming": "2026-10-12: user-reported early cues reproduced on a 27-minute narrated video with continuous music. Previous embedded track started at 0:00 with 30 cues starting in silence; fixed engine starts at 11.59s (narration onset) with 3 cues starting at most 0.71s early for the 1s readability minimum. 180 SwiftPM tests passed, 5 opt-in skips. User confirmed on 2026-10-12 that installed TestFlight 1.0 (5) no longer shows subtitles from the preceding music.",
       "processedBuildSelected": "2026-10-12: official API selected build 7 for macOS App Store version 1.0 (PREPARE_FOR_SUBMISSION, AFTER_APPROVAL preserved); readback verified.",
-      "appleTranslation": "2026-10-12: store-only Apple Translation provider (macOS 26+) added in 1.0 (6). 197 SwiftPM tests passed (5 opt-in skips), sandbox runtime 5 passed; the live Apple translation runtime test skipped because no language pair is installed on this Mac. Fresh-model review: no critical issues; re-entry guard, post-prompt re-check and root-view prompt anchoring fixed. Live translation pending. Build 7: auto-detected source languages now request and await the language-pack download right before translating (shared prompt per pair, refusal fails only that language, 15-minute download timeout); 203 SwiftPM tests passed.",
+      "appleTranslation": "2026-10-12: store-only Apple Translation provider (macOS 26+) added in 1.0 (6). 197 SwiftPM tests passed (5 opt-in skips), sandbox runtime 5 passed; the live Apple translation runtime test skipped because no language pair is installed on this Mac. Fresh-model review: no critical issues; re-entry guard, post-prompt re-check and root-view prompt anchoring fixed. Live translation pending. Build 7: auto-detected source languages now request and await the language-pack download right before translating (shared prompt per pair, refusal fails only that language, 15-minute download timeout); 203 SwiftPM tests passed. Build 8 adds a Language & Region settings link for checking/removing packs (the framework has no removal API) and refreshes pack status when the app becomes active; 204 SwiftPM tests passed. Runtime translation verification carries over from the user's build 7 check.",
       "translationBackendVerified": "2026-10-12: user reported on the installed TestFlight candidate (latest distributed build 1.0 (7); build number not stated by the user) that translation works very well, including Apple Translation. Recorded as the user's report, not a log-backed check.",
       "releaseRuntimeVerified": "2026-10-12: user confirmed TestFlight 1.0 (5) transcription timing fix and reported ChatGPT/Apple translation working on the TestFlight candidate (1.0 (7))."
     },
@@ -431,6 +439,39 @@
       "archiveInspectionPath": "build/subgen-release-20261012/archive6-inspection.json",
       "packageVerificationPath": "build/subgen-release-20261012/package6-verification.json",
       "testflightVerificationPath": "build/subgen-release-20261012/testflight6-api-verification.json",
+      "weakLinkEvidence": "Release archive links Translation and _Translation_SwiftUI as LC_LOAD_WEAK_DYLIB"
+    },
+    "previousReviewSubmissionBuild7": {
+      "submittedAt": "2026-10-12T06:22:50+09:00",
+      "state": "COMPLETE (canceled by developer before review started; version became DEVELOPER_REJECTED)",
+      "platform": "MAC_OS",
+      "version": "1.0",
+      "build": "7",
+      "releaseType": "AFTER_APPROVAL",
+      "route": "App Store Connect API reviewSubmissions + reviewSubmissionItems, existing team API key",
+      "reviewNotesPersisted": "Console appStoreReviewDetail notes PATCHed and read back as an exact match; demoAccountRequired false",
+      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-7 (commit ed2b3fc)",
+      "privacyPolicy": "https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md (commit 84543c7, Apple Translation sentence verified)",
+      "publicRelease": "not yet — AFTER_APPROVAL releases automatically once approved",
+      "canceledAt": "2026-10-12T08:20+09:00"
+    },
+    "previousDeliveryBuild7": {
+      "version": "1.0",
+      "build": "7",
+      "uploadStatus": "succeeded",
+      "processingStatus": "processed",
+      "processingState": "VALID",
+      "internalOnly": false,
+      "route": "xcrun altool --upload-package with verified existing personal-team API key",
+      "serverValidation": "altool --validate-app passed with no errors",
+      "packagePath": "build/subgen-release-20261012/export7/SubGen.pkg",
+      "packageSHA256": "aec5b63303086f80d8c82be887c97dcd4b56f7d59bb534c28bed5dcd41e73527",
+      "deliveryID": "d513861f-cfe2-42f7-aab8-617718311530",
+      "buildID": "d513861f-cfe2-42f7-aab8-617718311530",
+      "internalBuildState": "IN_BETA_TESTING",
+      "archiveInspectionPath": "build/subgen-release-20261012/archive7-inspection.json",
+      "packageVerificationPath": "build/subgen-release-20261012/package7-verification.json",
+      "testflightVerificationPath": "build/subgen-release-20261012/testflight7-api-verification.json",
       "weakLinkEvidence": "Release archive links Translation and _Translation_SwiftUI as LC_LOAD_WEAK_DYLIB"
     }
   },

@@ -47,6 +47,9 @@ Inspect filenames without printing key contents. Confirm the active key, Issuer 
 role and intended team in the console, then verify app access with the installed
 CLI's `--list-apps` filters. A key's display name does not establish app ownership.
 Do not create or revoke keys as a workaround for an upload request.
+When the user-level `app-store-connect-api` skill is installed (`~/.agents/skills`), use its
+verified key identifiers and API helper instead of rediscovering them. Never copy key
+identifiers into repository files; this skill folder is committed.
 
 A verified existing key can authenticate a direct upload of the already inspected
 store package without an Xcode login or another signing/export operation. Use the

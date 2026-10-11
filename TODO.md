@@ -117,5 +117,6 @@ Whisper 설치 파일: `dist/whisper-cli-1.8.4-macos14-arm64.zip`.
 - [x] 심사자 번역 접근 방법: Apple 번역(기기 내) 두 번째 방식 추가, 1.0 (6) TestFlight 배포
 - [x] 자동 감지 언어의 언어 팩을 번역 직전에 요청·대기 후 번역 (1.0 (7) TestFlight)
 - [x] TestFlight 후보에서 Apple 번역 실제 확인 (사용자)
-- [ ] 심사 빌드 소스 공개·심사 메모 소스 링크 갱신 후 정식 심사 제출
+- [x] 빌드 7 소스·개인정보 처리방침 공개, 심사 메모 갱신, 정식 심사 제출 (WAITING_FOR_REVIEW)
+- [ ] 심사 결과 확인 (승인 시 AFTER_APPROVAL로 자동 출시)
 
