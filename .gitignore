@@ -3,3 +3,15 @@ build/
 dist/
 .DS_Store
 *.debug.log
+__pycache__/
+*.xcarchive/
+*.xcresult/
+*.ipa
+*.pkg
+*.p8
+*.p12
+*.mobileprovision
+*.provisionprofile
+xcuserdata/
+Store/screenshots/raw/
+Store/screenshots/generated/

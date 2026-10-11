@@ -1,0 +1,40 @@
+{
+  "platform": "macOS",
+  "files": [
+    {
+      "file": "01.jpg",
+      "dimensions": [
+        2560,
+        1600
+      ],
+      "locale": "en-US",
+      "capture": "/private/tmp/subgen-store-captures-20261010/01-transcribe.png",
+      "captureSHA256": "93f732fecef63fc2f2a019dc2bfca6e6ec4547b3b0b8e69f056adfb21c3817fb",
+      "sha256": "f7612eca06843f24f6470ba7f2a3420c7398f6d2e715e5111a7764aecb267719"
+    },
+    {
+      "file": "02.jpg",
+      "dimensions": [
+        2560,
+        1600
+      ],
+      "locale": "en-US",
+      "capture": "/private/tmp/subgen-store-captures-20261010/02-translate.png",
+      "captureSHA256": "01dbdfe12bbbbb59a0ece2e24e0d475e6439278f584277d0af64f77150d2d180",
+      "sha256": "267f30180c18185b9a90686dc90750669fc387bf012cd29a611af03f6288ed6a"
+    },
+    {
+      "file": "03.jpg",
+      "dimensions": [
+        2560,
+        1600
+      ],
+      "locale": "en-US",
+      "capture": "/private/tmp/subgen-store-captures-20261010/03-setup.png",
+      "captureSHA256": "b331bde7ebdef6b9755730a7d9e8bbf46c60b31ce3204fa2ca2a744eb5ecfb03",
+      "sha256": "fb12a53ddee517a6ccd9de6fa73f1d92ced5c96626782d58ccd327377de4cc9e"
+    }
+  ],
+  "visualReview": "passed: actual native SubGen windows, English captions, Korean UI, no private files/accounts, proportions and glyphs inspected 2026-10-10",
+  "consoleUpload": "saved and reloaded: macOS / en-US / 01.jpg, 02.jpg, 03.jpg / three rendered thumbnails / 2026-10-10"
+}

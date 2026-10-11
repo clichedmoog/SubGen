@@ -1,0 +1,134 @@
+{
+  "status": "published-app-privacy-live-translation-verification-pending",
+  "sourceReviewedAt": "2026-10-10",
+  "platform": "macOS",
+  "localProcessing": {
+    "transcription": "Local whisper.cpp process after speech model installation",
+    "mediaProcessing": "Local FFmpeg/FFprobe processes",
+    "preferencesAndQueue": "App-owned AppStorage/UserDefaults; direct queue stores file paths, store queue stores security-scoped bookmarks",
+    "diagnostics": "Local SubtitleGen.log; store writes container Application Support/SubtitleGen/Logs, direct writes Library/Logs; diagnostics may include file paths and process output"
+  },
+  "networkFlows": [
+    {
+      "purpose": "Tool installation",
+      "hosts": [
+        "www.osxexperts.net",
+        "github.com"
+      ],
+      "note": "Download services may receive IP/request metadata; redirects use their CDN hosts",
+      "channels": [
+        "direct"
+      ]
+    },
+    {
+      "purpose": "Speech/VAD model installation",
+      "hosts": [
+        "huggingface.co"
+      ],
+      "note": "Download services may receive IP/request metadata; redirects use their CDN hosts",
+      "channels": [
+        "direct",
+        "mac-app-store"
+      ]
+    },
+    {
+      "purpose": "Translation",
+      "service": "Authenticated Claude Code or Codex CLI and its configured provider",
+      "data": [
+        "subtitle text",
+        "source/target language and instructions"
+      ],
+      "note": "Provider settings, authentication, telemetry and retention must be reviewed; translation is not entirely local",
+      "channels": [
+        "direct"
+      ]
+    },
+    {
+      "purpose": "ChatGPT sign-in and subtitle translation",
+      "hosts": [
+        "auth.openai.com",
+        "api.openai.com",
+        "chatgpt.com"
+      ],
+      "data": [
+        "OAuth identity and issued registration",
+        "SRT subtitle text",
+        "target language and translation instructions",
+        "account-specific model requests"
+      ],
+      "note": "Native store version only. Consent uses system browser and IPv4 loopback callback. Tokens are stored in macOS Keychain; nonsecret registration selection and installation UUID in app preferences. Responses requests use store:false; provider processing and retention still apply. Audio/video are not uploaded. No app-operated proxy or analytics backend. Live service and final provider disclosures remain pending.",
+      "channels": [
+        "mac-app-store"
+      ]
+    }
+  ],
+  "evidence": [
+    "SubtitleGen/TranslationEngine.swift: prompt supplied to external authenticated CLI",
+    "SubtitleGen/ToolArchiveInstaller.swift: tool ZIP download, signature/hash verification and installation",
+    "SubtitleGen/ContentView.swift: model/VAD downloads and AppStorage preferences",
+    "SubtitleGen/Models.swift: UserDefaults saved file paths",
+    "SubtitleGen/TranscriptionEngine.swift: local diagnostic logs",
+    "SubtitleGen/SafeFileReplacement.swift: file modification timestamps for replacement validation",
+    "SubtitleGen/ToolResolver.swift: installed tool file modification timestamps",
+    "SubtitleGen/AppDistribution.swift: store model and log paths",
+    "SubtitleGen/ModelDownloader.swift: URLSession data downloads",
+    "SubtitleGen/SandboxFileAccess.swift: scoped bookmarks and output folder grants",
+    "Store/Resources/PrivacyInfo.xcprivacy: published app manifest with four collected-data types and bundled tool timer reasons",
+    "SubtitleGen/ChatGPTAccountService.swift: validated OAuth, per-registration refresh and usage pause",
+    "SubtitleGen/ChatGPTCredentialStore.swift: private Keychain credentials",
+    "SubtitleGen/ChatGPTSubtitleClient.swift: direct Responses SSE with store:false",
+    "Apple privacy/data-type documentation checked 2026-10-10; native OAuth sends login_hint, registration and installation identifiers; authenticated Responses receives SRT text."
+  ],
+  "requiredReasonAPIsToReview": [
+    {
+      "category": "NSPrivacyAccessedAPICategoryUserDefaults",
+      "declaredReasons": [
+        "CA92.1"
+      ],
+      "usage": "App-owned preferences and bookmark queue"
+    },
+    {
+      "category": "NSPrivacyAccessedAPICategoryFileTimestamp",
+      "declaredReasons": [
+        "C617.1",
+        "3B52.1"
+      ],
+      "usage": "Container file metadata and user-authorized file replacement/size checks"
+    },
+    {
+      "category": "NSPrivacyAccessedAPICategorySystemBootTime",
+      "declaredReasons": [
+        "35F9.1"
+      ],
+      "usage": "Bundled native-engine elapsed timers"
+    }
+  ],
+  "appPrivacy": {
+    "consolePublished": true,
+    "dataCollected": true,
+    "tracking": false,
+    "note": "Published and reloaded in App Store Connect on 2026-10-10: four linked data categories for app functionality, no tracking. store:false does not establish zero retention. Live ChatGPT runtime verification remains pending.",
+    "proposedDataTypes": [
+      "Email address",
+      "User ID",
+      "Device ID (random app-installation identifier)",
+      "Other user content (subtitle text)"
+    ],
+    "purposes": [
+      "App functionality"
+    ],
+    "linkedToUser": true
+  },
+  "remaining": [
+    "Verify live ChatGPT sign-in, account catalog, token refresh, revocation and SRT translation",
+    "Verify the installed TestFlight build against the documented provider flow"
+  ],
+  "storeTranslation": {
+    "status": "implemented-live-verification-pending",
+    "proposal": "Sign in with ChatGPT OAuth + Responses API",
+    "reference": "Store/chatgpt-sign-in.md",
+    "credentialsObtained": false,
+    "inferenceVerified": false
+  },
+  "approvedReasonReference": "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitypereasons"
+}

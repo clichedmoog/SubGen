@@ -1,0 +1,12 @@
+{
+  "version": "9.0",
+  "sourceURL": "https://ffmpeg.org/releases/ffmpeg-9.0.tar.xz",
+  "sourceSHA256": "7f607a00dd0d28a729d5a4811205812eef01cf6ef6155025febb6f36a9062d52",
+  "architecture": "arm64",
+  "minimumOS": "14.0",
+  "license": "LGPL-2.1-or-later",
+  "sourceModified": false,
+  "externalCodecLibraries": false,
+  "recipe": "scripts/build-store-ffmpeg.sh",
+  "sourceInApp": "Contents/Resources/FFmpegSource/ffmpeg-9.0.tar.xz"
+}

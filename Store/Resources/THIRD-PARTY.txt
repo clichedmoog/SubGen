@@ -1,0 +1,25 @@
+Subtitle Maker & Translator — Mac App Store tools
+
+FFmpeg and FFprobe 9.0
+  Copyright (c) FFmpeg contributors.
+  https://ffmpeg.org/
+  GNU Lesser General Public License 2.1 or later.
+  Built from unmodified upstream source for ARM64/macOS 14+.
+  GPL/nonfree/version3 components and external codec libraries are disabled.
+  Apple AudioToolbox/VideoToolbox and system zlib are used.
+  The complete corresponding FFmpeg source, license, build recipe and source
+  checksum are included in Contents/Resources/FFmpegSource. The recipe records
+  the configure options and can rebuild either executable independently.
+  This software is based in part on the work of the Independent JPEG Group.
+  FFmpeg is invoked as a separate executable; the app does not link its libraries.
+
+whisper.cpp 1.8.4, including GGML
+  Copyright (c) 2023-2024 The ggml authors.
+  https://github.com/ggml-org/whisper.cpp
+  MIT; see whisper.cpp-MIT.txt.
+  Static libraries with embedded Metal kernels, deployment target 14.0,
+  GGML_NATIVE=OFF. Speech models are downloaded separately as data.
+
+The app's own source is MIT licensed; see SubtitleGen-MIT.txt.
+ChatGPT credentials are supplied through the user's OAuth consent.
+Claude Code and Codex CLI are not included or used by this store variant.

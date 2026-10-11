@@ -1,0 +1,29 @@
+SubtitleGen third-party tools
+
+These executables are invoked as separate command-line processes.
+
+FFmpeg and FFprobe
+  ARM64: FFmpeg 9.0, OSXExperts static build
+  Intel: FFmpeg 8.0, OSXExperts static build
+  Binary distributor: https://www.osxexperts.net/
+  Project and source releases: https://ffmpeg.org/download.html
+  ARM64 upstream source: https://ffmpeg.org/releases/ffmpeg-9.0.tar.xz
+  Intel upstream source: https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz
+  These builds enable GPL components. See FFmpeg-GPLv2.txt and
+  FFmpeg-GPLv3.txt. Run ffmpeg -L and ffmpeg -buildconf for the actual
+  license statement, enabled components and build configuration.
+  Distributor builds include third-party codec libraries; the upstream
+  FFmpeg source alone does not contain those libraries or build recipes.
+
+whisper.cpp 1.8.4, including GGML
+  Copyright (c) 2023-2024 The ggml authors
+  Project: https://github.com/ggml-org/whisper.cpp
+  Source: https://github.com/ggml-org/whisper.cpp/archive/refs/tags/v1.8.4.tar.gz
+  Source archive SHA256:
+    b26f30e52c095ccb75da40b168437736605eb280de57381887bf9e2b65f31e66
+  License: MIT; see whisper.cpp-MIT.txt
+  This package builds static libraries with embedded Metal kernels,
+  macOS deployment target 14.0 and GGML_NATIVE=OFF.
+
+GGML speech models are downloaded separately and are not in this package.
+Claude Code and Codex CLI are not bundled.
