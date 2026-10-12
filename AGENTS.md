@@ -1,6 +1,6 @@
 # SubtitleGen release work
 
-Read `README.md`, `CLAUDE.md`, `Store/README.md`, `Store/store.config.json` and
+Read `README.md`, `docs/DEVELOPMENT.md`, `CLAUDE.md`, `Store/README.md`, `Store/store.config.json` and
 `Store/releases/2026-10-12.md` before listing, build or submission work.
 Use the repository-owned skills:
 

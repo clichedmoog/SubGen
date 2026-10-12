@@ -6,8 +6,10 @@ final class AppleTranslationMappingTests: XCTestCase {
     private let source = try! SrtDocument("1\n00:00:01,000 --> 00:00:02,500\nGood morning.\n\n2\n00:00:03,000 --> 00:00:04,200\nThe train\nleaves at noon.\n")
 
     func testProviderDefaultsAndLabels() {
-        XCTAssertEqual(TranslationProvider.allCases, [.chatGPT, .apple])
+        XCTAssertEqual(TranslationProvider.choices(store: true), [.chatGPT, .apple])
+        XCTAssertEqual(TranslationProvider.choices(store: false), [.agentCLI, .apple])
         XCTAssertEqual(TranslationProvider.apple.label, "Apple 번역 (기기 내)")
+        XCTAssertEqual(TranslationProvider.agentCLI.label, "에이전트 CLI")
         XCTAssertEqual(TranslationProvider(rawValue: "apple"), .apple)
     }
 
@@ -107,20 +109,24 @@ final class StoreTranslatorSelectionTests: XCTestCase {
     func testChatGPTStillRequiresAnAccountButAppleDoesNot() throws {
         let engine = TranscriptionEngine()
         XCTAssertEqual(TranscriptionEngine.Options(model: "", embedSubtitle: false, keepSrtFile: true, subtitleDelay: 0, sensitivity: .normal,
-            language: "", translationTargets: [], authMethod: .codex, translationModel: "").translationProvider, .chatGPT)
-        XCTAssertThrowsError(try engine.storeTranslator(options: options(.chatGPT), sourceLanguage: "en", token: CancellationToken())) {
+            language: "", translationTargets: [], authMethod: .codex, translationModel: "").translationProvider, AppDistribution.isStore ? .chatGPT : .agentCLI)
+        XCTAssertThrowsError(try engine.makeTranslator(options: options(.chatGPT), sourceLanguage: "en", token: CancellationToken())) {
             XCTAssertTrue($0.localizedDescription.contains("ChatGPT"))
         }
         if #available(macOS 26.0, *) {
-            XCTAssertNoThrow(try engine.storeTranslator(options: options(.apple), sourceLanguage: "en", token: CancellationToken()))
+            XCTAssertNoThrow(try engine.makeTranslator(options: options(.apple), sourceLanguage: "en", token: CancellationToken()))
         } else {
-            XCTAssertThrowsError(try engine.storeTranslator(options: options(.apple), sourceLanguage: "en", token: CancellationToken()))
+            XCTAssertThrowsError(try engine.makeTranslator(options: options(.apple), sourceLanguage: "en", token: CancellationToken()))
         }
+    }
+
+    func testDirectDistributionKeepsTheAgentCLIPath() {
+        XCTAssertNoThrow(try TranscriptionEngine().makeTranslator(options: options(.agentCLI), sourceLanguage: "en", token: CancellationToken()))
     }
 
     func testUnknownSourceLanguageFailsThatLanguageWithoutRetrying() throws {
         guard #available(macOS 26.0, *) else { throw XCTSkip("Apple Translation requires macOS 26") }
-        let translator = try TranscriptionEngine().storeTranslator(options: options(.apple), sourceLanguage: "und", token: CancellationToken())
+        let translator = try TranscriptionEngine().makeTranslator(options: options(.apple), sourceLanguage: "und", token: CancellationToken())
         var attempts = 0
         let result = translator.translateSrt(srtContent: "1\n00:00:01,000 --> 00:00:02,000\nHello.\n", sourceLang: "und", targetLangs: [.ko],
             onProgress: { if $0.contains("재시도") { attempts += 1 } })

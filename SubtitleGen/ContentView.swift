@@ -33,8 +33,10 @@ struct ContentView: View {
     #if MAC_APP_STORE
     @StateObject private var chatGPT = ChatGPTAccountController()
     @AppStorage("store.translationProvider") private var translationProvider: TranslationProvider = .chatGPT
-    @StateObject private var appleTranslation = AppleTranslationCoordinator()
+    #else
+    @AppStorage("translationProvider") private var translationProvider: TranslationProvider = .agentCLI
     #endif
+    @StateObject private var appleTranslation = AppleTranslationCoordinator()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -75,10 +77,8 @@ struct ContentView: View {
             chatGPT.reload()
             #endif
         }
-        #if MAC_APP_STORE
         .modifier(AppleTranslationPreparationModifier(coordinator: appleTranslation))
         .onChange(of: translationProvider) { _, _ in requeueForChangedOptions() }
-        #endif
         .sheet(isPresented: $showSetup) { setupSection }
         .onChange(of: files.map(\.url)) { _, _ in
             FileItem.save(files)
@@ -619,67 +619,77 @@ struct ContentView: View {
                     #if MAC_APP_STORE
                     chatGPTOptions
                     #else
-                    optionRow("Agents") {
-                        Picker("", selection: $authMethod) {
-                            ForEach(AuthMethod.allCases) { method in
-                                Text(method.label).tag(method)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
-                        .onChange(of: authMethod) { _, newValue in
-                            let models = TranslationModel.models(for: newValue)
-                            translationModel = models.first!
-                        }
+                    Picker("번역 방식", selection: $translationProvider) {
+                        ForEach(TranslationProvider.choices(store: false)) { Text($0.label).tag($0) }
                     }
+                    .pickerStyle(.segmented)
 
-                    optionRow("모델") {
-                        Picker("", selection: $translationModel) {
-                            ForEach(TranslationModel.models(for: authMethod)) { model in
-                                Text(model.label).tag(model)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                        .labelsHidden()
-                        .help(authMethod == .claudeCode
-                              ? "CLI가 최신 모델 별칭을 해석합니다. 최신 버전을 사용하려면 Claude Code도 업데이트하세요."
-                              : "자동은 사용자 설정의 고정 모델을 건너뛰고 CLI 권장 모델을 사용합니다. 최신 Codex CLI를 사용하세요.")
-                    }
-
-                    optionRow("") {
-                        HStack(spacing: 8) {
-                            let cliName = authMethod == .claudeCode ? "claude" : "codex"
-                            let installed = TranslationEngine.findCLI(for: authMethod) != nil
-
-                            if installed {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundStyle(.green)
-                                Text("\(cliName) 설치됨")
-                                    .font(.caption)
-                                    .foregroundStyle(.green)
-                            } else {
-                                Image(systemName: "xmark.circle.fill")
-                                    .foregroundStyle(.red)
-                                Text("\(cliName) 미설치")
-                                    .font(.caption)
-                                    .foregroundStyle(.red)
-
-                                Button {
-                                    if authMethod == .claudeCode {
-                                        NSWorkspace.shared.open(URL(string: "https://claude.ai/download")!)
-                                    } else {
-                                        NSWorkspace.shared.open(URL(string: "https://openai.com/codex/download")!)
-                                    }
-                                } label: {
-                                    Text("설치")
+                    if translationProvider == .apple {
+                        AppleTranslationOptionsView(coordinator: appleTranslation, source: language.rawValue, targets: selectedTranslations)
+                    } else {
+                        optionRow("Agents") {
+                            Picker("", selection: $authMethod) {
+                                ForEach(AuthMethod.allCases) { method in
+                                    Text(method.label).tag(method)
                                 }
-                                .buttonStyle(.bordered)
-                                .controlSize(.small)
+                            }
+                            .pickerStyle(.menu)
+                            .labelsHidden()
+                            .onChange(of: authMethod) { _, newValue in
+                                let models = TranslationModel.models(for: newValue)
+                                translationModel = models.first!
                             }
                         }
+
+                        optionRow("모델") {
+                            Picker("", selection: $translationModel) {
+                                ForEach(TranslationModel.models(for: authMethod)) { model in
+                                    Text(model.label).tag(model)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .labelsHidden()
+                            .help(authMethod == .claudeCode
+                                  ? "CLI가 최신 모델 별칭을 해석합니다. 최신 버전을 사용하려면 Claude Code도 업데이트하세요."
+                                  : "자동은 사용자 설정의 고정 모델을 건너뛰고 CLI 권장 모델을 사용합니다. 최신 Codex CLI를 사용하세요.")
+                        }
+
+                        optionRow("") {
+                            HStack(spacing: 8) {
+                                let cliName = authMethod == .claudeCode ? "claude" : "codex"
+                                let installed = TranslationEngine.findCLI(for: authMethod) != nil
+
+                                if installed {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .foregroundStyle(.green)
+                                    Text("\(cliName) 설치됨")
+                                        .font(.caption)
+                                        .foregroundStyle(.green)
+                                } else {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundStyle(.red)
+                                    Text("\(cliName) 미설치")
+                                        .font(.caption)
+                                        .foregroundStyle(.red)
+
+                                    Button {
+                                        if authMethod == .claudeCode {
+                                            NSWorkspace.shared.open(URL(string: "https://claude.ai/download")!)
+                                        } else {
+                                            NSWorkspace.shared.open(URL(string: "https://openai.com/codex/download")!)
+                                        }
+                                    } label: {
+                                        Text("설치")
+                                    }
+                                    .buttonStyle(.bordered)
+                                    .controlSize(.small)
+                                }
+                            }
+                        }
+
                     }
 
-                    if TranslationEngine.findCLI(for: authMethod) != nil {
+                    if translationProvider == .apple || TranslationEngine.findCLI(for: authMethod) != nil {
                         Divider()
 
                         optionRow("언어") {
@@ -886,12 +896,13 @@ struct ContentView: View {
     }
 
     private func startProcessing(applePrepared: Bool = false) {
-        #if MAC_APP_STORE
         if !selectedTranslations.isEmpty {
             switch translationProvider {
+            #if MAC_APP_STORE
             case .chatGPT where !chatGPT.canTranslate:
                 engine.currentStatus = "번역하려면 ChatGPT 로그인·플랜 사용 권한·모델 선택을 확인해주세요."
                 return
+            #endif
             case .apple where !applePrepared:
                 guard !appleTranslation.isPreparing else { return }
                 engine.currentStatus = "Apple 번역 언어 팩 확인 중..."
@@ -905,7 +916,6 @@ struct ContentView: View {
             default: break
             }
         }
-        #endif
         if AppDistribution.isStore, !SandboxFileAccess.shared.authorizeOutputDirectories(for: files.filter { $0.status == .pending }.map(\.url)) {
             engine.currentStatus = "자막을 저장할 입력 폴더의 접근 허용이 필요합니다."
             return
@@ -924,13 +934,13 @@ struct ContentView: View {
         #if MAC_APP_STORE
         options.chatGPTAccountID = chatGPT.activeID
         options.chatGPTModel = chatGPT.resolvedModel
+        #endif
         options.translationProvider = translationProvider
         engine.appleLanguagePack = translationProvider == .apple ? { [appleTranslation] source, target, token in
             AppleTranslationCoordinator.waitForLanguagePack(cancellation: token) {
                 await appleTranslation.ensureInstalled(source: source, target: target)
             }
         } : nil
-        #endif
         engine.process(getFiles: { self.files }, options: options, onFileUpdate: { id, status, elapsed in
             if let index = files.firstIndex(where: { $0.id == id }) {
                 files[index].status = status

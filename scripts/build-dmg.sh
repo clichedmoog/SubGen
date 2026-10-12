@@ -24,17 +24,30 @@ STEM="${APP_NAME}-${VERSION}-${ARCH}${SUFFIX}"
 DMG="${DIST}/${STEM}.dmg"
 mkdir -p "$DIST" "${ROOT}/build"
 
+# An App Store Connect API key (ASC_KEY_ID + ASC_ISSUER_ID, key file in ~/.appstoreconnect/private_keys)
+# can notarize without a stored keychain profile or an Xcode account login.
+ASC_KEY_PATH="${ASC_KEY_PATH:-${HOME}/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID:-}.p8}"
+NOTARY_AUTH=(--keychain-profile "$KEYCHAIN_PROFILE")
+use_api_key() {
+    [ -n "${ASC_KEY_ID:-}" ] && [ -n "${ASC_ISSUER_ID:-}" ] && [ -f "$ASC_KEY_PATH" ] || return 1
+    NOTARY_AUTH=(--key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER_ID")
+}
+
 if [ "$NOTARIZE" = 1 ]; then
     case "$NOTARIZATION_BACKEND" in
         auto)
             if xcrun notarytool history --keychain-profile "$KEYCHAIN_PROFILE" --output-format json >"${WORK}/history.json" 2>"${WORK}/profile.log"; then
                 NOTARIZATION_BACKEND=notarytool
+            elif use_api_key && xcrun notarytool history "${NOTARY_AUTH[@]}" --output-format json >"${WORK}/history.json" 2>"${WORK}/profile.log"; then
+                NOTARIZATION_BACKEND=notarytool
+                echo 'Using the App Store Connect API key for notarization.'
             else
                 NOTARIZATION_BACKEND=xcode
                 echo 'Using the developer account registered in Xcode for notarization.'
             fi ;;
         notarytool)
-            xcrun notarytool history --keychain-profile "$KEYCHAIN_PROFILE" --output-format json >"${WORK}/history.json" ;;
+            use_api_key || true
+            xcrun notarytool history "${NOTARY_AUTH[@]}" --output-format json >"${WORK}/history.json" ;;
         xcode) ;;
         *) echo 'NOTARIZATION_BACKEND must be auto, notarytool or xcode' >&2; exit 1 ;;
     esac
@@ -92,13 +105,13 @@ python3 "${ROOT}/scripts/verify-release.py" "$APP_BUNDLE" "$ARCH"
 
 notarize() {
     local artifact="$1" label="$2" result="${DIST}/${STEM}-$2-notary.json"
-    xcrun notarytool submit "$artifact" --keychain-profile "$KEYCHAIN_PROFILE" \
+    xcrun notarytool submit "$artifact" "${NOTARY_AUTH[@]}" \
         --wait --timeout 30m --output-format json >"$result"
     local status request_id
     status=$(plutil -extract status raw -o - "$result")
     request_id=$(plutil -extract id raw -o - "$result")
     if [ "$status" != Accepted ]; then
-        xcrun notarytool log "$request_id" --keychain-profile "$KEYCHAIN_PROFILE" \
+        xcrun notarytool log "$request_id" "${NOTARY_AUTH[@]}" \
             "${DIST}/${STEM}-${label}-notary-log.json" || true
         echo "Notarization ${status}; see ${result}" >&2; exit 1
     fi

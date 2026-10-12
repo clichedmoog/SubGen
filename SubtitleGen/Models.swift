@@ -382,17 +382,23 @@ enum TranslationLanguage: String, CaseIterable, Identifiable {
     }
 }
 
-/// Store translation backends. ChatGPT stays first; Apple Translation needs no account.
+/// Translation backends. The App Store build offers ChatGPT, the direct build the Claude Code/Codex CLIs;
+/// both offer on-device Apple Translation, which needs no account.
 enum TranslationProvider: String, CaseIterable, Identifiable {
-    case chatGPT, apple
+    case chatGPT, agentCLI, apple
 
     var id: String { rawValue }
 
     var label: String {
         switch self {
         case .chatGPT: return "ChatGPT"
+        case .agentCLI: return "에이전트 CLI"
         case .apple: return "Apple 번역 (기기 내)"
         }
+    }
+
+    static func choices(store: Bool) -> [TranslationProvider] {
+        store ? [.chatGPT, .apple] : [.agentCLI, .apple]
     }
 }
 

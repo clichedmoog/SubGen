@@ -146,10 +146,12 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
     }
     @MainActor
     private func run(_ files: [FileItem], options: TranscriptionEngine.Options,
-                     prepareModel: ((URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void)? = nil) async throws -> ([FileItem], Double, [Double], [String]) {
+                     prepareModel: ((URL, CancellationToken, @escaping WhisperModelInstaller.Progress) throws -> Void)? = nil,
+                     configure: (TranscriptionEngine) -> Void = { _ in }) async throws -> ([FileItem], Double, [Double], [String]) {
         var queue = files, observations: [Double] = [], details: [String] = []
         let resolver: (String) -> String? = { [self] name in name == "whisper-cli" ? whisper : (name == "ffmpeg" ? ffmpeg : ffprobe) }
         let engine = prepareModel.map { TranscriptionEngine(binaryResolver: resolver, prepareModel: $0) } ?? TranscriptionEngine(binaryResolver: resolver)
+        configure(engine)
         let done = expectation(description: "pipeline completed")
         engine.process(getFiles: { queue }, options: options, onFileUpdate: { id, status, elapsed in
             guard let index = queue.firstIndex(where: { $0.id == id }) else { return }
@@ -271,6 +273,22 @@ final class ProcessingPipelineIntegrationTests: XCTestCase {
         XCTAssertTrue(message.contains("음성 구간 감지"), message)
         XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appendingPathComponent("whisper-arguments.txt").path))
         XCTAssertFalse(FileManager.default.fileExists(atPath: directory.appendingPathComponent("movie.en.srt").path))
+    }
+    @MainActor
+    func testAppleTranslationInTheDirectBuildAsksForLanguagePacks() async throws {
+        try srt.write(to: directory.appendingPathComponent("movie.en.srt"), atomically: true, encoding: .utf8)
+        var opts = options(targets: [.ko]); opts.translationProvider = .apple
+        var requested: [String] = []
+        let result = try await run([FileItem(url: video)], options: opts, configure: { engine in
+            engine.appleLanguagePack = { source, target, _ in
+                requested.append("\(source)>\(target.rawValue)")
+                return .failed("한국어 언어 팩 다운로드가 허용되지 않았습니다.")
+            }
+        })
+        XCTAssertEqual(requested, ["en>ko"])
+        guard case .failed(let message) = result.0[0].status else { return XCTFail("A refused pack must fail that translation") }
+        XCTAssertTrue(message.contains("언어 팩"), message)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: directory.appendingPathComponent("movie.en.srt").path))
     }
     @MainActor
     func testMalformedWhisperOutputPreservesDiagnosticAndOriginalVideo() async throws {

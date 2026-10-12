@@ -77,9 +77,11 @@ class TranscriptionEngine: ObservableObject {
         return (ready, failures)
     }
 
-    /// External CLIs are disabled in the sandboxed app; ChatGPT or Apple Translation translate instead.
-    func storeTranslator(options: Options, sourceLanguage: String, token: CancellationToken) throws -> TranslationEngine {
+    /// External CLIs are disabled in the sandboxed app; there ChatGPT or Apple Translation translate instead.
+    func makeTranslator(options: Options, sourceLanguage: String, token: CancellationToken) throws -> TranslationEngine {
         switch options.translationProvider {
+        case .agentCLI:
+            return TranslationEngine(authMethod: options.authMethod, translationModel: options.translationModel, cancellation: token)
         case .apple:
             guard #available(macOS 26.0, *) else { throw PipelineFailure("Apple 번역은 macOS 26 이상에서 사용할 수 있습니다.") }
             return TranslationEngine(authMethod: options.authMethod, cancellation: token, request: { srt, language in
@@ -110,7 +112,7 @@ class TranscriptionEngine: ObservableObject {
         var translationModel: String
         var chatGPTAccountID: String? = nil
         var chatGPTModel: String? = nil
-        var translationProvider: TranslationProvider = .chatGPT
+        var translationProvider: TranslationProvider = AppDistribution.isStore ? .chatGPT : .agentCLI
     }
 
     private func updateDockProgress() {
@@ -626,18 +628,13 @@ class TranscriptionEngine: ObservableObject {
                     onLangComplete(lang.rawValue)
                 } else { pending.append(lang) }
             }
-            if AppDistribution.isStore, options.translationProvider == .apple, !pending.isEmpty {
+            if options.translationProvider == .apple, !pending.isEmpty {
                 let prepared = readyAppleTargets(pending, source: source.language, token: token, onStatus: onStatusUpdate)
                 pending = prepared.ready
                 failures += prepared.failures
             }
             if !pending.isEmpty {
-                let translator: TranslationEngine
-                if AppDistribution.isStore {
-                    translator = try storeTranslator(options: options, sourceLanguage: source.language, token: token)
-                } else {
-                    translator = TranslationEngine(authMethod: options.authMethod, translationModel: options.translationModel, cancellation: token)
-                }
+                let translator = try makeTranslator(options: options, sourceLanguage: source.language, token: token)
                 let result = translator.translateSrt(srtContent: content, sourceLang: source.language, targetLangs: pending, onProgress: onStatusUpdate, onCueProgress: onCueProgress)
                 for (language, error) in result.failures { failures.append("\(language.label) 번역 실패: \(error)") }
                 for lang in pending {

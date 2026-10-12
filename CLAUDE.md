@@ -14,7 +14,7 @@ Tests require Xcode. Use the bin path reported by SwiftPM; build output layouts 
 
 ## Architecture
 
-macOS 14+ SwiftUI app, SwiftPM executable `SubGen` and module `SubtitleGen`. App bundles use `SubGen.app`; the App Store name remains Subtitle Maker & Translator. CLI-based whisper.cpp transcription with GGML models and Metal. Translation uses authenticated Claude Code or Codex CLI.
+macOS 14+ SwiftUI app, SwiftPM executable `SubGen` and module `SubtitleGen`. App bundles use `SubGen.app`; the App Store name remains Subtitle Maker & Translator. CLI-based whisper.cpp transcription with GGML models and Metal. Translation: direct builds use authenticated Claude Code or Codex CLI, the App Store build uses ChatGPT sign-in, and both offer on-device Apple Translation (macOS 26+, `TranslationProvider`).
 
 - `ToolResolver`: native Mach-O/Universal validation, bounded executable probes, shared by UI checks and transcription. App Support, bundle, then native Homebrew/local paths. Detect hardware ARM64 even under Rosetta.
 - `FFmpegDistribution`: pinned architecture-specific static binaries and SHA256. Keep URLs/hashes aligned with `scripts/bundle-ffmpeg.sh`.

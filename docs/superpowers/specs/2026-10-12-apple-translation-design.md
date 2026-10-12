@@ -11,7 +11,7 @@ ChatGPT를 첫 번째 번역 방식으로 유지하고, Apple Translation 프레
 
 ## 결정 사항 (사용자 확인)
 
-- 스토어판(`MAC_APP_STORE`)에만 추가한다. 직접 배포 DMG의 Claude Code/Codex CLI 번역은 그대로 둔다.
+- 스토어판(`MAC_APP_STORE`)에 먼저 추가했고, 2026-10-12 사용자 요청으로 직접 배포 DMG에도 `[에이전트 CLI | Apple 번역]` 선택으로 넣었다. Claude Code/Codex CLI 번역은 그대로 둔다.
 - macOS 26 이상에서만 제공한다. 엔진이 `TranslationSession(installedSource:target:)`로 세션을
   직접 만든다. 그보다 낮은 macOS에서는 선택지를 비활성화하고 이유를 표시한다.
 - 언어 팩: 원본 언어가 지정돼 있으면 처리 시작 전에 시스템 다운로드 확인을 띄운다.
@@ -91,6 +91,6 @@ ChatGPT를 첫 번째 번역 방식으로 유지하고, Apple Translation 프레
 
 ## 범위 밖
 
-- 직접 배포 DMG의 Apple 번역, macOS 15의 뷰 기반 세션.
+- macOS 15의 뷰 기반 세션.
 - Gemma 등 별도 LLM 런타임 번들(1.1 이후 검토).
 - 번역 품질 전략 선택(`highFidelity`/`lowLatency`, macOS 26.4+)은 기본값을 쓴다.

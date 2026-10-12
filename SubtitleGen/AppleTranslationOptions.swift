@@ -1,4 +1,3 @@
-#if MAC_APP_STORE
 import AppKit
 import SwiftUI
 import Translation
@@ -85,4 +84,3 @@ struct AppleTranslationOptionsView: View {
         }
     }
 }
-#endif
