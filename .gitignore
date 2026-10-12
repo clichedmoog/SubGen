@@ -15,3 +15,5 @@ __pycache__/
 xcuserdata/
 Store/screenshots/raw/
 Store/screenshots/generated/
+# Orca worker run records (local paths, run IDs)
+design/**/worker-launch.json

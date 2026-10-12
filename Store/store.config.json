@@ -114,11 +114,12 @@
     "contact": {
       "firstName": "Myeongseok",
       "lastName": "Seo",
-      "email": "<private-apple-id>",
+      "email": null,
       "phone": null,
-      "phoneInConsoleVerified": true
+      "phoneInConsoleVerified": true,
+      "emailInConsoleVerified": true
     },
-    "contactSource": "User requested Moa reference; same personal-team contact identity verified in Moa App Store Connect on 2026-10-10. Phone stays in ignored build/review-contact.private.json.",
+    "contactSource": "User requested Moa reference; same personal-team contact identity verified in Moa App Store Connect on 2026-10-10. Phone stays in ignored build/review-contact.private.json. Email also stays in the ignored private file (console value verified 2026-10-12).",
     "appAccountRequired": false,
     "translationProviderLoginRequired": false,
     "demoAccountRequired": false,
@@ -492,11 +493,12 @@
     "group": "SubtitleGen Internal",
     "testers": [
       {
-        "email": "<private-apple-id>",
+        "email": null,
         "name": "서명석",
         "role": "Account Holder / Admin",
         "source": "2026-10-10 official API: verified member of existing internal group; INSTALLED state does not establish new build 4 installation",
-        "status": "installed"
+        "status": "installed",
+        "emailSource": "Account Holder Apple ID; kept out of the public repository"
       }
     ],
     "status": "testing",

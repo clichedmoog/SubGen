@@ -1,0 +1,322 @@
+{
+ "geometry": [
+  "AppIcon.svg: 5 shapes (tile, rear, front, 2 caption) identical to IconCandidate/source/AppIcon.svg in all 3 variants",
+  "AppIcon-32.svg: 5 shapes (tile, rear, front, 2 caption) identical to IconCandidate/source/AppIcon-32.svg in all 3 variants",
+  "AppIcon-16.svg: 4 shapes (tile, rear, front, 1 caption) identical to IconCandidate/source/AppIcon-16.svg in all 3 variants",
+  "icon-composer-layers: rear bubble, glass bubble and caption shapes identical to IconCandidate/source/icon-composer-layers in all variants"
+ ],
+ "readability": {
+  "mirroring": [
+   [
+    32,
+    "rear / field",
+    "#2B3AAA",
+    "#6CA7FA",
+    3.73,
+    49.5
+   ],
+   [
+    32,
+    "glass / field",
+    "#BAE8FF",
+    "#6CA7FA",
+    1.88,
+    40.6
+   ],
+   [
+    32,
+    "glass over rear / rear",
+    "#8597EF",
+    "#2B3AAA",
+    3.35,
+    41.2
+   ],
+   [
+    32,
+    "transcript / glass",
+    "#203393",
+    "#BAE8FF",
+    8.22,
+    83.7
+   ],
+   [
+    32,
+    "translation / glass over rear",
+    "#E5F7FF",
+    "#8597EF",
+    2.49,
+    55.3
+   ],
+   [
+    16,
+    "rear / field",
+    "#2837A6",
+    "#66A1FB",
+    3.68,
+    46.6
+   ],
+   [
+    16,
+    "glass / field",
+    "#B1E3FF",
+    "#66A1FB",
+    1.9,
+    42.1
+   ],
+   [
+    16,
+    "glass over rear / rear",
+    "#8395EB",
+    "#2837A6",
+    3.41,
+    42.0
+   ],
+   [
+    16,
+    "transcript / glass over rear",
+    "#1E3093",
+    "#8395EB",
+    3.93,
+    42.5
+   ]
+  ],
+  "keynote": [
+   [
+    32,
+    "rear / field",
+    "#44A7F1",
+    "#2267B8",
+    2.17,
+    26.4
+   ],
+   [
+    32,
+    "glass / field",
+    "#91BFF3",
+    "#2267B8",
+    2.96,
+    38.7
+   ],
+   [
+    32,
+    "glass over rear / rear",
+    "#9FE5FF",
+    "#44A7F1",
+    1.88,
+    35.1
+   ],
+   [
+    32,
+    "transcript / glass",
+    "#15256E",
+    "#91BFF3",
+    7.2,
+    64.1
+   ],
+   [
+    32,
+    "translation / glass over rear",
+    "#1963D3",
+    "#9FE5FF",
+    4.02,
+    71.8
+   ],
+   [
+    16,
+    "rear / field",
+    "#3FA2EF",
+    "#1E5EB1",
+    2.32,
+    28.3
+   ],
+   [
+    16,
+    "glass / field",
+    "#89B6ED",
+    "#1E5EB1",
+    3.03,
+    38.9
+   ],
+   [
+    16,
+    "glass over rear / rear",
+    "#9CE1FF",
+    "#3FA2EF",
+    1.92,
+    35.2
+   ],
+   [
+    16,
+    "transcript / glass over rear",
+    "#16276F",
+    "#9CE1FF",
+    9.41,
+    79.1
+   ]
+  ],
+  "numbers": [
+   [
+    32,
+    "rear / field",
+    "#3BBC32",
+    "#29833B",
+    1.91,
+    36.2
+   ],
+   [
+    32,
+    "glass / field",
+    "#99D4A0",
+    "#29833B",
+    2.79,
+    36.0
+   ],
+   [
+    32,
+    "glass over rear / rear",
+    "#9DF696",
+    "#3BBC32",
+    1.91,
+    32.5
+   ],
+   [
+    32,
+    "transcript / glass",
+    "#103B25",
+    "#99D4A0",
+    7.33,
+    59.8
+   ],
+   [
+    32,
+    "translation / glass over rear",
+    "#16902C",
+    "#9DF696",
+    3.17,
+    38.3
+   ],
+   [
+    16,
+    "rear / field",
+    "#34B730",
+    "#237A36",
+    2.04,
+    37.9
+   ],
+   [
+    16,
+    "glass / field",
+    "#8FCB97",
+    "#237A36",
+    2.85,
+    34.9
+   ],
+   [
+    16,
+    "glass over rear / rear",
+    "#98F395",
+    "#34B730",
+    1.96,
+    32.6
+   ],
+   [
+    16,
+    "transcript / glass over rear",
+    "#113C25",
+    "#98F395",
+    9.19,
+    75.7
+   ]
+  ],
+  "original": [
+   [
+    32,
+    "rear / field",
+    "#FFB046",
+    "#434046",
+    5.61,
+    85.0
+   ],
+   [
+    32,
+    "glass / field",
+    "#E6E6E8",
+    "#434046",
+    8.18,
+    63.8
+   ],
+   [
+    32,
+    "glass over rear / rear",
+    "#EBE3DB",
+    "#FFB046",
+    1.43,
+    62.6
+   ],
+   [
+    32,
+    "transcript / glass",
+    "#383841",
+    "#E6E6E8",
+    9.31,
+    67.7
+   ],
+   [
+    32,
+    "translation / glass over rear",
+    "#FF9134",
+    "#EBE3DB",
+    1.77,
+    70.8
+   ],
+   [
+    16,
+    "rear / field",
+    "#FFAA40",
+    "#3E3B40",
+    5.82,
+    86.6
+   ],
+   [
+    16,
+    "glass / field",
+    "#DDDDDF",
+    "#3E3B40",
+    8.13,
+    62.9
+   ],
+   [
+    16,
+    "glass over rear / rear",
+    "#ECE4DC",
+    "#FFAA40",
+    1.51,
+    64.9
+   ],
+   [
+    16,
+    "transcript / glass over rear",
+    "#3A3941",
+    "#ECE4DC",
+    9.07,
+    67.4
+   ]
+  ]
+ },
+ "ranking": [
+  "mirroring",
+  "numbers",
+  "keynote"
+ ],
+ "alpha": [
+  "icon_16x16.png (16 px): opaque and clear pixels identical; 12 of 52 edge pixels differ, by at most 2/255",
+  "icon_16x16@2x.png (32 px): opaque and clear pixels identical; 51 of 100 edge pixels differ, by at most 3/255",
+  "icon_32x32@2x.png (64 px): opaque and clear pixels identical; 121 of 422 edge pixels differ, by at most 4/255",
+  "icon_128x128.png (128 px): opaque and clear pixels identical; 308 of 1581 edge pixels differ, by at most 6/255",
+  "icon_128x128@2x.png (256 px): opaque and clear pixels identical; 415 of 6594 edge pixels differ, by at most 7/255",
+  "icon_256x256.png (256 px): opaque and clear pixels identical; 415 of 6594 edge pixels differ, by at most 7/255",
+  "icon_256x256@2x.png (512 px): opaque and clear pixels identical; 833 of 23891 edge pixels differ, by at most 7/255",
+  "icon_512x512.png (512 px): opaque and clear pixels identical; 833 of 23891 edge pixels differ, by at most 7/255",
+  "icon_512x512@2x.png (1024 px): opaque and clear pixels identical; 1727 of 96559 edge pixels differ, by at most 7/255"
+ ]
+}

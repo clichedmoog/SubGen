@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SubtitleGen app icon, simplified master for 16px and 32px renditions.
+  Same concept as AppIcon.svg reduced to five bars and two lines, with every
+  edge on a 64-unit grid so it lands on whole pixels at 16px (and 32px).
+  Rasterized by scripts/generate-app-icon.sh.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tile" x1="180" y1="100" x2="844" y2="924" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2C63C6"/>
+      <stop offset="0.55" stop-color="#1B4E9E"/>
+      <stop offset="1" stop-color="#0D7782"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Tile -->
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#tile)"/>
+
+  <!-- Waveform: five bars on whole pixels at 16px. The center bar is 2px wide
+       so the group stays centered on the 16px grid; the others are 1px wide. -->
+  <g fill="#FFFFFF">
+    <rect x="192" y="320" width="64" height="64" rx="32"/>
+    <rect x="320" y="256" width="64" height="192" rx="32"/>
+    <rect x="448" y="192" width="128" height="320" rx="64"/>
+    <rect x="640" y="256" width="64" height="192" rx="32"/>
+    <rect x="768" y="320" width="64" height="64" rx="32"/>
+  </g>
+
+  <!-- Transcript line (white, 2px at 16px) and translation line (amber, 1px) -->
+  <rect x="192" y="576" width="640" height="128" rx="64" fill="#FFFFFF"/>
+  <rect x="320" y="768" width="384" height="64" rx="32" fill="#FFA94D"/>
+</svg>

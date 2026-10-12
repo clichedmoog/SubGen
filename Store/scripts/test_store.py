@@ -87,6 +87,13 @@ class StoreWorkflowTests(unittest.TestCase):
             self.assertEqual(fields['en-US']['description'], store.hashlib.sha256(
                 self.config['listings']['en-US']['description'].encode()).hexdigest())
 
+    def test_review_email_can_stay_private_when_verified_in_console(self):
+        contact = self.config['review']['contact']
+        contact.update(email=None, emailInConsoleVerified=True)
+        self.assertNotIn('Review contact missing: email', store.review_errors(self.config))
+        contact['emailInConsoleVerified'] = False
+        self.assertIn('Review contact missing: email', store.review_errors(self.config))
+
     def test_review_phone_can_stay_private_when_verified_in_console(self):
         contact = self.config['review']['contact']
         contact.update(phone=None, phoneInConsoleVerified=True)

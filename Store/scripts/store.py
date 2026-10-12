@@ -81,7 +81,8 @@ def review_errors(c):
             if not isinstance(value, str) or not value.startswith('https://'):
                 errors.append(f'{locale}.{key}: verified public HTTPS URL missing')
     for key in ('firstName', 'lastName', 'email', 'phone'):
-        if key == 'phone' and c['review'].get('contact', {}).get('phoneInConsoleVerified') is True:
+        # Personal contact details may stay in the ignored private file once saved in the console.
+        if key in ('phone', 'email') and c['review'].get('contact', {}).get(key + 'InConsoleVerified') is True:
             continue
         if not c['review'].get('contact', {}).get(key):
             errors.append('Review contact missing: ' + key)
