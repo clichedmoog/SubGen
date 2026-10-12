@@ -451,7 +451,7 @@
       "releaseType": "AFTER_APPROVAL",
       "route": "App Store Connect API reviewSubmissions + reviewSubmissionItems, existing team API key",
       "reviewNotesPersisted": "Console appStoreReviewDetail notes PATCHed and read back as an exact match; demoAccountRequired false",
-      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-7 (commit ed2b3fc)",
+      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-7 (commit 409edad)",
       "privacyPolicy": "https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md (commit 84543c7, Apple Translation sentence verified)",
       "publicRelease": "not yet — AFTER_APPROVAL releases automatically once approved",
       "canceledAt": "2026-10-12T08:20+09:00"
@@ -484,7 +484,7 @@
       "releaseType": "AFTER_APPROVAL",
       "route": "App Store Connect API reviewSubmissions + reviewSubmissionItems, existing team API key",
       "reviewNotesPersisted": "Console appStoreReviewDetail notes PATCHed (source link build-8) and read back as an exact match; demoAccountRequired false",
-      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-8 (commit 2fb9469)",
+      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-8 (commit 4e2eda5)",
       "privacyPolicy": "https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md (commit 84543c7)",
       "publicRelease": "not yet — AFTER_APPROVAL releases automatically once approved"
     }
@@ -550,7 +550,7 @@
     "storePricingChanged": true,
     "sourcePublished": true,
     "sourceBranch": "release/subgen-1.0-build-3",
-    "sourceCommit": "dfc0bf8c1573347623bd1b40f10e468131f575ac",
+    "sourceCommit": "7375f46c1573347623bd1b40f10e468131f575ac",
     "sourcePR": "https://github.com/clichedmoog/SubGen/pull/1",
     "sourceMergedToMain": false,
     "storePrice": "0",
