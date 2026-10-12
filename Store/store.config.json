@@ -136,7 +136,7 @@
     "dmgSHA256": "2cf86982e7bdb618d2cdd953b780b4a115bd86d5bdc5964737e8491b5b5cdec2",
     "notarization": "App and DMG Accepted via notarytool with the App Store Connect API key; stapled; Gatekeeper Notarized Developer ID",
     "translation": "Agent CLI (Claude Code/Codex) or on-device Apple Translation (macOS 26+)",
-    "publicationStatus": "pending GitHub release",
+    "publicationStatus": "published",
     "previous": {
       "version": "2026.10.09",
       "appPath": "build/SubtitleGen.app",
@@ -154,6 +154,16 @@
         "status": "signed-local-verification-not-notarized",
         "publicationStatus": "not-published"
       }
+    },
+    "release": {
+      "url": "https://github.com/clichedmoog/SubGen/releases/tag/v2026.10.12",
+      "tag": "v2026.10.12",
+      "target": "c8d2a8f",
+      "assets": [
+        "SubGen-2026.10.12-arm64.dmg",
+        "SubGen-2026.10.12-arm64.dmg.sha256"
+      ],
+      "verified": "Downloaded asset SHA-256 matches; releases/latest resolves to this tag"
     }
   },
   "macAppStore": {
