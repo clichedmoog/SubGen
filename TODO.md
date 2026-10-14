@@ -120,4 +120,5 @@ Whisper 설치 파일: `dist/whisper-cli-1.8.4-macos14-arm64.zip`.
 - [x] 빌드 7 소스·개인정보 처리방침 공개, 심사 메모 갱신, 정식 심사 제출 (WAITING_FOR_REVIEW)
 - [x] 빌드 7 심사 취소 → 언어 팩 관리 바로가기 추가한 빌드 8로 재제출 (WAITING_FOR_REVIEW)
 - [ ] 심사 결과 확인 (승인 시 AFTER_APPROVAL로 자동 출시)
+- [x] 2.4.5 거절(network.server) 원인 파악·회신·재제출 (빌드 8, WAITING_FOR_REVIEW)
 
