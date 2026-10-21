@@ -146,7 +146,7 @@
       "pt-BR",
       "ru"
     ],
-    "publicationStatus": "pending GitHub release",
+    "publicationStatus": "published",
     "previous": {
       "version": "2026.10.12",
       "appPath": "build/SubGen.app",
@@ -167,6 +167,12 @@
         ],
         "verified": "Downloaded asset SHA-256 matches; releases/latest resolves to this tag"
       }
+    },
+    "release": {
+      "url": "https://github.com/clichedmoog/SubGen/releases/tag/v2026.10.21",
+      "tag": "v2026.10.21",
+      "target": "55b131e",
+      "verified": "Downloaded asset SHA-256 matches; releases/latest resolves to this tag"
     }
   },
   "macAppStore": {
