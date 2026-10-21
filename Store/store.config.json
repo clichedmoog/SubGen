@@ -128,42 +128,45 @@
     "demoAccessEvidence": "2026-10-12: Apple Translation (macOS 26+) translates without any account, so reviewers can test translation without ChatGPT; the user reported Apple Translation working on the TestFlight candidate. ChatGPT remains optional."
   },
   "direct": {
-    "version": "2026.10.12",
+    "version": "2026.10.21",
     "appPath": "build/SubGen.app",
-    "dmgPath": "dist/SubGen-2026.10.12-arm64.dmg",
-    "manifestPath": "dist/SubGen-2026.10.12-arm64.json",
+    "dmgPath": "dist/SubGen-2026.10.21-arm64.dmg",
+    "manifestPath": "dist/SubGen-2026.10.21-arm64.json",
     "status": "notarized-local-artifact",
-    "dmgSHA256": "2cf86982e7bdb618d2cdd953b780b4a115bd86d5bdc5964737e8491b5b5cdec2",
+    "dmgSHA256": "51ebf68d239a7a035d915406608335cfe94ab0324bda432d169d9c10ee57809f",
     "notarization": "App and DMG Accepted via notarytool with the App Store Connect API key; stapled; Gatekeeper Notarized Developer ID",
-    "translation": "Agent CLI (Claude Code/Codex) or on-device Apple Translation (macOS 26+)",
-    "publicationStatus": "published",
+    "localizations": [
+      "ko",
+      "en",
+      "ja",
+      "zh-Hans",
+      "fr",
+      "de",
+      "es",
+      "pt-BR",
+      "ru"
+    ],
+    "publicationStatus": "pending GitHub release",
     "previous": {
-      "version": "2026.10.09",
-      "appPath": "build/SubtitleGen.app",
-      "dmgPath": "dist/SubtitleGen-2026.10.09-arm64.dmg",
-      "manifestPath": "dist/SubtitleGen-2026.10.09-arm64.json",
+      "version": "2026.10.12",
+      "appPath": "build/SubGen.app",
+      "dmgPath": "dist/SubGen-2026.10.12-arm64.dmg",
+      "manifestPath": "dist/SubGen-2026.10.12-arm64.json",
       "status": "notarized-local-artifact",
-      "publicationStatus": "not-published",
-      "localRenamePackage": {
-        "version": "2026.10.10",
-        "appPath": "build/SubGen.app",
-        "dmgPath": "dist/SubGen-2026.10.10-arm64-signed.dmg",
-        "manifestPath": "dist/SubGen-2026.10.10-arm64-signed.json",
-        "executableSHA256": "d5f5d3863fc8bb70b583aa7a8db4adf4704e56c00648c9e2d480870e1a6f4ca3",
-        "dmgSHA256": "a99dc8a516b93c340efb05d3809375ffb54583fdc8049334962faf258a4f8151",
-        "status": "signed-local-verification-not-notarized",
-        "publicationStatus": "not-published"
+      "dmgSHA256": "2cf86982e7bdb618d2cdd953b780b4a115bd86d5bdc5964737e8491b5b5cdec2",
+      "notarization": "App and DMG Accepted via notarytool with the App Store Connect API key; stapled; Gatekeeper Notarized Developer ID",
+      "translation": "Agent CLI (Claude Code/Codex) or on-device Apple Translation (macOS 26+)",
+      "publicationStatus": "published",
+      "release": {
+        "url": "https://github.com/clichedmoog/SubGen/releases/tag/v2026.10.12",
+        "tag": "v2026.10.12",
+        "target": "c8d2a8f",
+        "assets": [
+          "SubGen-2026.10.12-arm64.dmg",
+          "SubGen-2026.10.12-arm64.dmg.sha256"
+        ],
+        "verified": "Downloaded asset SHA-256 matches; releases/latest resolves to this tag"
       }
-    },
-    "release": {
-      "url": "https://github.com/clichedmoog/SubGen/releases/tag/v2026.10.12",
-      "tag": "v2026.10.12",
-      "target": "c8d2a8f",
-      "assets": [
-        "SubGen-2026.10.12-arm64.dmg",
-        "SubGen-2026.10.12-arm64.dmg.sha256"
-      ],
-      "verified": "Downloaded asset SHA-256 matches; releases/latest resolves to this tag"
     }
   },
   "macAppStore": {

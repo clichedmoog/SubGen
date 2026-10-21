@@ -407,6 +407,64 @@
         }
       }
     },
+    "%@ 미설치": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 미설치"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ not installed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 未インストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 未安装"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non installé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nicht installiert"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no instalado"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não instalado"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ не установлен"
+          }
+        }
+      }
+    },
     "%@ 번역 · %lld/%lld개 · 묶음 %lld/%lld": {
       "localizations": {
         "en": {
@@ -635,6 +693,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "%@ 설치 또는 실행 검증에 실패했습니다. 다시 시도해주세요."
+          }
+        }
+      }
+    },
+    "%@ 설치됨": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 설치됨"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installed"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ インストール済み"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 已安装"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installé"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ installiert"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalado"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ instalado"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ установлен"
           }
         }
       }
@@ -1157,6 +1273,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "%lld개 언어로 자막을 번역합니다."
+          }
+        }
+      }
+    },
+    "%lld개 언어에 병렬 번역": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld개 언어에 병렬 번역"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Translating into %lld languages in parallel"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld 言語に並行して翻訳"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "并行翻译为 %lld 种语言"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traduction en parallèle vers %lld langue(s)"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parallele Übersetzung in %lld Sprachen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Traducción en paralelo a %lld idioma(s)"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tradução em paralelo para %lld idioma(s)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Параллельный перевод на языков: %lld"
           }
         }
       }
@@ -2839,6 +3013,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "Base (빠름)"
+          }
+        }
+      }
+    },
+    "CLI가 최신 모델 별칭을 해석합니다. 최신 버전을 사용하려면 Claude Code도 업데이트하세요.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLI가 최신 모델 별칭을 해석합니다. 최신 버전을 사용하려면 Claude Code도 업데이트하세요."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The CLI resolves the latest model alias. Update Claude Code to use the newest version."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLI が最新モデルのエイリアスを解決します。最新版を使うには Claude Code もアップデートしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLI 会解析最新的模型别名。要使用最新版本，请同时更新 Claude Code。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La CLI résout l’alias du dernier modèle. Mettez aussi à jour Claude Code pour utiliser la version la plus récente."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die CLI löst den Alias des neuesten Modells auf. Aktualisieren Sie auch Claude Code, um die neueste Version zu verwenden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La CLI resuelve el alias del modelo más reciente. Actualice también Claude Code para usar la última versión."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A CLI resolve o alias do modelo mais recente. Atualize também o Claude Code para usar a versão mais nova."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CLI определяет псевдоним новейшей модели. Чтобы использовать последнюю версию, обновите и Claude Code."
           }
         }
       }
@@ -6787,6 +7019,64 @@
         }
       }
     },
+    "다운로드한 파일의 무결성 검증에 실패했습니다.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "다운로드한 파일의 무결성 검증에 실패했습니다."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The downloaded file failed the integrity check."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードしたファイルの整合性チェックに失敗しました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下载的文件未通过完整性校验。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier téléchargé n’a pas passé la vérification d’intégrité."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die heruntergeladene Datei hat die Integritätsprüfung nicht bestanden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El archivo descargado no superó la comprobación de integridad."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O arquivo baixado não passou na verificação de integridade."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Загруженный файл не прошёл проверку целостности."
+          }
+        }
+      }
+    },
     "단계 ": {
       "localizations": {
         "en": {
@@ -7015,6 +7305,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "도구는 앱에 포함되어 있습니다. 앱을 다시 설치해주세요."
+          }
+        }
+      }
+    },
+    "도구를 다운로드하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해주세요.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "도구를 다운로드하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해주세요."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't download the tools. Check your internet connection and try again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ツールをダウンロードできませんでした。インターネット接続を確認して、もう一度お試しください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法下载工具。请检查网络连接后重试。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de télécharger les outils. Vérifiez votre connexion Internet et réessayez."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Werkzeuge konnten nicht geladen werden. Prüfen Sie die Internetverbindung und versuchen Sie es erneut."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron descargar las herramientas. Compruebe la conexión a Internet e inténtelo de nuevo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível baixar as ferramentas. Verifique a conexão com a internet e tente novamente."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось загрузить инструменты. Проверьте подключение к интернету и повторите попытку."
           }
         }
       }
@@ -9745,6 +10093,64 @@
         }
       }
     },
+    "설치": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Install"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストール"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "安装"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installer"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installieren"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Instalar"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Установить"
+          }
+        }
+      }
+    },
     "설치 중단": {
       "localizations": {
         "en": {
@@ -9799,6 +10205,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "설치 중단"
+          }
+        }
+      }
+    },
+    "설치 파일을 열지 못했습니다. 다시 다운로드해주세요.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치 파일을 열지 못했습니다. 다시 다운로드해주세요."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't open the installation file. Please download it again."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールファイルを開けませんでした。もう一度ダウンロードしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法打开安装文件。请重新下载。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’ouvrir le fichier d’installation. Téléchargez-le à nouveau."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Installationsdatei konnte nicht geöffnet werden. Bitte laden Sie sie erneut herunter."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo abrir el archivo de instalación. Descárguelo de nuevo."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível abrir o arquivo de instalação. Baixe-o novamente."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось открыть файл установки. Загрузите его снова."
           }
         }
       }
@@ -9915,6 +10379,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "설치됨"
+          }
+        }
+      }
+    },
+    "설치를 중단했습니다.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "설치를 중단했습니다."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installation was canceled."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "インストールを中止しました。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已取消安装。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’installation a été annulée."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Installation wurde abgebrochen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se canceló la instalación."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A instalação foi cancelada."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Установка отменена."
           }
         }
       }
@@ -10553,6 +11075,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "약 %lld초"
+          }
+        }
+      }
+    },
+    "언어": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "언어"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Languages"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "言語"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "语言"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langues"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sprachen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idiomas"
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Idiomas"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Языки"
           }
         }
       }
@@ -12123,6 +12703,122 @@
         }
       }
     },
+    "음성인식 도구의 개발자 서명을 확인하지 못했습니다.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "음성인식 도구의 개발자 서명을 확인하지 못했습니다."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't verify the developer signature of the speech recognition tool."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音声認識ツールの開発者署名を確認できませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法验证语音识别工具的开发者签名。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de vérifier la signature développeur de l’outil de reconnaissance vocale."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Die Entwicklersignatur des Spracherkennungswerkzeugs konnte nicht überprüft werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo verificar la firma de desarrollador de la herramienta de reconocimiento de voz."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível verificar a assinatura de desenvolvedor da ferramenta de reconhecimento de fala."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось проверить подпись разработчика инструмента распознавания речи."
+          }
+        }
+      }
+    },
+    "음성인식 도구의 다운로드 정보를 찾지 못했습니다. 앱을 업데이트해주세요.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "음성인식 도구의 다운로드 정보를 찾지 못했습니다. 앱을 업데이트해주세요."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't find download information for the speech recognition tool. Please update the app."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "音声認識ツールのダウンロード情報が見つかりませんでした。アプリをアップデートしてください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "找不到语音识别工具的下载信息。请更新应用。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Informations de téléchargement de l’outil de reconnaissance vocale introuvables. Mettez à jour l’app."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download-Informationen für das Spracherkennungswerkzeug wurden nicht gefunden. Bitte aktualisieren Sie die App."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se encontró la información de descarga de la herramienta de reconocimiento de voz. Actualice la app."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foram encontradas as informações de download da ferramenta de reconhecimento de fala. Atualize o app."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не найдены сведения для загрузки инструмента распознавания речи. Обновите приложение."
+          }
+        }
+      }
+    },
     "음성인식 모델": {
       "localizations": {
         "en": {
@@ -12525,6 +13221,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "이 ChatGPT 계정에서 요청한 모델 또는 번역 요청을 지원하지 않습니다."
+          }
+        }
+      }
+    },
+    "이 Mac에서 도구를 실행하지 못했습니다.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 Mac에서 도구를 실행하지 못했습니다."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't run the tool on this Mac."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この Mac でツールを実行できませんでした。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法在此 Mac 上运行该工具。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’exécuter l’outil sur ce Mac."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Werkzeug konnte auf diesem Mac nicht ausgeführt werden."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo ejecutar la herramienta en este Mac."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Não foi possível executar a ferramenta neste Mac."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось запустить инструмент на этом Mac."
           }
         }
       }
@@ -13279,6 +14033,64 @@
           "stringUnit": {
             "state": "translated",
             "value": "자동 감지된 언어의 언어 팩이 없으면 번역 직전에 다운로드를 묻고, 받은 뒤 번역합니다."
+          }
+        }
+      }
+    },
+    "자동은 사용자 설정의 고정 모델을 건너뛰고 CLI 권장 모델을 사용합니다. 최신 Codex CLI를 사용하세요.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "자동은 사용자 설정의 고정 모델을 건너뛰고 CLI 권장 모델을 사용합니다. 최신 Codex CLI를 사용하세요."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto skips the model pinned in your settings and uses the CLI's recommended model. Use the latest Codex CLI."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "「自動」は設定で固定したモデルを使わず、CLI の推奨モデルを使います。最新の Codex CLI を使ってください。"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“自动”会跳过设置中固定的模型，改用 CLI 推荐的模型。请使用最新的 Codex CLI。"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "« Auto » ignore le modèle fixé dans vos réglages et utilise le modèle recommandé par la CLI. Utilisez la dernière Codex CLI."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "„Automatisch“ überspringt das in Ihren Einstellungen festgelegte Modell und verwendet das von der CLI empfohlene. Verwenden Sie die neueste Codex CLI."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Auto» omite el modelo fijado en sus ajustes y usa el recomendado por la CLI. Use la última Codex CLI."
+          }
+        },
+        "pt-BR": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "“Automático” ignora o modelo fixado nos seus ajustes e usa o modelo recomendado pela CLI. Use a Codex CLI mais recente."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Авто» пропускает модель, закреплённую в настройках, и использует модель, рекомендованную CLI. Используйте последнюю версию Codex CLI."
           }
         }
       }
