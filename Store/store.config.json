@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "status": "resubmitted-1.0-build-8-after-2.4.5-entitlement-explanation",
+  "status": "resubmitted-1.0-build-9-localized-ui",
   "platform": "macos",
   "productName": "Subtitle Maker & Translator",
   "bundleID": "com.clichedmoog.subtitle-generator",
@@ -184,21 +184,26 @@
     },
     "delivery": {
       "version": "1.0",
-      "build": "8",
+      "build": "9",
       "uploadStatus": "succeeded",
       "processingStatus": "processed",
       "processingState": "VALID",
-      "internalOnly": false,
-      "route": "xcrun altool --upload-package with verified existing personal-team API key",
-      "serverValidation": "altool --validate-app passed with no errors",
-      "packagePath": "build/subgen-release-20261012/export8/SubGen.pkg",
-      "packageSHA256": "8ebefde846d8d5a47f70e9a237a2c25db52da3559046aaedb37ca090d06e9e2f",
-      "deliveryID": "0f412f02-5ef6-4bae-ab7b-41569461e395",
-      "buildID": "0f412f02-5ef6-4bae-ab7b-41569461e395",
+      "packagePath": "build/subgen-release-20261021/export9/SubGen.pkg",
+      "packageSHA256": "c32cfb56e7fc29db81ac2bc0237254701475a4bd4a4c1dd085a2607780bd4b31",
+      "deliveryID": "6b8f0908-9265-4d25-85b7-5267887473c3",
+      "buildID": "6b8f0908-9265-4d25-85b7-5267887473c3",
       "internalBuildState": "IN_BETA_TESTING",
-      "archiveInspectionPath": "build/subgen-release-20261012/archive8-inspection.json",
-      "packageVerificationPath": "build/subgen-release-20261012/package8-verification.json",
-      "testflightVerificationPath": "build/subgen-release-20261012/testflight8-api-verification.json",
+      "localizations": [
+        "ko",
+        "en",
+        "ja",
+        "zh-Hans",
+        "fr",
+        "de",
+        "es",
+        "pt-BR",
+        "ru"
+      ],
       "weakLinkEvidence": "Release archive links Translation and _Translation_SwiftUI as LC_LOAD_WEAK_DYLIB"
     },
     "reviewReadiness": {
@@ -501,20 +506,47 @@
       "state": "WAITING_FOR_REVIEW",
       "platform": "MAC_OS",
       "version": "1.0",
-      "build": "8",
+      "build": "9",
       "releaseType": "AFTER_APPROVAL",
       "route": "App Store Connect API reviewSubmissions + reviewSubmissionItems, existing team API key",
       "reviewNotesPersisted": "Console appStoreReviewDetail notes PATCHed (source link build-8) and read back as an exact match; demoAccountRequired false",
-      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-8 (commit 4e2eda5)",
+      "sourceBranch": "https://github.com/clichedmoog/SubGen/tree/release/subgen-1.0-build-9 (commit a50c681)",
       "privacyPolicy": "https://github.com/clichedmoog/SubGen/blob/main/docs/privacy.md (commit 84543c7)",
       "publicRelease": "not yet — AFTER_APPROVAL releases automatically once approved",
-      "resubmittedAt": "2026-10-14T13:32+09:00",
+      "resubmittedAt": "2026-10-21",
       "rejection": {
         "receivedAt": "2026-10-13T16:36+09:00",
         "guideline": "2.4.5 Performance: Hardware Compatibility (macOS)",
         "reason": "Automated analysis: com.apple.security.network.server entitlement without apparent matching functionality",
         "response": "Kept the entitlement (required by the Sign in with ChatGPT 127.0.0.1 loopback OAuth redirect); replied in App Review messages, added an ENTITLEMENTS paragraph to review notes, marked the item resolved and resubmitted build 8 without a new binary."
+      },
+      "secondRejection": {
+        "receivedAt": "2026-10-20T23:26+09:00",
+        "guidelines": [
+          "2.1(a) App Completeness: UI all Korean on an English system while submitted as English",
+          "4 Design: no menu item to reopen a closed main window"
+        ],
+        "response": "Localized the UI into 9 languages with English fallback; switched to a single Window scene that quits when the main window closes (queue saved). Replied (and sent a correction that the window is not listed in the Window menu), updated notes to English labels, resolved the item and resubmitted build 9."
       }
+    },
+    "previousDeliveryBuild8": {
+      "version": "1.0",
+      "build": "8",
+      "uploadStatus": "succeeded",
+      "processingStatus": "processed",
+      "processingState": "VALID",
+      "internalOnly": false,
+      "route": "xcrun altool --upload-package with verified existing personal-team API key",
+      "serverValidation": "altool --validate-app passed with no errors",
+      "packagePath": "build/subgen-release-20261012/export8/SubGen.pkg",
+      "packageSHA256": "8ebefde846d8d5a47f70e9a237a2c25db52da3559046aaedb37ca090d06e9e2f",
+      "deliveryID": "0f412f02-5ef6-4bae-ab7b-41569461e395",
+      "buildID": "0f412f02-5ef6-4bae-ab7b-41569461e395",
+      "internalBuildState": "IN_BETA_TESTING",
+      "archiveInspectionPath": "build/subgen-release-20261012/archive8-inspection.json",
+      "packageVerificationPath": "build/subgen-release-20261012/package8-verification.json",
+      "testflightVerificationPath": "build/subgen-release-20261012/testflight8-api-verification.json",
+      "weakLinkEvidence": "Release archive links Translation and _Translation_SwiftUI as LC_LOAD_WEAK_DYLIB"
     }
   },
   "testflight": {
