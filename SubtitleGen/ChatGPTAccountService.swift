@@ -6,7 +6,7 @@ struct ChatGPTAccount: Identifiable, Equatable {
     let email: String?
     let signedIn: Bool
     let planEnabled: Bool
-    var label: String { (email ?? "ChatGPT 계정") + " · " + id.suffix(8) }
+    var label: String { (email ?? String(localized: "ChatGPT 계정")) + " · " + id.suffix(8) }
 }
 struct ChatGPTModel: Identifiable, Decodable, Equatable {
     let slug: String
@@ -56,9 +56,9 @@ actor ChatGPTAccountService {
     func signIn(accountID: String?, hostID: String, consent: Bool = false,
                 open: @escaping @Sendable (URL) async throws -> Void = { url in
                     let opened = await MainActor.run { NSWorkspace.shared.open(url) }
-                    if !opened { throw ChatGPTFailure.message("브라우저를 열 수 없습니다.") }
+                    if !opened { throw ChatGPTFailure.message(String(localized: "브라우저를 열 수 없습니다.")) }
                 }) async throws -> String {
-        guard !loginInProgress else { throw ChatGPTFailure.message("진행 중인 ChatGPT 로그인을 먼저 완료하거나 취소해주세요.") }
+        guard !loginInProgress else { throw ChatGPTFailure.message(String(localized: "진행 중인 ChatGPT 로그인을 먼저 완료하거나 취소해주세요.")) }
         loginInProgress = true; defer { loginInProgress = false }
         try load()
         let prior = try accountID.map { try registration($0) }
@@ -125,7 +125,7 @@ actor ChatGPTAccountService {
         let now = Date()
         if credentials.expiresAt > now.addingTimeInterval(60) { return credentials.accessToken }
         if let earliest = credentials.earliestRefreshAt, earliest > now {
-            guard credentials.expiresAt > now else { throw ChatGPTFailure.message("ChatGPT 연결 갱신이 아직 허용되지 않습니다. 잠시 후 다시 시도해주세요.") }
+            guard credentials.expiresAt > now else { throw ChatGPTFailure.message(String(localized: "ChatGPT 연결 갱신이 아직 허용되지 않습니다. 잠시 후 다시 시도해주세요.")) }
             return credentials.accessToken
         }
         let flight: (id: UUID, task: Task<ChatGPTCredentials, Error>)
@@ -174,18 +174,18 @@ actor ChatGPTAccountService {
         guard let values = object["models"] as? [[String: Any]],
               let data = try? JSONSerialization.data(withJSONObject: values),
               let parsed = try? JSONDecoder().decode([ChatGPTModel].self, from: data) else {
-            throw ChatGPTFailure.message("ChatGPT 모델 목록을 읽을 수 없습니다.")
+            throw ChatGPTFailure.message(String(localized: "ChatGPT 모델 목록을 읽을 수 없습니다."))
         }
         var seen = Set<String>()
         let models = parsed.filter { $0.visibility == "list" && !$0.slug.isEmpty && seen.insert($0.slug).inserted }
-        guard !models.isEmpty else { throw ChatGPTFailure.message("이 계정에 표시할 ChatGPT 모델이 없습니다.") }
+        guard !models.isEmpty else { throw ChatGPTFailure.message(String(localized: "이 계정에 표시할 ChatGPT 모델이 없습니다.")) }
         guard try registration(accountID).credentials?.revision == revision else { throw ChatGPTFailure.loginRequired }
         catalog[accountID] = (models, Date()); return models
     }
     func authorizeTranslation(accountID: String, model: String) async throws -> String {
         guard !usagePaused.contains(accountID) else { throw ChatGPTFailure.service(status: 429, code: "subscription_sharing_usage_limit_exceeded", requestID: nil) }
         let available = try await models(accountID: accountID)
-        guard available.contains(where: { $0.slug == model }) else { throw ChatGPTFailure.message("선택한 모델을 사용할 수 없습니다. 모델 목록을 새로고침해주세요.") }
+        guard available.contains(where: { $0.slug == model }) else { throw ChatGPTFailure.message(String(localized: "선택한 모델을 사용할 수 없습니다. 모델 목록을 새로고침해주세요.")) }
         return try await accessToken(accountID: accountID)
     }
     func recordFailure(_ failure: ChatGPTFailure, accountID: String) {

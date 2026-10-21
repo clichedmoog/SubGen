@@ -27,7 +27,7 @@ struct ChatGPTSubtitleClient {
             ])
             let (bytes, response) = try await session.bytes(for: request)
             defer { bytes.task.cancel() }
-            guard let http = response as? HTTPURLResponse else { throw ChatGPTFailure.message("ChatGPT 서버 응답이 올바르지 않습니다.") }
+            guard let http = response as? HTTPURLResponse else { throw ChatGPTFailure.message(String(localized: "ChatGPT 서버 응답이 올바르지 않습니다.")) }
             guard (200..<300).contains(http.statusCode) else {
                 var body = Data()
                 for try await byte in bytes { if body.count >= 65_536 { break }; body.append(byte) }
@@ -44,7 +44,7 @@ struct ChatGPTSubtitleClient {
                 try Task.checkCancellation()
                 prefix.append(byte)
                 if ![9, 10, 13, 32].contains(byte) { break }
-                guard prefix.count < 4_096 else { throw ChatGPTFailure.message("ChatGPT 응답 형식이 올바르지 않습니다.") }
+                guard prefix.count < 4_096 else { throw ChatGPTFailure.message(String(localized: "ChatGPT 응답 형식이 올바르지 않습니다.")) }
             }
             let requestID = http.value(forHTTPHeaderField: "x-request-id") ?? http.value(forHTTPHeaderField: "openai-request-id")
             if prefix.last == 123 { // JSON object, regardless of Content-Type
@@ -76,7 +76,7 @@ struct ChatGPTSubtitleClient {
         } catch is CancellationError { throw ChatGPTFailure.cancelled }
         catch let error as URLError {
             if error.code == .cancelled { throw ChatGPTFailure.cancelled }
-            throw ChatGPTFailure.message("ChatGPT 연결이 끊겼습니다. 인터넷 연결을 확인해주세요.")
+            throw ChatGPTFailure.message(String(localized: "ChatGPT 연결이 끊겼습니다. 인터넷 연결을 확인해주세요."))
         }
     }
 
@@ -96,7 +96,7 @@ struct ChatGPTSubtitleClient {
             catch ChatGPTFailure.cancelled { box.set(ProcessResult(failure: .cancelled)) }
             catch let failure as ChatGPTFailure { box.set(ProcessResult(failure: .service(failure.localizedDescription, retryable: failure.retryable))) }
             catch is CancellationError { box.set(ProcessResult(failure: .cancelled)) }
-            catch { box.set(ProcessResult(failure: .service("ChatGPT 번역 요청에 실패했습니다.", retryable: false))) }
+            catch { box.set(ProcessResult(failure: .service(String(localized: "ChatGPT 번역 요청에 실패했습니다."), retryable: false))) }
         }
         let deadline = Date().addingTimeInterval(600)
         while finished.wait(timeout: .now() + 0.05) == .timedOut {

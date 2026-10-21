@@ -122,12 +122,12 @@ enum WhisperModel: String, CaseIterable, Identifiable {
 
     var displayName: String {
         switch self {
-        case .largev3: return "Large v3 (최고 품질)"
-        case .largev3turbo: return "Large v3 Turbo (추천)"
-        case .medium: return "Medium (좋은 품질)"
-        case .small: return "Small (균형)"
-        case .base: return "Base (빠름)"
-        case .tiny: return "Tiny (가장 빠름, 낮은 품질)"
+        case .largev3: return String(localized: "Large v3 (최고 품질)")
+        case .largev3turbo: return String(localized: "Large v3 Turbo (추천)")
+        case .medium: return String(localized: "Medium (좋은 품질)")
+        case .small: return String(localized: "Small (균형)")
+        case .base: return String(localized: "Base (빠름)")
+        case .tiny: return String(localized: "Tiny (가장 빠름, 낮은 품질)")
         }
     }
 
@@ -164,8 +164,8 @@ enum OutputMode: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .embedInVideo: return "영상에 자막 포함"
-        case .srtOnly: return "srt 파일 생성"
+        case .embedInVideo: return String(localized: "영상에 자막 포함")
+        case .srtOnly: return String(localized: "srt 파일 생성")
         }
     }
 }
@@ -180,37 +180,37 @@ enum Language: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .auto: return "자동 감지"
-        case .ja: return "일본어"
-        case .ko: return "한국어"
-        case .en: return "영어"
-        case .zh: return "중국어"
-        case .fr: return "프랑스어"
-        case .de: return "독일어"
-        case .es: return "스페인어"
-        case .it: return "이탈리아어"
-        case .pt: return "포르투갈어"
-        case .ru: return "러시아어"
-        case .ar: return "아랍어"
-        case .hi: return "힌디어"
-        case .th: return "태국어"
-        case .vi: return "베트남어"
-        case .id: return "인도네시아어"
-        case .ms: return "말레이어"
-        case .tl: return "타갈로그어"
-        case .tr: return "터키어"
-        case .pl: return "폴란드어"
-        case .nl: return "네덜란드어"
-        case .sv: return "스웨덴어"
-        case .da: return "덴마크어"
-        case .no: return "노르웨이어"
-        case .fi: return "핀란드어"
-        case .el: return "그리스어"
-        case .he: return "히브리어"
-        case .uk: return "우크라이나어"
-        case .cs: return "체코어"
-        case .ro: return "루마니아어"
-        case .hu: return "헝가리어"
+        case .auto: return String(localized: "자동 감지")
+        case .ja: return String(localized: "일본어")
+        case .ko: return String(localized: "한국어")
+        case .en: return String(localized: "영어")
+        case .zh: return String(localized: "중국어")
+        case .fr: return String(localized: "프랑스어")
+        case .de: return String(localized: "독일어")
+        case .es: return String(localized: "스페인어")
+        case .it: return String(localized: "이탈리아어")
+        case .pt: return String(localized: "포르투갈어")
+        case .ru: return String(localized: "러시아어")
+        case .ar: return String(localized: "아랍어")
+        case .hi: return String(localized: "힌디어")
+        case .th: return String(localized: "태국어")
+        case .vi: return String(localized: "베트남어")
+        case .id: return String(localized: "인도네시아어")
+        case .ms: return String(localized: "말레이어")
+        case .tl: return String(localized: "타갈로그어")
+        case .tr: return String(localized: "터키어")
+        case .pl: return String(localized: "폴란드어")
+        case .nl: return String(localized: "네덜란드어")
+        case .sv: return String(localized: "스웨덴어")
+        case .da: return String(localized: "덴마크어")
+        case .no: return String(localized: "노르웨이어")
+        case .fi: return String(localized: "핀란드어")
+        case .el: return String(localized: "그리스어")
+        case .he: return String(localized: "히브리어")
+        case .uk: return String(localized: "우크라이나어")
+        case .cs: return String(localized: "체코어")
+        case .ro: return String(localized: "루마니아어")
+        case .hu: return String(localized: "헝가리어")
         }
     }
 }
@@ -224,9 +224,9 @@ enum Sensitivity: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .sensitive: return "민감"
-        case .normal: return "보통"
-        case .accurate: return "정확"
+        case .sensitive: return String(localized: "민감")
+        case .normal: return String(localized: "보통")
+        case .accurate: return String(localized: "정확")
         }
     }
 
@@ -275,8 +275,8 @@ enum AuthMethod: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .claudeCode: return "Claude Code (구독)"
-        case .codex: return "Codex CLI (구독)"
+        case .claudeCode: return String(localized: "Claude Code (구독)")
+        case .codex: return String(localized: "Codex CLI (구독)")
         }
     }
 }
@@ -296,14 +296,14 @@ enum TranslationModel: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .claudeOpus: return "Claude Opus (최신 · 품질 우선)"
-        case .claudeSonnet: return "Claude Sonnet (최신 · 균형)"
-        case .claudeHaiku: return "Claude Haiku (최신 · 속도 우선)"
-        case .codexDefault: return "자동 (Codex 권장 모델)"
-        case .codexSol: return "GPT-6.1 Sol (균형)"
-        case .codexLuna: return "GPT-6 Luna (속도 우선)"
-        case .codexAstra: return "GPT-6 Astra (품질 우선)"
-        case .codexConfigured: return "Codex 사용자 설정 따르기"
+        case .claudeOpus: return String(localized: "Claude Opus (최신 · 품질 우선)")
+        case .claudeSonnet: return String(localized: "Claude Sonnet (최신 · 균형)")
+        case .claudeHaiku: return String(localized: "Claude Haiku (최신 · 속도 우선)")
+        case .codexDefault: return String(localized: "자동 (Codex 권장 모델)")
+        case .codexSol: return String(localized: "GPT-6.1 Sol (균형)")
+        case .codexLuna: return String(localized: "GPT-6 Luna (속도 우선)")
+        case .codexAstra: return String(localized: "GPT-6 Astra (품질 우선)")
+        case .codexConfigured: return String(localized: "Codex 사용자 설정 따르기")
         }
     }
 
@@ -355,15 +355,15 @@ enum TranslationLanguage: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .ko: return "한국어"
-        case .ja: return "일본어"
-        case .en: return "영어"
-        case .zh: return "중국어"
-        case .fr: return "프랑스어"
-        case .de: return "독일어"
-        case .es: return "스페인어"
-        case .pt: return "포르투갈어"
-        case .ru: return "러시아어"
+        case .ko: return String(localized: "한국어")
+        case .ja: return String(localized: "일본어")
+        case .en: return String(localized: "영어")
+        case .zh: return String(localized: "중국어")
+        case .fr: return String(localized: "프랑스어")
+        case .de: return String(localized: "독일어")
+        case .es: return String(localized: "스페인어")
+        case .pt: return String(localized: "포르투갈어")
+        case .ru: return String(localized: "러시아어")
         }
     }
 
@@ -392,8 +392,8 @@ enum TranslationProvider: String, CaseIterable, Identifiable {
     var label: String {
         switch self {
         case .chatGPT: return "ChatGPT"
-        case .agentCLI: return "에이전트 CLI"
-        case .apple: return "Apple 번역 (기기 내)"
+        case .agentCLI: return String(localized: "에이전트 CLI")
+        case .apple: return String(localized: "Apple 번역 (기기 내)")
         }
     }
 
@@ -409,13 +409,13 @@ enum SubtitleDelay: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .earlyFull: return "1.0초 빠르게"
-        case .earlyHalf: return "0.5초 빠르게"
-        case .earlyQuarter: return "0.25초 빠르게"
-        case .none: return "조절 없음"
-        case .lateQuarter: return "0.25초 늦게"
-        case .lateHalf: return "0.5초 늦게"
-        case .lateFull: return "1.0초 늦게"
+        case .earlyFull: return String(localized: "1.0초 빠르게")
+        case .earlyHalf: return String(localized: "0.5초 빠르게")
+        case .earlyQuarter: return String(localized: "0.25초 빠르게")
+        case .none: return String(localized: "조절 없음")
+        case .lateQuarter: return String(localized: "0.25초 늦게")
+        case .lateHalf: return String(localized: "0.5초 늦게")
+        case .lateFull: return String(localized: "1.0초 늦게")
         }
     }
 

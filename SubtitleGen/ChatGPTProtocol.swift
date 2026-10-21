@@ -9,25 +9,25 @@ enum ChatGPTFailure: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .message(let text): return text
-        case .cancelled: return "ChatGPT 연결을 중단했습니다."
-        case .invalidIdentity: return "ChatGPT 로그인 응답을 검증할 수 없습니다. 다시 로그인해주세요."
-        case .loginRequired: return "선택한 ChatGPT 계정에 다시 로그인해주세요."
-        case .planPermissionRequired: return "ChatGPT 플랜 사용 권한을 허용해주세요."
+        case .cancelled: return String(localized: "ChatGPT 연결을 중단했습니다.")
+        case .invalidIdentity: return String(localized: "ChatGPT 로그인 응답을 검증할 수 없습니다. 다시 로그인해주세요.")
+        case .loginRequired: return String(localized: "선택한 ChatGPT 계정에 다시 로그인해주세요.")
+        case .planPermissionRequired: return String(localized: "ChatGPT 플랜 사용 권한을 허용해주세요.")
         case .service(let status, let code, let requestID):
             let text: String
             switch code {
             case "subscription_sharing_usage_limit_exceeded":
-                text = "ChatGPT 사용량 제한에 도달했습니다. ChatGPT 설정의 Usage에서 한도를 확인해주세요."
+                text = String(localized: "ChatGPT 사용량 제한에 도달했습니다. ChatGPT 설정의 Usage에서 한도를 확인해주세요.")
             case "subscription_sharing_user_not_eligible":
-                text = "이 계정 또는 워크스페이스에서는 ChatGPT 플랜을 사용할 수 없습니다."
+                text = String(localized: "이 계정 또는 워크스페이스에서는 ChatGPT 플랜을 사용할 수 없습니다.")
             case "subscription_sharing_unsupported_capability", "subscription_sharing_route_not_supported":
-                text = "이 ChatGPT 계정에서 요청한 모델 또는 번역 요청을 지원하지 않습니다."
+                text = String(localized: "이 ChatGPT 계정에서 요청한 모델 또는 번역 요청을 지원하지 않습니다.")
             case "invalid_grant", "invalid_refresh_token", "token_expired", "refresh_token_expired",
                  "refresh_token_invalidated", "refresh_token_reused":
-                text = "ChatGPT 연결이 만료되었거나 취소되었습니다. 다시 로그인해주세요."
-            default: text = "ChatGPT 요청에 실패했습니다 (HTTP \(status), \(code))."
+                text = String(localized: "ChatGPT 연결이 만료되었거나 취소되었습니다. 다시 로그인해주세요.")
+            default: text = String(localized: "ChatGPT 요청에 실패했습니다 (HTTP \(status), \(code)).")
             }
-            return text + (requestID.map { " 요청 ID: \($0)" } ?? "")
+            return text + (requestID.map { String(localized: " 요청 ID: \($0)") } ?? "")
         }
     }
     var retryable: Bool {
@@ -57,7 +57,7 @@ enum ChatGPTOAuth {
         let status = data.withUnsafeMutableBytes {
             SecRandomCopyBytes(kSecRandomDefault, bytes, $0.baseAddress!)
         }
-        guard status == errSecSuccess else { throw ChatGPTFailure.message("로그인용 난수를 만들 수 없습니다.") }
+        guard status == errSecSuccess else { throw ChatGPTFailure.message(String(localized: "로그인용 난수를 만들 수 없습니다.")) }
         return data.base64URL
     }
     static func challenge(_ verifier: String) -> String { Data(SHA256.hash(data: Data(verifier.utf8))).base64URL }
@@ -103,7 +103,7 @@ enum ChatGPTOAuth {
             guard Set(items.map(\.name)).count == items.count else { throw ChatGPTFailure.invalidIdentity }
             let fields = Dictionary(uniqueKeysWithValues: items.map { ($0.name, $0.value ?? "") })
             guard let returnedState = fields["state"], constantTimeEqual(returnedState, state) else { throw ChatGPTFailure.invalidIdentity }
-            if fields["error"] != nil { throw ChatGPTFailure.message("ChatGPT 로그인을 승인하지 않았거나 완료하지 못했습니다.") }
+            if fields["error"] != nil { throw ChatGPTFailure.message(String(localized: "ChatGPT 로그인을 승인하지 않았거나 완료하지 못했습니다.")) }
             guard let code = fields["code"], !code.isEmpty, code.count <= 4096 else { throw ChatGPTFailure.invalidIdentity }
             let issued = fields["client_id"] ?? clientID ?? ""
             guard !issued.isEmpty, issued != "dynamic_agent_client", issued.count <= 256,
@@ -141,7 +141,7 @@ struct ChatGPTResponseStream {
             if line.hasPrefix("data:") {
                 let value = String(line.dropFirst(5)).trimmingCharacters(in: .whitespaces)
                 guard frame.reduce(0, { $0 + $1.utf8.count }) + value.utf8.count < 2_000_000 else {
-                    throw ChatGPTFailure.message("ChatGPT 응답이 너무 큽니다.")
+                    throw ChatGPTFailure.message(String(localized: "ChatGPT 응답이 너무 큽니다."))
                 }
                 frame.append(value)
             }
@@ -151,16 +151,16 @@ struct ChatGPTResponseStream {
         let payload = frame.joined(separator: "\n"); frame.removeAll()
         guard payload != "[DONE]", let data = payload.data(using: .utf8),
               let event = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
-              let type = event["type"] as? String else { throw ChatGPTFailure.message("ChatGPT 응답 스트림이 올바르지 않습니다.") }
+              let type = event["type"] as? String else { throw ChatGPTFailure.message(String(localized: "ChatGPT 응답 스트림이 올바르지 않습니다.")) }
         switch type {
         case "response.output_text.delta":
-            guard let delta = event["delta"] as? String else { throw ChatGPTFailure.message("번역 응답이 올바르지 않습니다.") }
-            guard text.utf8.count + delta.utf8.count < 16_000_000 else { throw ChatGPTFailure.message("번역 결과가 너무 큽니다.") }
+            guard let delta = event["delta"] as? String else { throw ChatGPTFailure.message(String(localized: "번역 응답이 올바르지 않습니다.")) }
+            guard text.utf8.count + delta.utf8.count < 16_000_000 else { throw ChatGPTFailure.message(String(localized: "번역 결과가 너무 큽니다.")) }
             text += delta
         case "response.completed":
             guard let response = event["response"] as? [String: Any], response["status"] as? String == "completed",
                   !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-                throw ChatGPTFailure.message("ChatGPT 번역이 완료되지 않았습니다.")
+                throw ChatGPTFailure.message(String(localized: "ChatGPT 번역이 완료되지 않았습니다."))
             }
             completed = true
         case "response.failed", "error":
@@ -170,13 +170,13 @@ struct ChatGPTResponseStream {
             let status = code == "subscription_sharing_usage_unavailable" ? 503 : (code == "subscription_sharing_usage_limit_exceeded" ? 429 : 400)
             throw ChatGPTHTTP.failure(status: status, object: error, requestID: nil)
         case "response.incomplete":
-            throw ChatGPTFailure.message("ChatGPT 번역 결과가 잘렸습니다. 원본 자막을 보존했습니다.")
+            throw ChatGPTFailure.message(String(localized: "ChatGPT 번역 결과가 잘렸습니다. 원본 자막을 보존했습니다."))
         default: break
         }
     }
     mutating func finish() throws -> String {
         if !frame.isEmpty { try consume(line: "") }
-        guard completed else { throw ChatGPTFailure.message("ChatGPT 연결이 완료 전에 끊겼습니다. 원본 자막을 보존했습니다.") }
+        guard completed else { throw ChatGPTFailure.message(String(localized: "ChatGPT 연결이 완료 전에 끊겼습니다. 원본 자막을 보존했습니다.")) }
         return text
     }
 }
@@ -189,15 +189,15 @@ struct ChatGPTEventLines {
         if afterCR { afterCR = false; if byte == 10 { return nil } }
         if byte == 10 || byte == 13 {
             afterCR = byte == 13
-            guard let line = String(data: bytes, encoding: .utf8) else { throw ChatGPTFailure.message("번역 스트림의 문자 인코딩이 올바르지 않습니다.") }
+            guard let line = String(data: bytes, encoding: .utf8) else { throw ChatGPTFailure.message(String(localized: "번역 스트림의 문자 인코딩이 올바르지 않습니다.")) }
             bytes.removeAll(keepingCapacity: true); return line
         }
-        guard bytes.count < 2_000_000 else { throw ChatGPTFailure.message("ChatGPT 응답이 너무 큽니다.") }
+        guard bytes.count < 2_000_000 else { throw ChatGPTFailure.message(String(localized: "ChatGPT 응답이 너무 큽니다.")) }
         bytes.append(byte); return nil
     }
     mutating func finish() throws -> String? {
         guard !bytes.isEmpty else { return nil }
-        guard let line = String(data: bytes, encoding: .utf8) else { throw ChatGPTFailure.message("번역 스트림의 문자 인코딩이 올바르지 않습니다.") }
+        guard let line = String(data: bytes, encoding: .utf8) else { throw ChatGPTFailure.message(String(localized: "번역 스트림의 문자 인코딩이 올바르지 않습니다.")) }
         bytes.removeAll(); return line
     }
 }

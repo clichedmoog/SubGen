@@ -6,10 +6,10 @@ enum ModelDownloader {
         case cancelled, timedOut, http(Int), transfer(String)
         var errorDescription: String? {
             switch self {
-            case .cancelled: return "다운로드를 중단했습니다."
-            case .timedOut: return "다운로드 제한 시간을 초과했습니다."
-            case .http(let code): return "다운로드 서버 오류 (HTTP \(code))"
-            case .transfer(let message): return "다운로드 실패: \(message)"
+            case .cancelled: return String(localized: "다운로드를 중단했습니다.")
+            case .timedOut: return String(localized: "다운로드 제한 시간을 초과했습니다.")
+            case .http(let code): return String(localized: "다운로드 서버 오류 (HTTP \(code))")
+            case .transfer(let message): return String(localized: "다운로드 실패: \(message)")
             }
         }
     }

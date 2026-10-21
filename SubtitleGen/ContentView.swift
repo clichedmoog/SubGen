@@ -18,7 +18,7 @@ struct ContentView: View {
     @AppStorage("authMethod") private var authMethod: AuthMethod = .claudeCode
     @AppStorage("translationModel") private var translationModel: TranslationModel = .claudeOpus
     @State private var isDownloadingModel = false
-    @State private var modelDownloadDetail = "연결 중…"
+    @State private var modelDownloadDetail = String(localized: "연결 중…")
     @State private var modelDownloadToken: CancellationToken?
     @State private var isDropTargeted = false
     @AppStorage("initialSetupCompleted") private var initialSetupCompleted = false
@@ -67,8 +67,8 @@ struct ContentView: View {
         .frame(minWidth: 860, idealWidth: 940, maxWidth: .infinity,
                minHeight: 760, idealHeight: 820, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
-        .alert("다운로드 실패", isPresented: Binding(get: { toolChecker.installationError != nil }, set: { if !$0 { toolChecker.installationError = nil } })) {
-            Button("확인") { toolChecker.installationError = nil }
+        .alert(String(localized: "다운로드 실패"), isPresented: Binding(get: { toolChecker.installationError != nil }, set: { if !$0 { toolChecker.installationError = nil } })) {
+            Button(String(localized: "확인")) { toolChecker.installationError = nil }
         } message: { Text(toolChecker.installationError ?? "") }
         .onAppear {
             toolChecker.checkAll()
@@ -138,21 +138,21 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 2) {
                 Text("SubGen")
                     .font(.title2.bold())
-                Text("음성 전사 · 자막 번역")
+                Text(String(localized: "음성 전사 · 자막 번역"))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
-            Label("음성은 이 Mac에서 처리", systemImage: "lock.shield")
+            Label(String(localized: "음성은 이 Mac에서 처리"), systemImage: "lock.shield")
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
             Button { startAfterSetup = false; showSetup = true } label: {
-                Label("작업 준비", systemImage: "slider.horizontal.3")
+                Label(String(localized: "작업 준비"), systemImage: "slider.horizontal.3")
             }
-                .help("음성 인식 모델과 도구 설치 상태 확인")
+                .help(String(localized: "음성 인식 모델과 도구 설치 상태 확인"))
                 .disabled(engine.isProcessing)
         }
         .padding(.horizontal, 24)
@@ -163,9 +163,9 @@ struct ContentView: View {
 
     private var setupSection: some View {
         VStack(alignment: .leading, spacing: 18) {
-            Label("자막 작업 준비", systemImage: "captions.bubble.fill")
+            Label(String(localized: "자막 작업 준비"), systemImage: "captions.bubble.fill")
                 .font(.title2.bold())
-            Text(AppDistribution.isStore ? "음성인식·영상 처리 도구는 앱에 포함되어 있습니다. 사용할 음성인식 모델을 선택하고 한 번 다운로드해주세요." : "음성인식·영상 처리 도구와 모델을 한 번 설치하면 다음 실행부터 바로 사용할 수 있습니다. 이 Mac에 맞는 도구를 자동으로 선택합니다.")
+            Text(AppDistribution.isStore ? String(localized: "음성인식·영상 처리 도구는 앱에 포함되어 있습니다. 사용할 음성인식 모델을 선택하고 한 번 다운로드해주세요.") : String(localized: "음성인식·영상 처리 도구와 모델을 한 번 설치하면 다음 실행부터 바로 사용할 수 있습니다. 이 Mac에 맞는 도구를 자동으로 선택합니다."))
                 .foregroundStyle(.secondary)
 
             ForEach(toolChecker.tools) { tool in
@@ -177,23 +177,23 @@ struct ContentView: View {
                     }
                     Spacer()
                     if tool.status == .installed {
-                        Text("준비됨").foregroundStyle(.green)
+                        Text(String(localized: "준비됨")).foregroundStyle(.green)
                     } else if tool.status == .installing || tool.status == .checking {
                         ProgressView().controlSize(.small)
-                    } else { Text("설치 필요").foregroundStyle(.secondary) }
+                    } else { Text(String(localized: "설치 필요")).foregroundStyle(.secondary) }
                 }
             }
 
             Divider()
-            Picker("음성인식 모델", selection: $selectedModel) {
+            Picker(String(localized: "음성인식 모델"), selection: $selectedModel) {
                 ForEach(WhisperModel.allCases) { model in
                     Text("\(model.displayName) · \(model.sizeLabel)").tag(model)
                 }
             }
             .disabled(isSettingUp || isDownloadingModel || toolChecker.isInstalling)
-            Text(selectedModel.isCached ? "모델이 준비되어 있습니다." : "선택한 모델 \(selectedModel.sizeLabel)을 다운로드합니다. 인터넷 연결과 여유 저장 공간이 필요합니다.")
+            Text(selectedModel.isCached ? String(localized: "모델이 준비되어 있습니다.") : String(localized: "선택한 모델 \(selectedModel.sizeLabel)을 다운로드합니다. 인터넷 연결과 여유 저장 공간이 필요합니다."))
                 .font(.caption).foregroundStyle(.secondary)
-            Text(AppDistribution.isStore ? "번역은 ChatGPT 로그인 후 플랜 사용 권한을 허용하면 사용할 수 있습니다. 음성 전사는 로그인 없이 가능합니다." : "번역은 로그인된 Claude Code 또는 Codex CLI를 연결한 뒤 사용할 수 있습니다.")
+            Text(AppDistribution.isStore ? String(localized: "번역은 ChatGPT 로그인 후 플랜 사용 권한을 허용하면 사용할 수 있습니다. 음성 전사는 로그인 없이 가능합니다.") : String(localized: "번역은 로그인된 Claude Code 또는 Codex CLI를 연결한 뒤 사용할 수 있습니다."))
                 .font(.caption).foregroundStyle(.secondary)
 
             if let error = toolChecker.installationError {
@@ -202,14 +202,14 @@ struct ContentView: View {
             HStack {
                 if isSettingUp || isDownloadingModel || toolChecker.isInstalling {
                     ProgressView().controlSize(.small)
-                    Text(isDownloadingModel ? "음성인식 모델 다운로드 중 · \(modelDownloadDetail)" : "필요한 도구 설치 중…")
+                    Text(isDownloadingModel ? String(localized: "음성인식 모델 다운로드 중 · \(modelDownloadDetail)") : String(localized: "필요한 도구 설치 중…"))
                         .font(.caption)
                     Spacer()
-                    Button("설치 중단") { cancelSetup() }
+                    Button(String(localized: "설치 중단")) { cancelSetup() }
                 } else {
-                    Button("나중에") { startAfterSetup = false; showSetup = false }
+                    Button(String(localized: "나중에")) { startAfterSetup = false; showSetup = false }
                     Spacer()
-                    Button(toolChecker.allInstalled && selectedModel.isCached ? "시작하기" : "필요한 항목 설치") {
+                    Button(toolChecker.allInstalled && selectedModel.isCached ? String(localized: "시작하기") : String(localized: "필요한 항목 설치")) {
                         installSetup()
                     }
                     .buttonStyle(.borderedProminent)
@@ -257,7 +257,7 @@ struct ContentView: View {
         let missing = toolChecker.tools.filter { $0.status != .installed }
         if missing.isEmpty { prepareModel() }
         else if AppDistribution.isStore {
-            toolChecker.installationError = "앱에 포함된 도구를 실행하지 못했습니다. 앱을 다시 설치해주세요."
+            toolChecker.installationError = String(localized: "앱에 포함된 도구를 실행하지 못했습니다. 앱을 다시 설치해주세요.")
             isSettingUp = false
         } else { toolChecker.installAll(missing, completion: prepareModel) }
     }
@@ -275,11 +275,11 @@ struct ContentView: View {
             HStack {
                 Image(systemName: "wrench.and.screwdriver")
                     .foregroundStyle(.orange)
-                Text("필요한 도구")
+                Text(String(localized: "필요한 도구"))
                     .font(.headline)
                 Spacer()
                 if toolChecker.isInstalling {
-                    Button("설치 중단") { toolChecker.cancelInstall() }
+                    Button(String(localized: "설치 중단")) { toolChecker.cancelInstall() }
                 }
             }
 
@@ -314,23 +314,23 @@ struct ContentView: View {
                 .frame(width: 64, height: 64)
                 .background(.blue.opacity(0.08), in: RoundedRectangle(cornerRadius: 18))
 
-            Text("파일을 추가해 시작하세요")
+            Text(String(localized: "파일을 추가해 시작하세요"))
                 .font(.title3.weight(.semibold))
 
-            Text("영상·음성 파일을 이곳에 끌어 놓거나 선택하세요.")
+            Text(String(localized: "영상·음성 파일을 이곳에 끌어 놓거나 선택하세요."))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
-            Text("MP4 · MOV · MKV · WebM · M4A · WAV · MP3 등")
+            Text(String(localized: "MP4 · MOV · MKV · WebM · M4A · WAV · MP3 등"))
                 .font(.caption)
                 .foregroundStyle(.tertiary)
 
-            Button("파일 선택…") {
+            Button(String(localized: "파일 선택…")) {
                 openFilePicker()
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            .accessibilityLabel("전사할 영상 또는 음성 파일 선택")
+            .accessibilityLabel(String(localized: "전사할 영상 또는 음성 파일 선택"))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
@@ -355,7 +355,7 @@ struct ContentView: View {
     private var fileList: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("\(files.count)개 파일")
+                Text(String(localized: "\(files.count)개 파일"))
                     .font(.subheadline.weight(.semibold))
 
                 Spacer()
@@ -363,7 +363,7 @@ struct ContentView: View {
                 Button {
                     openFilePicker()
                 } label: {
-                    Label("추가", systemImage: "plus")
+                    Label(String(localized: "추가"), systemImage: "plus")
                         .font(.caption)
                 }
                 .buttonStyle(.borderless)
@@ -376,23 +376,23 @@ struct ContentView: View {
                     }
                     engine.resetProgress()
                 } label: {
-                    Label("다시 처리", systemImage: "arrow.counterclockwise")
+                    Label(String(localized: "다시 처리"), systemImage: "arrow.counterclockwise")
                         .font(.caption)
                 }
                 .buttonStyle(.borderless)
                 .disabled(engine.isProcessing)
-                .help("목록의 처리 상태만 초기화합니다. 영상과 자막 파일은 보존합니다.")
+                .help(String(localized: "목록의 처리 상태만 초기화합니다. 영상과 자막 파일은 보존합니다."))
 
                 Button {
                     files.removeAll { !$0.isActive }
                 } label: {
-                    Label("목록 비우기", systemImage: "trash")
+                    Label(String(localized: "목록 비우기"), systemImage: "trash")
                         .font(.caption)
                 }
                 .buttonStyle(.borderless)
                 .foregroundStyle(.red.opacity(engine.isProcessing ? 0.3 : 1.0))
                 .disabled(engine.isProcessing)
-                .help("작업 목록에서 제거합니다. 실제 파일은 삭제하지 않습니다.")
+                .help(String(localized: "작업 목록에서 제거합니다. 실제 파일은 삭제하지 않습니다."))
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
@@ -418,7 +418,7 @@ struct ContentView: View {
                                     selectedFileIDs.removeAll()
                                     engine.resetProgress()
                                 } label: {
-                                    Label("선택 항목 초기화 (\(selectedFileIDs.count)개)", systemImage: "arrow.counterclockwise")
+                                    Label(String(localized: "선택 항목 초기화 (\(selectedFileIDs.count)개)"), systemImage: "arrow.counterclockwise")
                                 }
                                 .disabled(engine.isProcessing)
 
@@ -426,7 +426,7 @@ struct ContentView: View {
                                     files.removeAll { selectedFileIDs.contains($0.id) && !$0.isActive }
                                     selectedFileIDs.removeAll()
                                 } label: {
-                                    Label("선택 항목 삭제 (\(selectedFileIDs.count)개)", systemImage: "trash")
+                                    Label(String(localized: "선택 항목 삭제 (\(selectedFileIDs.count)개)"), systemImage: "trash")
                                 }
                             } else {
                                 // Single item context menu
@@ -435,13 +435,13 @@ struct ContentView: View {
                                         Button {
                                             engine.skipCurrent(fileID: file.id)
                                         } label: {
-                                            Label("건너뛰기", systemImage: "forward.fill")
+                                            Label(String(localized: "건너뛰기"), systemImage: "forward.fill")
                                         }
                                     } else if file.status == .pending {
                                         Button {
                                             files[index].status = .skipped
                                         } label: {
-                                            Label("건너뛰기", systemImage: "forward.fill")
+                                            Label(String(localized: "건너뛰기"), systemImage: "forward.fill")
                                         }
                                     }
 
@@ -451,13 +451,13 @@ struct ContentView: View {
                                 Button {
                                     NSWorkspace.shared.activateFileViewerSelecting([file.url])
                                 } label: {
-                                    Label("파인더에서 보기", systemImage: "folder")
+                                    Label(String(localized: "파인더에서 보기"), systemImage: "folder")
                                 }
 
                                 Button {
                                     NSWorkspace.shared.open(file.url)
                                 } label: {
-                                    Label("기본 앱으로 열기", systemImage: "play.circle")
+                                    Label(String(localized: "기본 앱으로 열기"), systemImage: "play.circle")
                                 }
 
                                 Divider()
@@ -466,14 +466,14 @@ struct ContentView: View {
                                     files[index].resetForProcessing()
                                     engine.resetProgress()
                                 } label: {
-                                    Label("상태 초기화", systemImage: "arrow.counterclockwise")
+                                    Label(String(localized: "상태 초기화"), systemImage: "arrow.counterclockwise")
                                 }
                                 .disabled(engine.isProcessing)
 
                                 Button(role: .destructive) {
                                     files.remove(at: index)
                                 } label: {
-                                    Label("목록에서 제거", systemImage: "trash")
+                                    Label(String(localized: "목록에서 제거"), systemImage: "trash")
                                 }
                                 .disabled(file.isActive)
                             }
@@ -505,7 +505,7 @@ struct ContentView: View {
         DisclosureGroup(isExpanded: $optionsExpanded) {
             HStack {
                 Spacer()
-                Button("옵션 초기화") {
+                Button(String(localized: "옵션 초기화")) {
                     resetOptions()
                 }
                 .buttonStyle(.borderless)
@@ -516,11 +516,11 @@ struct ContentView: View {
             HStack(alignment: .top, spacing: 16) {
                 // Left: 자막 생성 옵션
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("음성 전사", systemImage: "waveform")
+                    Label(String(localized: "음성 전사"), systemImage: "waveform")
                         .font(.headline)
                         .foregroundStyle(.primary)
 
-                    optionRow("모델") {
+                    optionRow(String(localized: "모델")) {
                         VStack(alignment: .leading, spacing: 4) {
                             Picker("", selection: $selectedModel) {
                                 ForEach(WhisperModel.allCases) { model in
@@ -542,18 +542,18 @@ struct ContentView: View {
                                     if isDownloadingModel {
                                         ProgressView()
                                             .controlSize(.small)
-                                        Button("중단") { modelDownloadToken?.cancel() }.controlSize(.mini)
-                                        Text("다운로드 중 · \(modelDownloadDetail)")
+                                        Button(String(localized: "중단")) { modelDownloadToken?.cancel() }.controlSize(.mini)
+                                        Text(String(localized: "다운로드 중 · \(modelDownloadDetail)"))
                                             .font(.caption)
                                             .foregroundStyle(.secondary)
                                     } else {
                                         Image(systemName: "arrow.down.circle")
                                             .foregroundStyle(.orange)
                                             .font(.caption)
-                                        Text("첫 사용 시 \(selectedModel.sizeLabel) 다운로드")
+                                        Text(String(localized: "첫 사용 시 \(selectedModel.sizeLabel) 다운로드"))
                                             .font(.caption)
                                             .foregroundStyle(.orange)
-                                        Button("미리 다운로드") {
+                                        Button(String(localized: "미리 다운로드")) {
                                             downloadModel()
                                         }
                                         .buttonStyle(.bordered)
@@ -564,7 +564,7 @@ struct ContentView: View {
                         }
                     }
 
-                    optionRow("출력") {
+                    optionRow(String(localized: "출력")) {
                         Picker("", selection: $outputMode) {
                             ForEach(OutputMode.allCases) { mode in
                                 Text(mode.label).tag(mode)
@@ -574,7 +574,7 @@ struct ContentView: View {
                         .labelsHidden()
                     }
 
-                    optionRow("원본 언어") {
+                    optionRow(String(localized: "원본 언어")) {
                         Picker("", selection: $language) {
                             ForEach(Language.allCases) { lang in
                                 Text(lang.label).tag(lang)
@@ -584,7 +584,7 @@ struct ContentView: View {
                         .labelsHidden()
                     }
 
-                    optionRow("감도") {
+                    optionRow(String(localized: "감도")) {
                         Picker("", selection: $sensitivity) {
                             ForEach(Sensitivity.allCases) { s in
                                 Text(s.label).tag(s)
@@ -595,7 +595,7 @@ struct ContentView: View {
                         .labelsHidden()
                     }
 
-                    optionRow("시간 보정") {
+                    optionRow(String(localized: "시간 보정")) {
                         Picker("", selection: $subtitleDelay) {
                             ForEach(SubtitleDelay.allCases) { delay in
                                 Text(delay.label).tag(delay)
@@ -612,17 +612,19 @@ struct ContentView: View {
 
                 // Right: 번역 옵션
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("자막 번역", systemImage: "character.bubble")
+                    Label(String(localized: "자막 번역"), systemImage: "character.bubble")
                         .font(.headline)
                         .foregroundStyle(.primary)
 
                     #if MAC_APP_STORE
                     chatGPTOptions
                     #else
-                    Picker("번역 방식", selection: $translationProvider) {
+                    Text(String(localized: "번역 방식")).font(.subheadline).foregroundStyle(.secondary)
+                    Picker(String(localized: "번역 방식"), selection: $translationProvider) {
                         ForEach(TranslationProvider.choices(store: false)) { Text($0.label).tag($0) }
                     }
                     .pickerStyle(.segmented)
+                    .labelsHidden()
 
                     if translationProvider == .apple {
                         AppleTranslationOptionsView(coordinator: appleTranslation, source: language.rawValue, targets: selectedTranslations)
@@ -641,7 +643,7 @@ struct ContentView: View {
                             }
                         }
 
-                        optionRow("모델") {
+                        optionRow(String(localized: "모델")) {
                             Picker("", selection: $translationModel) {
                                 ForEach(TranslationModel.models(for: authMethod)) { model in
                                     Text(model.label).tag(model)
@@ -650,8 +652,8 @@ struct ContentView: View {
                             .pickerStyle(.menu)
                             .labelsHidden()
                             .help(authMethod == .claudeCode
-                                  ? "CLI가 최신 모델 별칭을 해석합니다. 최신 버전을 사용하려면 Claude Code도 업데이트하세요."
-                                  : "자동은 사용자 설정의 고정 모델을 건너뛰고 CLI 권장 모델을 사용합니다. 최신 Codex CLI를 사용하세요.")
+                                  ? String(localized: "CLI가 최신 모델 별칭을 해석합니다. 최신 버전을 사용하려면 Claude Code도 업데이트하세요.")
+                                  : String(localized: "자동은 사용자 설정의 고정 모델을 건너뛰고 CLI 권장 모델을 사용합니다. 최신 Codex CLI를 사용하세요."))
                         }
 
                         optionRow("") {
@@ -662,13 +664,13 @@ struct ContentView: View {
                                 if installed {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundStyle(.green)
-                                    Text("\(cliName) 설치됨")
+                                    Text(String(localized: "\(cliName) 설치됨"))
                                         .font(.caption)
                                         .foregroundStyle(.green)
                                 } else {
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundStyle(.red)
-                                    Text("\(cliName) 미설치")
+                                    Text(String(localized: "\(cliName) 미설치"))
                                         .font(.caption)
                                         .foregroundStyle(.red)
 
@@ -679,7 +681,7 @@ struct ContentView: View {
                                             NSWorkspace.shared.open(URL(string: "https://openai.com/codex/download")!)
                                         }
                                     } label: {
-                                        Text("설치")
+                                        Text(String(localized: "설치"))
                                     }
                                     .buttonStyle(.bordered)
                                     .controlSize(.small)
@@ -692,7 +694,7 @@ struct ContentView: View {
                     if translationProvider == .apple || TranslationEngine.findCLI(for: authMethod) != nil {
                         Divider()
 
-                        optionRow("언어") {
+                        optionRow(String(localized: "언어")) {
                             FlowLayout(spacing: 8) {
                                 ForEach(TranslationLanguage.allCases) { lang in
                                     Toggle(lang.label, isOn: Binding(
@@ -706,7 +708,7 @@ struct ContentView: View {
                         }
 
                         if !selectedTranslations.isEmpty {
-                            Text("\(selectedTranslations.count)개 언어에 병렬 번역")
+                            Text(String(localized: "\(selectedTranslations.count)개 언어에 병렬 번역"))
                                 .font(.caption)
                                 .foregroundStyle(.tertiary)
                                 .padding(.leading, 62)
@@ -721,7 +723,7 @@ struct ContentView: View {
             }
             .padding(.top, 8)
         } label: {
-            Label("작업 설정", systemImage: "slider.horizontal.3")
+            Label(String(localized: "작업 설정"), systemImage: "slider.horizontal.3")
                 .font(.headline)
         }
         .padding(.horizontal, 24)
@@ -744,7 +746,7 @@ struct ContentView: View {
         HStack {
             if engine.isProcessing {
                 ProgressView().progressViewStyle(.circular).controlSize(.small)
-                    .accessibilityLabel("처리 중")
+                    .accessibilityLabel(String(localized: "처리 중"))
                 VStack(alignment: .leading, spacing: 4) {
                     ProgressView(value: engine.overallProgress)
 
@@ -759,23 +761,23 @@ struct ContentView: View {
                         Text("\(Int(engine.overallProgress * 100))%")
                             .font(.caption.monospacedDigit())
 
-                        Text(engine.eta.isEmpty ? "계산 중..." : engine.eta + " 남음")
+                        Text(engine.eta.isEmpty ? String(localized: "계산 중...") : engine.eta + String(localized: " 남음"))
                             .font(.caption.monospacedDigit())
                             .foregroundStyle(.secondary)
                     }
                 }
                 .frame(maxWidth: .infinity)
 
-                Button("중단") {
+                Button(String(localized: "중단")) {
                     engine.cancel()
                 }
                 .buttonStyle(.bordered)
             } else {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(files.isEmpty ? "파일을 추가하면 자막 작업을 시작할 수 있습니다." : "\(files.count)개 파일 · \(outputMode.label)")
+                    Text(files.isEmpty ? String(localized: "파일을 추가하면 자막 작업을 시작할 수 있습니다.") : String(localized: "\(files.count)개 파일 · \(outputMode.label)"))
                         .font(.subheadline)
                     Text(engine.currentStatus.isEmpty
-                         ? (selectedTranslations.isEmpty ? "번역 없이 원본 언어의 자막을 만듭니다." : "\(selectedTranslations.count)개 언어로 자막을 번역합니다.")
+                         ? (selectedTranslations.isEmpty ? String(localized: "번역 없이 원본 언어의 자막을 만듭니다.") : String(localized: "\(selectedTranslations.count)개 언어로 자막을 번역합니다."))
                          : engine.currentStatus)
                         .font(.caption).foregroundStyle(.secondary).lineLimit(2)
                 }
@@ -784,12 +786,12 @@ struct ContentView: View {
                 Button {
                     requestProcessing()
                 } label: {
-                    Label("자막 만들기", systemImage: "play.fill")
+                    Label(String(localized: "자막 만들기"), systemImage: "play.fill")
                         .frame(width: 160)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
-                .help("자막 작업 시작 (⌘R)")
+                .help(String(localized: "자막 작업 시작 (⌘R)"))
                 .disabled(files.isEmpty || isDownloadingModel || toolChecker.isInstalling)
             }
         }
@@ -851,7 +853,7 @@ struct ContentView: View {
         let token = CancellationToken()
         modelDownloadToken = token
         isDownloadingModel = true
-        modelDownloadDetail = "연결 중…"
+        modelDownloadDetail = String(localized: "연결 중…")
         let model = selectedModel
         DispatchQueue.global().async {
             var succeeded = false
@@ -862,12 +864,12 @@ struct ContentView: View {
                     DispatchQueue.main.async { modelDownloadDetail = detail }
                 }
                 if !WhisperModelInstaller.isVadAvailable(at: WhisperModelInstaller.vadURL(nextTo: modelURL)) {
-                    DispatchQueue.main.async { modelDownloadDetail = "음성 구간 감지 모델 준비 중…" }
+                    DispatchQueue.main.async { modelDownloadDetail = String(localized: "음성 구간 감지 모델 준비 중…") }
                     try WhisperModelInstaller.ensureVadAvailable(nextTo: modelURL, cancellation: token)
                 }
                 succeeded = !token.isCancelled
             } catch {
-                if !token.isCancelled { DispatchQueue.main.async { toolChecker.installationError = "모델 다운로드 실패: \(error.localizedDescription)" } }
+                if !token.isCancelled { DispatchQueue.main.async { toolChecker.installationError = String(localized: "모델 다운로드 실패: \(error.localizedDescription)") } }
             }
             let success = succeeded
             DispatchQueue.main.async {
@@ -900,16 +902,16 @@ struct ContentView: View {
             switch translationProvider {
             #if MAC_APP_STORE
             case .chatGPT where !chatGPT.canTranslate:
-                engine.currentStatus = "번역하려면 ChatGPT 로그인·플랜 사용 권한·모델 선택을 확인해주세요."
+                engine.currentStatus = String(localized: "번역하려면 ChatGPT 로그인·플랜 사용 권한·모델 선택을 확인해주세요.")
                 return
             #endif
             case .apple where !applePrepared:
                 guard !appleTranslation.isPreparing else { return }
-                engine.currentStatus = "Apple 번역 언어 팩 확인 중..."
+                engine.currentStatus = String(localized: "Apple 번역 언어 팩 확인 중...")
                 Task {
                     await appleTranslation.prepare(source: language.rawValue, targets: selectedTranslations) { ready in
                         if ready { startProcessing(applePrepared: true) }
-                        else { engine.currentStatus = appleTranslation.message ?? "Apple 번역을 준비하지 못했습니다." }
+                        else { engine.currentStatus = appleTranslation.message ?? String(localized: "Apple 번역을 준비하지 못했습니다.") }
                     }
                 }
                 return
@@ -917,7 +919,7 @@ struct ContentView: View {
             }
         }
         if AppDistribution.isStore, !SandboxFileAccess.shared.authorizeOutputDirectories(for: files.filter { $0.status == .pending }.map(\.url)) {
-            engine.currentStatus = "자막을 저장할 입력 폴더의 접근 허용이 필요합니다."
+            engine.currentStatus = String(localized: "자막을 저장할 입력 폴더의 접근 허용이 필요합니다.")
             return
         }
         var options = TranscriptionEngine.Options(
@@ -964,47 +966,49 @@ struct ContentView: View {
     #if MAC_APP_STORE
     private var chatGPTOptions: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Picker("번역 방식", selection: $translationProvider) {
-                ForEach(TranslationProvider.allCases) { Text($0.label).tag($0) }
+            Text(String(localized: "번역 방식")).font(.subheadline).foregroundStyle(.secondary)
+            Picker(String(localized: "번역 방식"), selection: $translationProvider) {
+                ForEach(TranslationProvider.choices(store: true)) { Text($0.label).tag($0) }
             }
             .pickerStyle(.segmented)
+            .labelsHidden()
             if translationProvider == .chatGPT {
                 if !chatGPT.accounts.isEmpty {
-                    Picker("계정", selection: Binding(get: { chatGPT.activeID ?? "" }, set: { chatGPT.select($0) })) {
+                    Picker(String(localized: "계정"), selection: Binding(get: { chatGPT.activeID ?? "" }, set: { chatGPT.select($0) })) {
                         ForEach(chatGPT.accounts) { account in
-                            Text(account.label + (account.signedIn ? "" : " (로그아웃)")).tag(account.id)
+                            Text(account.label + (account.signedIn ? "" : String(localized: " (로그아웃)"))).tag(account.id)
                         }
                     }.disabled(chatGPT.busy)
                 }
                 if chatGPT.active?.signedIn != true || chatGPT.active?.planEnabled != true {
-                    Text("번역할 자막 텍스트를 OpenAI로 보냅니다. 음성 전사는 이 Mac에서 처리합니다.")
+                    Text(String(localized: "번역할 자막 텍스트를 OpenAI로 보냅니다. 음성 전사는 이 Mac에서 처리합니다."))
                         .font(.caption).foregroundStyle(.secondary)
                     Button("Continue with ChatGPT") { chatGPT.signIn(consent: chatGPT.active?.signedIn == true) }
                         .buttonStyle(.borderedProminent).tint(.primary).disabled(chatGPT.busy)
-                    Text("사용 가능한 ChatGPT 플랜이 필요합니다. 앱 자체는 무료입니다.")
+                    Text(String(localized: "사용 가능한 ChatGPT 플랜이 필요합니다. 앱 자체는 무료입니다."))
                         .font(.caption2).foregroundStyle(.secondary)
                 }
                 if chatGPT.isSigningIn {
-                    HStack { ProgressView().controlSize(.small); Text("브라우저에서 계정을 선택하고 ChatGPT 플랜 사용을 허용한 뒤 계속을 눌러주세요. 연결은 30분간 기다립니다.").font(.caption)
-                        Button("취소") { chatGPT.cancel() } }
+                    HStack { ProgressView().controlSize(.small); Text(String(localized: "브라우저에서 계정을 선택하고 ChatGPT 플랜 사용을 허용한 뒤 계속을 눌러주세요. 연결은 30분간 기다립니다.")).font(.caption)
+                        Button(String(localized: "취소")) { chatGPT.cancel() } }
                 }
                 if chatGPT.active?.signedIn == true {
                     HStack {
-                        Button("로그아웃") { chatGPT.signOut() }
-                        Button("다른 계정 연결") { chatGPT.signIn(newAccount: true) }
+                        Button(String(localized: "로그아웃")) { chatGPT.signOut() }
+                        Button(String(localized: "다른 계정 연결")) { chatGPT.signIn(newAccount: true) }
                     }.controlSize(.small).disabled(chatGPT.busy)
                 }
                 if chatGPT.active?.planEnabled == true && chatGPT.active?.signedIn == true {
-                    Picker("모델", selection: $chatGPT.selectedModel) {
-                        Text("자동").tag("")
+                    Picker(String(localized: "모델"), selection: $chatGPT.selectedModel) {
+                        Text(String(localized: "자동")).tag("")
                         ForEach(chatGPT.models) { Text($0.display_name).tag($0.slug) }
                     }.disabled(chatGPT.busy || chatGPT.models.isEmpty)
-                        .help("자동은 서버 목록의 첫 번째 모델을 사용합니다. 최신 출시 순서나 번역 품질 순위를 뜻하지 않습니다.")
+                        .help(String(localized: "자동은 서버 목록의 첫 번째 모델을 사용합니다. 최신 출시 순서나 번역 품질 순위를 뜻하지 않습니다."))
                     HStack {
                         Text("Using ChatGPT plan").font(.caption)
                         Link("Manage usage", destination: ChatGPTAccountController.usageURL).font(.caption)
                         Button { chatGPT.refreshModels() } label: { Image(systemName: "arrow.clockwise") }
-                            .help("모델 새로고침 · 사용량 제한 후 다시 시도").disabled(chatGPT.busy)
+                            .help(String(localized: "모델 새로고침 · 사용량 제한 후 다시 시도")).disabled(chatGPT.busy)
                     }
                 }
                 if let error = chatGPT.error {
@@ -1021,13 +1025,13 @@ struct ContentView: View {
                         .toggleStyle(.checkbox).font(.body)
                 }
             }
-            Text(translationProvider == .apple ? "번역 언어를 선택하지 않으면 전사만 합니다." : "번역 언어를 선택하지 않으면 로그인 없이 전사할 수 있습니다.")
+            Text(translationProvider == .apple ? String(localized: "번역 언어를 선택하지 않으면 전사만 합니다.") : String(localized: "번역 언어를 선택하지 않으면 로그인 없이 전사할 수 있습니다."))
                 .font(.caption2).foregroundStyle(.secondary)
         }
         .sheet(isPresented: $chatGPT.showWelcome) {
             VStack(alignment: .leading, spacing: 16) {
                 Text("You're using your ChatGPT plan").font(.title2.bold())
-                Text("이 앱의 번역 요청은 연결한 ChatGPT 플랜의 사용량 또는 크레딧을 사용합니다. ChatGPT 설정에서 사용량을 관리할 수 있습니다.")
+                Text(String(localized: "이 앱의 번역 요청은 연결한 ChatGPT 플랜의 사용량 또는 크레딧을 사용합니다. ChatGPT 설정에서 사용량을 관리할 수 있습니다."))
                 Link("Manage usage", destination: ChatGPTAccountController.usageURL)
                 Button("Got it") { chatGPT.dismissWelcome() }.buttonStyle(.borderedProminent)
             }.padding(24).frame(width: 420)
@@ -1087,8 +1091,8 @@ class ToolChecker: ObservableObject {
     func checkAll() {
         guard !isInstalling else { return }
         tools = [
-            ToolInfo(id: "whisper-cli", name: "whisper-cpp", description: "AI 음성인식 (Metal GPU)", installCommand: "brew install whisper-cpp"),
-            ToolInfo(id: "ffmpeg", name: "ffmpeg", description: "오디오 변환 + 자막 내장", installCommand: "brew install ffmpeg"),
+            ToolInfo(id: "whisper-cli", name: "whisper-cpp", description: String(localized: "AI 음성인식 (Metal GPU)"), installCommand: "brew install whisper-cpp"),
+            ToolInfo(id: "ffmpeg", name: "ffmpeg", description: String(localized: "오디오 변환 + 자막 내장"), installCommand: "brew install ffmpeg"),
         ]
 
         for i in tools.indices {
@@ -1114,7 +1118,7 @@ class ToolChecker: ObservableObject {
     }
 
     func install(_ tool: ToolInfo) {
-        guard !AppDistribution.isStore else { installationError = "도구는 앱에 포함되어 있습니다. 앱을 다시 설치해주세요."; return }
+        guard !AppDistribution.isStore else { installationError = String(localized: "도구는 앱에 포함되어 있습니다. 앱을 다시 설치해주세요."); return }
         guard !isInstalling else { return }
         guard let index = tools.firstIndex(where: { $0.id == tool.id }) else { return }
         isInstalling = true
@@ -1130,7 +1134,7 @@ class ToolChecker: ObservableObject {
                 }
                 self.downloadProgress = 0
                 self.isInstalling = false
-                if !success && self.installationToken?.isCancelled != true && self.installationError == nil { self.installationError = "\(tool.name) 설치 또는 실행 검증에 실패했습니다. 다시 시도해주세요." }
+                if !success && self.installationToken?.isCancelled != true && self.installationError == nil { self.installationError = String(localized: "\(tool.name) 설치 또는 실행 검증에 실패했습니다. 다시 시도해주세요.") }
             }
         }
     }
@@ -1150,7 +1154,7 @@ class ToolChecker: ObservableObject {
                     self.tools[index].status = success ? .installed : .notInstalled
                     self.downloadProgress = 0
                     if !success && self.installationToken?.isCancelled != true && self.installationError == nil {
-                        self.installationError = "\(tool.name) 설치 또는 실행 검증에 실패했습니다."
+                        self.installationError = String(localized: "\(tool.name) 설치 또는 실행 검증에 실패했습니다.")
                     }
                 }
             }
@@ -1285,9 +1289,9 @@ struct ToolRowView: View {
             switch tool.status {
             case .notInstalled:
                 if AppDistribution.isStore {
-                    Text("앱 도구 누락").foregroundStyle(.red)
+                    Text(String(localized: "앱 도구 누락")).foregroundStyle(.red)
                 } else {
-                    Button("다운로드") { onInstall() }
+                    Button(String(localized: "다운로드")) { onInstall() }
                         .buttonStyle(.bordered).controlSize(.small)
                 }
             case .installing:
@@ -1301,12 +1305,12 @@ struct ToolRowView: View {
                 } else {
                     ProgressView()
                         .controlSize(.small)
-                    Text("다운로드 중...")
+                    Text(String(localized: "다운로드 중..."))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
             case .installed:
-                Text("설치됨")
+                Text(String(localized: "설치됨"))
                     .font(.caption)
                     .foregroundStyle(.green)
             case .checking:
@@ -1328,7 +1332,7 @@ struct FileRowView: View {
         HStack(spacing: 12) {
             if file.isActive {
                 ProgressView().progressViewStyle(.circular).controlSize(.small)
-                    .frame(width: 20, height: 20).accessibilityLabel("처리 중")
+                    .frame(width: 20, height: 20).accessibilityLabel(String(localized: "처리 중"))
             } else {
                 Image(systemName: file.status.icon)
                     .foregroundStyle(file.status.color).font(.title3)
@@ -1363,10 +1367,10 @@ struct FileRowView: View {
                     }
 
                     if case .cancelled = file.status {
-                        Text("중단됨").font(.caption).foregroundStyle(.orange)
+                        Text(String(localized: "중단됨")).font(.caption).foregroundStyle(.orange)
                     }
                     if case .skipped = file.status {
-                        Text("건너뜀")
+                        Text(String(localized: "건너뜀"))
                             .font(.caption)
                             .foregroundStyle(.orange)
                     }
@@ -1386,7 +1390,7 @@ struct FileRowView: View {
                     }
                 }
                 if file.isActive {
-                    Text(file.progressDetail.isEmpty ? "처리 준비 중..." : file.progressDetail)
+                    Text(file.progressDetail.isEmpty ? String(localized: "처리 준비 중...") : file.progressDetail)
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(file.status.color).lineLimit(2)
                         .help(file.progressDetail)
@@ -1399,7 +1403,7 @@ struct FileRowView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     ProgressView(value: file.phaseProgress ?? file.progress)
                         .frame(width: 70).tint(file.status.color)
-                    Text("\(file.phaseProgress == nil ? "전체 " : "단계 ")\(Int((file.phaseProgress ?? file.progress) * 100))%")
+                    Text(String(localized: "\(file.phaseProgress == nil ? String(localized: "전체 ") : String(localized: "단계 "))\(Int((file.phaseProgress ?? file.progress) * 100))%"))
                         .font(.system(size: 9).monospacedDigit())
                         .foregroundStyle(.tertiary)
                     if !fileEtaText.isEmpty {
@@ -1414,6 +1418,6 @@ struct FileRowView: View {
     private func formatElapsed(_ interval: TimeInterval) -> String {
         let mins = Int(interval) / 60
         let secs = Int(interval) % 60
-        return mins > 0 ? "\(mins)분 \(secs)초" : "\(secs)초"
+        return mins > 0 ? String(localized: "\(mins)분 \(secs)초") : String(localized: "\(secs)초")
     }
 }

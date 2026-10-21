@@ -35,7 +35,7 @@ struct AppleSubtitleTranslator {
     func request(_ srt: String, cancellation: CancellationToken) -> ProcessResult {
         if cancellation.isCancelled { return ProcessResult(failure: .cancelled) }
         guard let document = try? SrtDocument(srt) else {
-            return ProcessResult(failure: .service("번역할 SRT 형식이 올바르지 않습니다.", retryable: false))
+            return ProcessResult(failure: .service(String(localized: "번역할 SRT 형식이 올바르지 않습니다."), retryable: false))
         }
         final class Box: @unchecked Sendable {
             let lock = NSLock()
@@ -64,13 +64,13 @@ struct AppleSubtitleTranslator {
         case is CancellationError, TranslationError.alreadyCancelled:
             return ProcessResult(failure: .cancelled)
         case TranslationError.notInstalled:
-            return ProcessResult(failure: .service("Apple 번역 언어 팩이 설치되어 있지 않습니다. 다시 실행하면 다운로드를 요청합니다.", retryable: false))
+            return ProcessResult(failure: .service(String(localized: "Apple 번역 언어 팩이 설치되어 있지 않습니다. 다시 실행하면 다운로드를 요청합니다."), retryable: false))
         case TranslationError.unsupportedSourceLanguage, TranslationError.unsupportedTargetLanguage, TranslationError.unsupportedLanguagePairing:
-            return ProcessResult(failure: .service("Apple 번역이 이 언어 조합을 지원하지 않습니다. ChatGPT 번역을 사용해주세요.", retryable: false))
+            return ProcessResult(failure: .service(String(localized: "Apple 번역이 이 언어 조합을 지원하지 않습니다. ChatGPT 번역을 사용해주세요."), retryable: false))
         case let missing as AppleTranslationMapping.Missing:
             return ProcessResult(failure: .service(missing.localizedDescription, retryable: true))
         default:
-            return ProcessResult(failure: .service("Apple 번역에 실패했습니다: \(error.localizedDescription)", retryable: true))
+            return ProcessResult(failure: .service(String(localized: "Apple 번역에 실패했습니다: \(error.localizedDescription)"), retryable: true))
         }
     }
 }

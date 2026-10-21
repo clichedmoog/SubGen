@@ -34,7 +34,8 @@ struct SubtitleGeneratorApp: App {
     }
 
     var body: some Scene {
-        WindowGroup("SubGen") {
+        // A single Window scene appears in the Window menu, so a closed main window can be reopened.
+        Window("SubGen", id: "main") {
             ContentView()
         }
         .windowStyle(.titleBar)
@@ -44,12 +45,12 @@ struct SubtitleGeneratorApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {}
             CommandGroup(after: .toolbar) {
-                Button("자막 생성 시작") {
+                Button(String(localized: "자막 생성 시작")) {
                     NotificationCenter.default.post(name: .startProcessing, object: nil)
                 }
                 .keyboardShortcut("r", modifiers: .command)
 
-                Button("중단") {
+                Button(String(localized: "중단")) {
                     NotificationCenter.default.post(name: .stopProcessing, object: nil)
                 }
                 .keyboardShortcut(".", modifiers: .command)

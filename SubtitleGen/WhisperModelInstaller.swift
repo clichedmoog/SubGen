@@ -42,9 +42,9 @@ enum WhisperModelInstaller {
         guard !cancellation.isCancelled else { throw ModelDownloader.Failure.cancelled }
         if isAvailable(at: destination) { return }
         guard let model = WhisperModel(rawValue: destination.lastPathComponent), let source = URL(string: model.downloadURL) else {
-            throw ModelDownloader.Failure.transfer("선택한 음성인식 모델의 다운로드 정보를 찾을 수 없습니다.")
+            throw ModelDownloader.Failure.transfer(String(localized: "선택한 음성인식 모델의 다운로드 정보를 찾을 수 없습니다."))
         }
-        try install(source, to: destination, isValid: isAvailable, invalid: "다운로드한 음성인식 모델이 불완전하거나 형식이 올바르지 않습니다.",
+        try install(source, to: destination, isValid: isAvailable, invalid: String(localized: "다운로드한 음성인식 모델이 불완전하거나 형식이 올바르지 않습니다."),
                     cancellation: cancellation, onProgress: onProgress, download: download)
     }
 
@@ -56,7 +56,7 @@ enum WhisperModelInstaller {
         guard !cancellation.isCancelled else { throw ModelDownloader.Failure.cancelled }
         let destination = vadURL(nextTo: model)
         if isVadAvailable(at: destination) { return }
-        try install(vadSource, to: destination, isValid: isVadAvailable, invalid: "다운로드한 음성 구간 감지 모델이 불완전하거나 형식이 올바르지 않습니다.",
+        try install(vadSource, to: destination, isValid: isVadAvailable, invalid: String(localized: "다운로드한 음성 구간 감지 모델이 불완전하거나 형식이 올바르지 않습니다."),
                     cancellation: cancellation, onProgress: { _, _ in }, download: download)
     }
 
@@ -81,7 +81,7 @@ enum WhisperModelInstaller {
 
     static func downloadDetail(received: Int64, total: Int64?) -> String {
         let receivedText = ByteCountFormatter.string(fromByteCount: max(0, received), countStyle: .file)
-        guard let total, total > 0 else { return received > 0 ? receivedText : "연결 중…" }
+        guard let total, total > 0 else { return received > 0 ? receivedText : String(localized: "연결 중…") }
         let totalText = ByteCountFormatter.string(fromByteCount: total, countStyle: .file)
         return "\(receivedText) / \(totalText) · \(Int(min(1, max(0, Double(received) / Double(total))) * 100))%"
     }

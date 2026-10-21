@@ -24,7 +24,7 @@ final class TranslationEngine {
     func translateSrt(srtContent: String, sourceLang: String, targetLangs: [TranslationLanguage], onProgress: @escaping (String) -> Void,
                       onCueProgress: @escaping (TranslationLanguage, Int, Int) -> Void = { _, _, _ in }) -> TranslationBatchResult {
         guard let source = try? SrtDocument(srtContent) else {
-            return TranslationBatchResult(failures: Dictionary(uniqueKeysWithValues: targetLangs.map { ($0, "원문 SRT 형식이 올바르지 않습니다") }))
+            return TranslationBatchResult(failures: Dictionary(uniqueKeysWithValues: targetLangs.map { ($0, String(localized: "원문 SRT 형식이 올바르지 않습니다")) }))
         }
         let chunks = stride(from: 0, to: source.cues.count, by: 200).map {
             SrtDocument(cues: Array(source.cues[$0..<min($0 + 200, source.cues.count)]))
@@ -40,17 +40,17 @@ final class TranslationEngine {
                 var errorMessage: String?
                 onCueProgress(lang, 0, source.cues.count)
                 for (index, chunk) in chunks.enumerated() {
-                    if self.cancellation.isCancelled { errorMessage = "작업이 중단되었습니다"; break }
-                    onProgress("\(lang.label) 번역 · \(cues.count)/\(source.cues.count)개 · 묶음 \(index + 1)/\(chunks.count)")
+                    if self.cancellation.isCancelled { errorMessage = String(localized: "작업이 중단되었습니다"); break }
+                    onProgress(String(localized: "\(lang.label) 번역 · \(cues.count)/\(source.cues.count)개 · 묶음 \(index + 1)/\(chunks.count)"))
                     var accepted: SrtDocument?
                     for attempt in 1...3 {
-                        if self.cancellation.isCancelled { errorMessage = "작업이 중단되었습니다"; break }
+                        if self.cancellation.isCancelled { errorMessage = String(localized: "작업이 중단되었습니다"); break }
                         let response = self.requestOverride?(chunk.render(), lang) ?? self.callCLI(chunk.render(), targetLang: lang)
                         if response.succeeded, let document = try? SrtDocument(response.stdout), document.matchesTiming(of: chunk) {
                             accepted = document
                             break
                         }
-                        errorMessage = response.succeeded ? "번역 결과의 자막 개수·번호·시간이 원문과 일치하지 않습니다" : response.diagnostic
+                        errorMessage = response.succeeded ? String(localized: "번역 결과의 자막 개수·번호·시간이 원문과 일치하지 않습니다") : response.diagnostic
                         logDebug("Translation \(lang.rawValue) chunk \(index + 1) attempt \(attempt): \(errorMessage ?? "")")
                         if response.failure == .cancelled || response.failure == .timedOut { break }
                         if case .service(_, let retryable) = response.failure {
@@ -60,7 +60,7 @@ final class TranslationEngine {
                                 while Date() < until && !self.cancellation.isCancelled { Thread.sleep(forTimeInterval: 0.05) }
                             }
                         }
-                        if attempt < 3 { onProgress("\(lang.label) 재시도 (\(attempt + 1)/3)...") }
+                        if attempt < 3 { onProgress(String(localized: "\(lang.label) 재시도 (\(attempt + 1)/3)...")) }
                     }
                     guard let accepted else { break }
                     errorMessage = nil
@@ -71,7 +71,7 @@ final class TranslationEngine {
                 if let errorMessage { result.failures[lang] = errorMessage }
                 else if !self.cancellation.isCancelled && cues.count == source.cues.count {
                     result.translations[lang] = SrtDocument(cues: cues).render()
-                } else { result.failures[lang] = "작업이 중단되었거나 번역이 누락되었습니다" }
+                } else { result.failures[lang] = String(localized: "작업이 중단되었거나 번역이 누락되었습니다") }
                 lock.unlock()
             }
         }
@@ -109,10 +109,10 @@ final class TranslationEngine {
 
     private func callCLI(_ srt: String, targetLang: TranslationLanguage) -> ProcessResult {
         guard !AppDistribution.isStore else {
-            return ProcessResult(failure: .launch("이 빌드에서는 번역을 아직 사용할 수 없습니다."))
+            return ProcessResult(failure: .launch(String(localized: "이 빌드에서는 번역을 아직 사용할 수 없습니다.")))
         }
         guard let binary = cliOverride ?? Self.findCLI(for: authMethod) else {
-            return ProcessResult(failure: .launch("\(authMethod.label) CLI를 찾을 수 없습니다"))
+            return ProcessResult(failure: .launch(String(localized: "\(authMethod.label) CLI를 찾을 수 없습니다")))
         }
         let fm = FileManager.default
         let temp = fm.temporaryDirectory.appendingPathComponent("subtitle-translation-\(UUID().uuidString)")
@@ -138,7 +138,7 @@ final class TranslationEngine {
                                        input: systemPrompt + "\n\n" + prompt, directory: temp, timeout: 600, cancellation: cancellation)
         if result.succeeded {
             do { result.stdout = try String(contentsOf: output, encoding: .utf8) }
-            catch { result.failure = .launch("Codex 번역 결과 파일을 읽을 수 없습니다: \(error.localizedDescription)") }
+            catch { result.failure = .launch(String(localized: "Codex 번역 결과 파일을 읽을 수 없습니다: \(error.localizedDescription)")) }
         }
         return result
     }

@@ -13,6 +13,7 @@
 		291CDB9D5FF42F72BD1FCFE7 /* ChatGPTCredentialStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DE71466454017F2FA955795 /* ChatGPTCredentialStore.swift */; };
 		294A7E06063F1868B2E693F3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85C018CFAEAE74E4CD25023 /* ContentView.swift */; };
 		3369CC6B98B24D1EC8BE2F0E /* SrtDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2F19FD0126B7BB25F80D6F /* SrtDocument.swift */; };
+		4793690E7B2AB175C9017A57 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = C426323BEFBD594693CBA371 /* Localizable.xcstrings */; };
 		5E0811CCB524019DDCDE2CC0 /* AppIcon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 9AEFDDD66C775FE306486F9A /* AppIcon.icon */; };
 		6569096E02834E3748A99F77 /* AppleTranslationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0D83193352AEBF2EBA1098C /* AppleTranslationCoordinator.swift */; };
 		69DA40086F8114311785909A /* DockProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9590B1E6FF11F47307BB8FAD /* DockProgressView.swift */; };
@@ -89,6 +90,7 @@
 		BA1822593C7F85363C5DCEA2 /* Licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Licenses; path = SubtitleGen/Resources/Licenses; sourceTree = SOURCE_ROOT; };
 		BA668378BD47571A36B8F3DB /* video.webm */ = {isa = PBXFileReference; path = video.webm; sourceTree = "<group>"; };
 		BE02221918F54BC5EFCA0491 /* AudioPreparation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPreparation.swift; sourceTree = "<group>"; };
+		C426323BEFBD594693CBA371 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		C85C018CFAEAE74E4CD25023 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CBBE20ECC0F7F16B8CF80E4F /* ProcessRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessRunner.swift; sourceTree = "<group>"; };
 		CBDEED5A72317943CE3678E6 /* SubGenRuntimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SubGenRuntimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				1DE5E13767A3C25BBA6B4F1B /* AppIcon.icns */,
+				C426323BEFBD594693CBA371 /* Localizable.xcstrings */,
 			);
 			name = Resources;
 			path = SubtitleGen/Resources;
@@ -292,6 +295,7 @@
 				B09720842301C54A84005B75 /* AppIcon.icns in Resources */,
 				5E0811CCB524019DDCDE2CC0 /* AppIcon.icon in Resources */,
 				91BC56EE8B8D0B3AFD4B7809 /* Licenses in Resources */,
+				4793690E7B2AB175C9017A57 /* Localizable.xcstrings in Resources */,
 				7DCD944E7CD62FC3A9EEA0E9 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -392,7 +396,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Store/Resources/SubGen.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -436,7 +440,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Store/Resources/SubGen.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -506,12 +510,14 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
 			};
@@ -589,6 +595,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -596,6 +603,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};

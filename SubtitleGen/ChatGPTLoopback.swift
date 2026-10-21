@@ -30,16 +30,16 @@ final class ChatGPTLoopback: @unchecked Sendable {
                                 let url = URL(string: "http://127.0.0.1:\(port.rawValue)/auth/callback")!
                                 self.redirect = url
                                 self.ready?.resume(returning: url); self.ready = nil
-                            case .failed: self.complete(.failure(ChatGPTFailure.message("로그인 연결을 받을 수 없습니다.")))
+                            case .failed: self.complete(.failure(ChatGPTFailure.message(String(localized: "로그인 연결을 받을 수 없습니다."))))
                             default: break
                             }
                         }
                         server.newConnectionHandler = { self.accept($0) }
                         server.start(queue: self.queue)
                         self.queue.asyncAfter(deadline: .now() + ChatGPTOAuth.loginTimeout) {
-                            self.complete(.failure(ChatGPTFailure.message("ChatGPT 로그인 시간이 초과되었습니다.")))
+                            self.complete(.failure(ChatGPTFailure.message(String(localized: "ChatGPT 로그인 시간이 초과되었습니다."))))
                         }
-                    } catch { self.complete(.failure(ChatGPTFailure.message("로그인 연결을 시작할 수 없습니다."))) }
+                    } catch { self.complete(.failure(ChatGPTFailure.message(String(localized: "로그인 연결을 시작할 수 없습니다.")))) }
                 }
             }
         }, onCancel: { self.cancel() })

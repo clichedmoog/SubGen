@@ -5,7 +5,7 @@ import Foundation
 enum AppleTranslationMapping {
     struct Missing: LocalizedError {
         let cue: Int
-        var errorDescription: String? { "Apple 번역 결과에 \(cue)번 자막이 없습니다." }
+        var errorDescription: String? { String(localized: "Apple 번역 결과에 \(cue)번 자막이 없습니다.") }
     }
 
     /// Whisper/SRT two-letter codes to identifiers understood by the Translation framework.

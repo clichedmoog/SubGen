@@ -14,13 +14,13 @@ enum ToolArchiveInstaller {
         case download, extraction, checksum, signature, execution, cancelled, configuration
         var errorDescription: String? {
             switch self {
-            case .download: return "도구를 다운로드하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해주세요."
-            case .extraction: return "설치 파일을 열지 못했습니다. 다시 다운로드해주세요."
-            case .checksum: return "다운로드한 파일의 무결성 검증에 실패했습니다."
-            case .signature: return "음성인식 도구의 개발자 서명을 확인하지 못했습니다."
-            case .execution: return "이 Mac에서 도구를 실행하지 못했습니다."
-            case .cancelled: return "설치를 중단했습니다."
-            case .configuration: return "음성인식 도구의 다운로드 정보를 찾지 못했습니다. 앱을 업데이트해주세요."
+            case .download: return String(localized: "도구를 다운로드하지 못했습니다. 인터넷 연결을 확인하고 다시 시도해주세요.")
+            case .extraction: return String(localized: "설치 파일을 열지 못했습니다. 다시 다운로드해주세요.")
+            case .checksum: return String(localized: "다운로드한 파일의 무결성 검증에 실패했습니다.")
+            case .signature: return String(localized: "음성인식 도구의 개발자 서명을 확인하지 못했습니다.")
+            case .execution: return String(localized: "이 Mac에서 도구를 실행하지 못했습니다.")
+            case .cancelled: return String(localized: "설치를 중단했습니다.")
+            case .configuration: return String(localized: "음성인식 도구의 다운로드 정보를 찾지 못했습니다. 앱을 업데이트해주세요.")
             }
         }
     }

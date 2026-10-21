@@ -15,9 +15,9 @@ final class AppleTranslationCoordinator: ObservableObject {
         case installed, needsDownload, unsupported
         var label: String {
             switch self {
-            case .installed: return "설치됨"
-            case .needsDownload: return "다운로드 필요"
-            case .unsupported: return "지원 안 함"
+            case .installed: return String(localized: "설치됨")
+            case .needsDownload: return String(localized: "다운로드 필요")
+            case .unsupported: return String(localized: "지원 안 함")
             }
         }
     }
@@ -101,13 +101,13 @@ final class AppleTranslationCoordinator: ObservableObject {
     func finishPair(_ pair: Pair, prepared: Bool) {
         pendingPairs.removeAll { $0 == pair }
         guard prepared else {
-            resume(pair, .failed("\(pair.target.label) 언어 팩 다운로드가 허용되지 않았습니다. 다시 실행하면 다시 요청합니다."))
+            resume(pair, .failed(String(localized: "\(pair.target.label) 언어 팩 다운로드가 허용되지 않았습니다. 다시 실행하면 다시 요청합니다.")))
             return
         }
         downloading.insert(pair)
         Task {
             let deadline = ContinuousClock.now.advanced(by: downloadTimeout)
-            var result = AppleLanguagePackResult.failed("\(pair.target.label) 언어 팩 다운로드가 끝나지 않았습니다. 시스템 설정 > 일반 > 언어 및 지역 > 번역 언어에서 확인한 뒤 다시 실행해주세요.")
+            var result = AppleLanguagePackResult.failed(String(localized: "\(pair.target.label) 언어 팩 다운로드가 끝나지 않았습니다. 시스템 설정 > 일반 > 언어 및 지역 > 번역 언어에서 확인한 뒤 다시 실행해주세요."))
             while ContinuousClock.now < deadline {
                 if await status(pair.source, pair.target) == .installed { result = .ready; break }
                 try? await Task.sleep(for: pollInterval)
@@ -134,17 +134,17 @@ final class AppleTranslationCoordinator: ObservableObject {
         let box = Box(), finished = DispatchSemaphore(value: 0)
         let task = Task { @MainActor in box.set(await operation()); finished.signal() }
         while finished.wait(timeout: .now() + 0.05) == .timedOut {
-            if cancellation.isCancelled { task.cancel(); return .failed("작업이 중단되었습니다") }
+            if cancellation.isCancelled { task.cancel(); return .failed(String(localized: "작업이 중단되었습니다")) }
         }
-        return box.get() ?? .failed("작업이 중단되었습니다")
+        return box.get() ?? .failed(String(localized: "작업이 중단되었습니다"))
     }
 
     /// System Settings › General › Language & Region, where macOS lists, adds and removes translation languages.
     /// Packs are shared by all apps and the Translation framework has no removal API.
     static let languageSettingsURL = URL(string: "x-apple.systempreferences:com.apple.Localization-Settings.extension")!
 
-    private static let unsupportedOS = "Apple 번역은 macOS 26 이상에서 사용할 수 있습니다."
+    private static let unsupportedOS = String(localized: "Apple 번역은 macOS 26 이상에서 사용할 수 있습니다.")
     private static func unsupportedPair(_ target: TranslationLanguage) -> String {
-        "Apple 번역이 \(target.label) 번역을 지원하지 않습니다. ChatGPT 번역을 사용하거나 번역 언어를 바꿔주세요."
+        String(localized: "Apple 번역이 \(target.label) 번역을 지원하지 않습니다. ChatGPT 번역을 사용하거나 번역 언어를 바꿔주세요.")
     }
 }

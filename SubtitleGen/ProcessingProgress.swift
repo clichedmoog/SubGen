@@ -12,7 +12,7 @@ struct ProcessingProgress {
         var translatedCues: [String: Int] = [:]
         var totalCues = 0
         var terminal: FileStatus?
-        var detail = "준비 중..."
+        var detail = String(localized: "준비 중...")
         var phaseFraction: Double?
         var startedAt = Date()
         var transcriptionStartedAt: Date?
@@ -28,13 +28,16 @@ struct ProcessingProgress {
         var translationDetail: String {
             targets.sorted().map { language in
                 let label = TranslationLanguage(rawValue: language)?.label ?? language
-                return "\(label) \(translatedCues[language] ?? 0)/\(totalCues)개"
+                return String(localized: "\(label) \(translatedCues[language] ?? 0)/\(totalCues)개")
             }.joined(separator: " · ")
         }
         mutating func source(_ fraction: Double, detail: String) {
             guard Self.clamp(fraction) >= sourceFraction else { return }
             sourceFraction = max(sourceFraction, Self.clamp(fraction)); phaseFraction = sourceFraction; self.detail = detail
-            if transcriptionStartedAt == nil, detail.hasPrefix("전사 ") { transcriptionStartedAt = Date() }
+            // Transcription details carry "elapsed / total" SRT times in every interface language.
+            if transcriptionStartedAt == nil, detail.range(of: #"\d{2}:\d{2}:\d{2},\d{3} / "#, options: .regularExpression) != nil {
+                transcriptionStartedAt = Date()
+            }
         }
         mutating func sourceReady(language: String) { sourceFraction = 1; targets.remove(language) }
         mutating func translation(language: String, completed: Int, total: Int) {
@@ -44,12 +47,12 @@ struct ProcessingProgress {
             // Retain room for SRT persistence, embedding and final validation.
             languageFractions[language] = max(languageFractions[language] ?? 0, fraction * 0.9)
             phaseFraction = targets.reduce(0.0) { $0 + Double(translatedCues[$1] ?? 0) / Double(total) } / Double(targets.count)
-            detail = "번역 · " + translationDetail
+            detail = String(localized: "번역 · ") + translationDetail
         }
         mutating func languageSaved(_ language: String) {
             guard targets.contains(language) else { return }
             languageFractions[language] = 1
-            if totalCues > 0 { translatedCues[language] = totalCues; detail = "번역 · " + translationDetail }
+            if totalCues > 0 { translatedCues[language] = totalCues; detail = String(localized: "번역 · ") + translationDetail }
         }
         private static func clamp(_ value: Double) -> Double { value.isFinite ? min(1, max(0, value)) : 0 }
     }

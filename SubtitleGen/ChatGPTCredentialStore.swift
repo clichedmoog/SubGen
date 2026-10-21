@@ -37,7 +37,7 @@ struct ChatGPTKeychain: ChatGPTCredentialStorage {
         if status == errSecItemNotFound { return [] }
         guard status == errSecSuccess, let data = result as? Data else { throw failure(status) }
         do { return try JSONDecoder().decode([ChatGPTRegistration].self, from: data) }
-        catch { throw ChatGPTFailure.message("저장된 ChatGPT 연결 정보를 읽을 수 없습니다. 키체인을 확인해주세요.") }
+        catch { throw ChatGPTFailure.message(String(localized: "저장된 ChatGPT 연결 정보를 읽을 수 없습니다. 키체인을 확인해주세요.")) }
     }
     func save(_ registrations: [ChatGPTRegistration]) throws {
         let data = try JSONEncoder().encode(registrations)
@@ -50,6 +50,6 @@ struct ChatGPTKeychain: ChatGPTCredentialStorage {
         guard status == errSecSuccess else { throw failure(status) }
     }
     private func failure(_ status: OSStatus) -> ChatGPTFailure {
-        .message("ChatGPT 연결 정보를 키체인에 저장하거나 읽을 수 없습니다 (\(status)).")
+        .message(String(localized: "ChatGPT 연결 정보를 키체인에 저장하거나 읽을 수 없습니다 (\(status))."))
     }
 }

@@ -50,11 +50,11 @@ struct ProcessResult {
         switch failure {
         case .launch(let message): return message
         case .service(let message, _): return message
-        case .cancelled: return "작업이 중단되었습니다"
-        case .timedOut: return "실행 제한 시간을 초과했습니다"
+        case .cancelled: return String(localized: "작업이 중단되었습니다")
+        case .timedOut: return String(localized: "실행 제한 시간을 초과했습니다")
         case nil:
             let detail = output.trimmingCharacters(in: .whitespacesAndNewlines)
-            return "종료 코드 \(exitCode): \(detail.suffix(1200))"
+            return String(localized: "종료 코드 \(exitCode): \(detail.suffix(1200))")
         }
     }
 }

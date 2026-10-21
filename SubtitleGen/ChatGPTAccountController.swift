@@ -66,7 +66,7 @@ final class ChatGPTAccountController: ObservableObject {
             let revoked = try await self.service.signOut(accountID: id)
             try Task.checkCancellation()
             let accounts = try await self.service.accounts(); try Task.checkCancellation(); self.accounts = accounts; self.models = []
-            if !revoked { self.error = "이 Mac의 연결 정보는 삭제했습니다. 서버 연결 취소는 확인하지 못했습니다. ChatGPT 설정에서 연결을 확인해주세요." }
+            if !revoked { self.error = String(localized: "이 Mac의 연결 정보는 삭제했습니다. 서버 연결 취소는 확인하지 못했습니다. ChatGPT 설정에서 연결을 확인해주세요.") }
         }
     }
     func cancel() {

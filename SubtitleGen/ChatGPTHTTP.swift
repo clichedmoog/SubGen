@@ -16,7 +16,7 @@ enum ChatGPTHTTP {
     static func json(_ request: URLRequest, session: URLSession = session) async throws -> [String: Any] {
         let (data, response) = try await session.data(for: request)
         guard let http = response as? HTTPURLResponse, data.count < 5_000_000 else {
-            throw ChatGPTFailure.message("ChatGPT 서버 응답이 올바르지 않습니다.")
+            throw ChatGPTFailure.message(String(localized: "ChatGPT 서버 응답이 올바르지 않습니다."))
         }
         let object = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
         guard (200..<300).contains(http.statusCode) else {

@@ -6,7 +6,7 @@ struct WhisperSrtDocument {
     struct Invalid: LocalizedError {
         let cue: Int
         let reason: String
-        var errorDescription: String? { "전사 자막 \(cue)번: \(reason)" }
+        var errorDescription: String? { String(localized: "전사 자막 \(cue)번: \(reason)") }
     }
     let cues: [SrtDocument.Cue]
     let omittedCount: Int
@@ -23,12 +23,12 @@ struct WhisperSrtDocument {
             if trimmed.isEmpty { continue }
             let lines = trimmed.components(separatedBy: "\n")
             guard lines.count >= 2, let number = Int(lines[0].trimmingCharacters(in: .whitespaces)), number > previousNumber else {
-                throw Invalid(cue: index + 1, reason: "번호 또는 시간 행이 올바르지 않습니다.")
+                throw Invalid(cue: index + 1, reason: String(localized: "번호 또는 시간 행이 올바르지 않습니다."))
             }
             previousNumber = number
             let times = lines[1].components(separatedBy: " --> ")
             guard times.count == 2, let start = SrtDocument.timestamp(times[0]), let end = SrtDocument.timestamp(times[1]), end >= start else {
-                throw Invalid(cue: number, reason: "시작·종료 시간이 올바르지 않습니다.")
+                throw Invalid(cue: number, reason: String(localized: "시작·종료 시간이 올바르지 않습니다."))
             }
             let text = lines.dropFirst(2).joined(separator: "\n").trimmingCharacters(in: .whitespacesAndNewlines)
             let clippedEnd = min(end, duration)

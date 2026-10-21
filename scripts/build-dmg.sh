@@ -70,6 +70,9 @@ elif [ $# -eq 0 ]; then
     cp "${ROOT}/SubtitleGen/Resources/Info.plist" "${NEW_APP}/Contents/"
     cp "${ROOT}/SubtitleGen/Resources/AppIcon.icns" "${NEW_APP}/Contents/Resources/"
     cp "${ROOT}/SubtitleGen/Resources/ToolDownloads.plist" "${NEW_APP}/Contents/Resources/"
+    # SwiftPM does not bundle the string catalog; compile it into per-language .lproj folders.
+    xcrun xcstringstool compile "${ROOT}/SubtitleGen/Resources/Localizable.xcstrings" \
+        --output-directory "${NEW_APP}/Contents/Resources"
     /usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${VERSION}" "${NEW_APP}/Contents/Info.plist"
     /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${VERSION}" "${NEW_APP}/Contents/Info.plist"
     bash "${ROOT}/scripts/compile-app-icon.sh" "$NEW_APP"

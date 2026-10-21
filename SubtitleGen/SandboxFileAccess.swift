@@ -85,8 +85,8 @@ final class SandboxFileAccess {
             panel.canChooseDirectories = true
             panel.allowsMultipleSelection = false
             panel.directoryURL = input.deletingLastPathComponent()
-            panel.message = "\(input.lastPathComponent)의 자막 저장·영상 교체를 위해 해당 파일이 있는 폴더의 접근을 허용해주세요."
-            panel.prompt = "폴더 접근 허용"
+            panel.message = String(localized: "\(input.lastPathComponent)의 자막 저장·영상 교체를 위해 해당 파일이 있는 폴더의 접근을 허용해주세요.")
+            panel.prompt = String(localized: "폴더 접근 허용")
             guard panel.runModal() == .OK, let directory = panel.url,
                   Self.contains(directory, file: input) else { return false }
             guard let bookmark = try? directory.bookmarkData(options: .withSecurityScope,

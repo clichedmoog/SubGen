@@ -17,7 +17,8 @@ then translates them if you want. [한국어 안내는 아래에 있습니다.](
   - **Claude Code or Codex CLI** — uses an installed, signed-in CLI (direct-download edition).
 - Queue many files, cancel any time, and reuse existing subtitles instead of transcribing again.
 
-The interface is currently in Korean.
+The interface is available in English, Korean, Japanese, Simplified Chinese, French, German, Spanish,
+Brazilian Portuguese and Russian, following the system language.
 
 ## Download
 

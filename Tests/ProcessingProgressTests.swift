@@ -17,6 +17,16 @@ final class ProcessingProgressTests: XCTestCase {
         XCTAssertTrue(files[0].translatedLangs.isEmpty); XCTAssertEqual(files[0].progressDetail, "")
         XCTAssertEqual(files[0].sourceLanguage, "en"); XCTAssertEqual(files[1], active)
     }
+    func testTranscriptionStartIsDetectedInAnyInterfaceLanguage() {
+        let file = FileItem(url: URL(fileURLWithPath: "/movie.mp4"))
+        var progress = ProcessingProgress()
+        progress.sync([file], embed: false, targets: [], sourceLanguage: "en")
+        progress.start(file.id)
+        progress.update(file.id) { $0.source(0, detail: "Extracting audio… (1/1)") }
+        XCTAssertNil(progress.files[file.id]!.transcriptionStartedAt)
+        progress.update(file.id) { $0.source(0.1, detail: "Transcribing 00:00:01,500 / 00:00:03,000 · chunk 1/1 · en") }
+        XCTAssertNotNil(progress.files[file.id]!.transcriptionStartedAt)
+    }
     func testPendingSubsetAndParallelTranslationDoNotUseQueueIndexOrReach100Early() {
         var old = FileItem(url: URL(fileURLWithPath: "/old.mp4")); old.status = .completed(lang: "en")
         let first = FileItem(url: URL(fileURLWithPath: "/first.mp4")), second = FileItem(url: URL(fileURLWithPath: "/second.mp4"))

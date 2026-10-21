@@ -68,10 +68,10 @@ class TranscriptionEngine: ObservableObject {
         var ready: [TranslationLanguage] = [], failures: [String] = []
         for target in targets {
             guard target.rawValue != source else { ready.append(target); continue }
-            onStatus("Apple 번역 \(target.label) 언어 팩 준비 중 · 다운로드 확인 창이 뜨면 허용해주세요")
+            onStatus(String(localized: "Apple 번역 \(target.label) 언어 팩 준비 중 · 다운로드 확인 창이 뜨면 허용해주세요"))
             switch ensure(source, target, token) {
             case .ready: ready.append(target)
-            case .failed(let message): failures.append("\(target.label) 번역 실패: \(message)")
+            case .failed(let message): failures.append(String(localized: "\(target.label) 번역 실패: \(message)"))
             }
         }
         return (ready, failures)
@@ -83,16 +83,16 @@ class TranscriptionEngine: ObservableObject {
         case .agentCLI:
             return TranslationEngine(authMethod: options.authMethod, translationModel: options.translationModel, cancellation: token)
         case .apple:
-            guard #available(macOS 26.0, *) else { throw PipelineFailure("Apple 번역은 macOS 26 이상에서 사용할 수 있습니다.") }
+            guard #available(macOS 26.0, *) else { throw PipelineFailure(String(localized: "Apple 번역은 macOS 26 이상에서 사용할 수 있습니다.")) }
             return TranslationEngine(authMethod: options.authMethod, cancellation: token, request: { srt, language in
                 guard let translator = AppleSubtitleTranslator(source: sourceLanguage, target: language) else {
-                    return ProcessResult(failure: .service("Apple 번역이 이 언어 조합을 지원하지 않습니다. ChatGPT 번역을 사용해주세요.", retryable: false))
+                    return ProcessResult(failure: .service(String(localized: "Apple 번역이 이 언어 조합을 지원하지 않습니다. ChatGPT 번역을 사용해주세요."), retryable: false))
                 }
                 return translator.request(srt, cancellation: token)
             })
         case .chatGPT:
             guard let account = options.chatGPTAccountID, let model = options.chatGPTModel else {
-                throw PipelineFailure("번역할 ChatGPT 계정과 모델을 선택해주세요.")
+                throw PipelineFailure(String(localized: "번역할 ChatGPT 계정과 모델을 선택해주세요."))
             }
             let client = ChatGPTSubtitleClient(accountID: account, model: model)
             return TranslationEngine(authMethod: options.authMethod, cancellation: token,
@@ -149,7 +149,7 @@ class TranscriptionEngine: ObservableObject {
         if isProcessing, sourceFileID == nil {
             let active = workProgress.files.values.filter { $0.started && $0.terminal == nil }
             if active.count == 1 { currentStatus = active[0].detail }
-            else if !active.isEmpty { currentStatus = "\(active.count)개 파일 번역·자막 저장 중..." }
+            else if !active.isEmpty { currentStatus = String(localized: "\(active.count)개 파일 번역·자막 저장 중...") }
         }
         eta = sourceFileID == nil ? "" : calculateOverallEta()
     }
@@ -176,10 +176,10 @@ class TranscriptionEngine: ObservableObject {
         let skipped = files.filter { $0.status == .skipped }.count
 
         let content = UNMutableNotificationContent()
-        content.title = "자막 생성 완료"
-        var body = "\(completed)개 완료"
-        if skipped > 0 { body += ", \(skipped)개 건너뜀" }
-        if failed > 0 { body += ", \(failed)개 실패" }
+        content.title = String(localized: "자막 생성 완료")
+        var body = String(localized: "\(completed)개 완료")
+        if skipped > 0 { body += String(localized: ", \(skipped)개 건너뜀") }
+        if failed > 0 { body += String(localized: ", \(failed)개 실패") }
         content.body = body
         content.sound = .default
 
@@ -215,11 +215,11 @@ class TranscriptionEngine: ObservableObject {
     ) {
         guard !isProcessing else { return }
         guard getFiles().contains(where: { $0.status == .pending }) else {
-            currentStatus = "대기 중인 파일이 없습니다. 옵션을 바꾸거나 상태를 초기화해주세요."
+            currentStatus = String(localized: "대기 중인 파일이 없습니다. 옵션을 바꾸거나 상태를 초기화해주세요.")
             return
         }
         guard let whisper = findBinary("whisper-cli"), let ffmpeg = findBinary("ffmpeg"), let ffprobe = findBinary("ffprobe") else {
-            currentStatus = "현재 CPU에서 실행 가능한 whisper-cli, ffmpeg, ffprobe를 설치해주세요."
+            currentStatus = String(localized: "현재 CPU에서 실행 가능한 whisper-cli, ffmpeg, ffprobe를 설치해주세요.")
             return
         }
         resetProgress()
@@ -248,7 +248,7 @@ class TranscriptionEngine: ObservableObject {
                     next = files.first { $0.status == .pending }
                     if let file = next {
                         self.sourceFileID = file.id; self.workProgress.start(file.id)
-                        self.fileStartTime = Date(); self.currentStatus = "자막 준비 중..."
+                        self.fileStartTime = Date(); self.currentStatus = String(localized: "자막 준비 중...")
                         onFileUpdate(file.id, .processing, nil); self.publishProgress(file.id)
                     } else { self.sourceFileID = nil; self.publishProgress() }
                 }
@@ -270,7 +270,7 @@ class TranscriptionEngine: ObservableObject {
                         }, onModelDownload: { received, total in
                             DispatchQueue.main.async {
                                 guard self.runID == run else { return }
-                                let detail = "음성인식 모델 다운로드 중 · " + WhisperModelInstaller.downloadDetail(received: received, total: total)
+                                let detail = String(localized: "음성인식 모델 다운로드 중 · ") + WhisperModelInstaller.downloadDetail(received: received, total: total)
                                 self.workProgress.update(file.id) {
                                     $0.detail = detail
                                     $0.phaseFraction = total.flatMap { $0 > 0 ? min(1, max(0, Double(received) / Double($0))) : nil }
@@ -287,23 +287,23 @@ class TranscriptionEngine: ObservableObject {
                     var sourceEmbedded = false
                     if options.embedSubtitle {
                         DispatchQueue.main.async {
-                            self.workProgress.update(file.id) { $0.detail = "원본 자막 내장·검증 중..."; $0.phaseFraction = nil }
-                            self.currentStatus = "원본 자막 내장·검증 중..."; self.publishProgress(file.id)
+                            self.workProgress.update(file.id) { $0.detail = String(localized: "원본 자막 내장·검증 중..."); $0.phaseFraction = nil }
+                            self.currentStatus = String(localized: "원본 자막 내장·검증 중..."); self.publishProgress(file.id)
                         }
                         sourceEmbedded = try self.embed(source.url, language: source.language, into: file.url, ffmpeg: ffmpeg, ffprobe: ffprobe, token: token)
                     }
-                    guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
+                    guard !token.isCancelled else { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
                     DispatchQueue.main.async {
                         self.workProgress.update(file.id) { $0.sourceOutputDone = true }; self.publishProgress(file.id)
                     }
                     if options.translationTargets.contains(where: { $0.rawValue != source.language }) {
                         while translationSlots.wait(timeout: .now() + 0.1) == .timedOut {
-                            if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
+                            if token.isCancelled { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
                         }
-                        if token.isCancelled { translationSlots.signal(); throw PipelineFailure("작업이 중단되었습니다") }
+                        if token.isCancelled { translationSlots.signal(); throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
                         DispatchQueue.main.async {
-                            self.workProgress.update(file.id) { $0.detail = "번역 준비 중..."; $0.phaseFraction = 0 }
-                            onFileUpdate(file.id, .translating(lang: "번역 준비 중..."), nil); self.publishProgress(file.id)
+                            self.workProgress.update(file.id) { $0.detail = String(localized: "번역 준비 중..."); $0.phaseFraction = 0 }
+                            onFileUpdate(file.id, .translating(lang: String(localized: "번역 준비 중...")), nil); self.publishProgress(file.id)
                         }
                         translations.enter()
                         let embedded = sourceEmbedded
@@ -313,10 +313,7 @@ class TranscriptionEngine: ObservableObject {
                                 options: options, token: token,
                                 onStatusUpdate: { message in DispatchQueue.main.async {
                                     onFileUpdate(file.id, .translating(lang: message), nil)
-                                    self.workProgress.update(file.id) {
-                                        $0.detail = message + ($0.totalCues > 0 ? " · " + $0.translationDetail : "")
-                                        if message.contains("저장") || message.contains("내장") { $0.phaseFraction = nil }
-                                    }
+                                    self.workProgress.update(file.id) { $0.detail = message + ($0.totalCues > 0 ? " · " + $0.translationDetail : "") }
                                     self.publishProgress(file.id)
                                 } },
                                 onLangComplete: { language in DispatchQueue.main.async {
@@ -325,6 +322,14 @@ class TranscriptionEngine: ObservableObject {
                                 } },
                                 onCueProgress: { language, completed, total in DispatchQueue.main.async {
                                     self.workProgress.update(file.id) { $0.translation(language: language.rawValue, completed: completed, total: total) }
+                                    self.publishProgress(file.id)
+                                } },
+                                onSavingStatus: { message in DispatchQueue.main.async {
+                                    onFileUpdate(file.id, .translating(lang: message), nil)
+                                    self.workProgress.update(file.id) {
+                                        $0.detail = message + ($0.totalCues > 0 ? " · " + $0.translationDetail : "")
+                                        $0.phaseFraction = nil
+                                    }
                                     self.publishProgress(file.id)
                                 } })
                             let final = token.isCancelled ? (self.shouldCancel ? FileStatus.cancelled : .skipped) : status
@@ -342,14 +347,14 @@ class TranscriptionEngine: ObservableObject {
                 }
             }
             if translations.wait(timeout: .now()) == .timedOut {
-                DispatchQueue.main.async { self.currentStatus = "남은 번역·자막 저장 작업을 기다리는 중..."; self.eta = "" }
+                DispatchQueue.main.async { self.currentStatus = String(localized: "남은 번역·자막 저장 작업을 기다리는 중..."); self.eta = "" }
                 translations.wait()
             }
             DispatchQueue.main.async {
                 guard self.runID == run else { return }
                 self.sourceFileID = nil; self.isProcessing = false; self.publishProgress(); self.eta = ""
                 let failed = self.workProgress.files.values.filter { if case .failed = $0.terminal { return true }; return false }.count
-                self.currentStatus = self.shouldCancel ? "중단됨" : (failed > 0 ? "완료 — \(failed)개 실패" : "완료")
+                self.currentStatus = self.shouldCancel ? String(localized: "중단됨") : (failed > 0 ? String(localized: "완료 — \(failed)개 실패") : String(localized: "완료"))
                 if !self.shouldCancel { self.bounceIcon(); self.sendCompletionNotification(getFiles: getFiles) }
             }
         }
@@ -389,7 +394,7 @@ class TranscriptionEngine: ObservableObject {
               let format = json["format"] as? [String: Any],
               let durationText = format["duration"] as? String, let duration = Double(durationText), duration.isFinite, duration > 0,
               let streams = json["streams"] as? [[String: Any]] else {
-            throw PipelineFailure("미디어 정보를 읽지 못했습니다: \(result.diagnostic)")
+            throw PipelineFailure(String(localized: "미디어 정보를 읽지 못했습니다: \(result.diagnostic)"))
         }
         let tracks = streams.filter { $0["codec_type"] as? String == "subtitle" }.compactMap { stream -> SubtitleTrack? in
             guard let index = stream["index"] as? Int, let codec = stream["codec_name"] as? String else { return nil }
@@ -432,10 +437,10 @@ class TranscriptionEngine: ObservableObject {
         let temp = destination.deletingLastPathComponent().appendingPathComponent(".subtitle-\(UUID().uuidString).srt")
         defer { try? FileManager.default.removeItem(at: temp) }
         let result = ProcessRunner.run(ffmpeg, arguments: ["-nostdin", "-v", "error", "-y", "-i", media.path, "-map", "0:\(track.index)", "-c:s", "srt", temp.path], timeout: 120, cancellation: token)
-        try checked(result, stage: "내장 자막 추출 실패")
+        try checked(result, stage: String(localized: "내장 자막 추출 실패"))
         let content = try String(contentsOf: temp, encoding: .utf8)
-        guard let document = try? SrtDocument(content) else { throw PipelineFailure("내장 자막이 비어 있거나 형식이 올바르지 않습니다") }
-        guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
+        guard let document = try? SrtDocument(content) else { throw PipelineFailure(String(localized: "내장 자막이 비어 있거나 형식이 올바르지 않습니다")) }
+        guard !token.isCancelled else { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
         try document.render().write(to: destination, atomically: true, encoding: .utf8)
     }
 
@@ -457,9 +462,9 @@ class TranscriptionEngine: ObservableObject {
         let matching = Self.sourceSidecars(for: file, language: options.language)
         if let existing = matching.first {
             guard (try? SrtDocument(String(contentsOf: existing.url, encoding: .utf8))) != nil else {
-                throw PipelineFailure("기존 SRT 형식이 올바르지 않습니다: \(existing.url.lastPathComponent)")
+                throw PipelineFailure(String(localized: "기존 SRT 형식이 올바르지 않습니다: \(existing.url.lastPathComponent)"))
             }
-            onProgress(1, "기존 SRT 확인 완료 · \(existing.language)")
+            onProgress(1, String(localized: "기존 SRT 확인 완료 · \(existing.language)"))
             let assignedLanguage = existing.language == "und"
                 ? (options.language.isEmpty ? file.sourceLanguage ?? "und" : options.language) : existing.language
             return SourceSubtitle(url: existing.url, language: assignedLanguage, created: false)
@@ -468,18 +473,18 @@ class TranscriptionEngine: ObservableObject {
         if let track = info.subtitles.first(where: { $0.isText && (options.language.isEmpty || $0.language == options.language) }) {
             let destination = sidecarURL(file.url, language: track.language)
             try extractSubtitle(track, media: file.url, destination: destination, ffmpeg: ffmpeg, token: token)
-            onProgress(1, "내장 자막 추출 완료 · \(track.language)")
+            onProgress(1, String(localized: "내장 자막 추출 완료 · \(track.language)"))
             return SourceSubtitle(url: destination, language: track.language, created: true)
         }
-        guard info.audioCount > 0 else { throw PipelineFailure("전사할 오디오 트랙이 없습니다") }
+        guard info.audioCount > 0 else { throw PipelineFailure(String(localized: "전사할 오디오 트랙이 없습니다")) }
         do { try prepareModel(URL(fileURLWithPath: options.model), token, onModelDownload) }
         catch {
-            if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
-            throw PipelineFailure("음성인식 모델 준비 실패: \(error.localizedDescription)")
+            if token.isCancelled { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
+            throw PipelineFailure(String(localized: "음성인식 모델 준비 실패: \(error.localizedDescription)"))
         }
         let vad = WhisperModelInstaller.vadURL(nextTo: URL(fileURLWithPath: options.model))
         guard WhisperModelInstaller.isVadAvailable(at: vad) else {
-            throw PipelineFailure("음성 구간 감지 모델이 없어 자막 시간을 맞출 수 없습니다. 시작 설정에서 모델을 다시 설치해주세요.")
+            throw PipelineFailure(String(localized: "음성 구간 감지 모델이 없어 자막 시간을 맞출 수 없습니다. 시작 설정에서 모델을 다시 설치해주세요."))
         }
         let fm = FileManager.default
         let temp = fm.temporaryDirectory.appendingPathComponent("transcription-\(UUID().uuidString)")
@@ -489,12 +494,12 @@ class TranscriptionEngine: ObservableObject {
         if language.isEmpty {
             let supported = Set(Language.allCases.map { $0.rawValue }.filter { !$0.isEmpty })
             for (index, sample) in AudioPreparation.samples(duration: info.duration).enumerated() {
-                if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
-                onProgress(0, "언어 감지 중... (\(index + 1))")
+                if token.isCancelled { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
+                onProgress(0, String(localized: "언어 감지 중... (\(index + 1))"))
                 let wav = temp.appendingPathComponent("sample.wav")
-                try checked(AudioPreparation.extract(source: file.url, chunk: sample, destination: wav, ffmpeg: ffmpeg, cancellation: token), stage: "언어 감지용 오디오 추출 실패")
+                try checked(AudioPreparation.extract(source: file.url, chunk: sample, destination: wav, ffmpeg: ffmpeg, cancellation: token), stage: String(localized: "언어 감지용 오디오 추출 실패"))
                 let result = ProcessRunner.run(whisper, arguments: ["-m", options.model, "-f", wav.path, "-dl"], timeout: 120, cancellation: token)
-                try checked(result, stage: "언어 감지 실패")
+                try checked(result, stage: String(localized: "언어 감지 실패"))
                 if let detected = AudioPreparation.detectLanguage(result.output) {
                     logDebug("Language sample at \(sample.start)s: \(detected.language), confidence=\(detected.probability)")
                     if supported.contains(detected.language), detected.probability >= 0.5 {
@@ -503,15 +508,15 @@ class TranscriptionEngine: ObservableObject {
                     }
                 }
             }
-            guard !language.isEmpty else { throw PipelineFailure("언어를 확실하게 감지하지 못했습니다. 원본 언어를 지정해주세요.") }
+            guard !language.isEmpty else { throw PipelineFailure(String(localized: "언어를 확실하게 감지하지 못했습니다. 원본 언어를 지정해주세요.")) }
         }
         var cues: [SrtDocument.Cue] = []
         let chunks = AudioPreparation.chunks(duration: info.duration)
         for (index, chunk) in chunks.enumerated() {
-            if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
-            onProgress(chunk.start / info.duration, "오디오 추출 중... (\(index + 1)/\(chunks.count))")
+            if token.isCancelled { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
+            onProgress(chunk.start / info.duration, String(localized: "오디오 추출 중... (\(index + 1)/\(chunks.count))"))
             let wav = temp.appendingPathComponent("chunk.wav")
-            try checked(AudioPreparation.extract(source: file.url, chunk: chunk, destination: wav, ffmpeg: ffmpeg, cancellation: token), stage: "청크 오디오 추출 실패")
+            try checked(AudioPreparation.extract(source: file.url, chunk: chunk, destination: wav, ffmpeg: ffmpeg, cancellation: token), stage: String(localized: "청크 오디오 추출 실패"))
             let output = temp.appendingPathComponent("chunk")
             let args = ["-m", options.model, "-f", wav.path, "-l", language, "-t", String(min(10, ProcessInfo.processInfo.activeProcessorCount)),
                 "--beam-size", String(options.sensitivity.beamSize), "--best-of", String(options.sensitivity.bestOf),
@@ -521,7 +526,7 @@ class TranscriptionEngine: ObservableObject {
             let reportTime: (Double, Bool) -> Void = { position, estimated in
                 let elapsed = min(info.duration, max(chunk.start, position))
                 onProgress(elapsed / info.duration,
-                    "전사\(estimated ? " 추정" : "") \(SrtDocument.format(elapsed)) / \(SrtDocument.format(info.duration)) · 청크 \(index + 1)/\(chunks.count) · \(language)")
+                    String(localized: "전사\(estimated ? String(localized: " 추정") : "") \(SrtDocument.format(elapsed)) / \(SrtDocument.format(info.duration)) · 청크 \(index + 1)/\(chunks.count) · \(language)"))
             }
             reportTime(chunk.start, false)
             let result = ProcessRunner.run(whisper, arguments: args, timeout: max(300, chunk.duration * 4), cancellation: token) { line in
@@ -529,9 +534,9 @@ class TranscriptionEngine: ObservableObject {
                     reportTime(position.seconds, position.estimated)
                 }
             }
-            try checked(result, stage: "\(index + 1)번째 청크 음성 인식 실패")
+            try checked(result, stage: String(localized: "\(index + 1)번째 청크 음성 인식 실패"))
             guard let raw = try? Data(contentsOf: output.appendingPathExtension("srt")) else {
-                throw PipelineFailure("\(index + 1)번째 청크의 자막 결과 파일이 생성되지 않았습니다")
+                throw PipelineFailure(String(localized: "\(index + 1)번째 청크의 자막 결과 파일이 생성되지 않았습니다"))
             }
             let text = String(decoding: raw, as: UTF8.self)
             if !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -540,8 +545,8 @@ class TranscriptionEngine: ObservableObject {
                 catch {
                     let diagnostic = file.url.deletingPathExtension().appendingPathExtension("whisper-chunk-\(index + 1)-\(UUID().uuidString).diagnostic.srt")
                     let preserved = (try? raw.write(to: diagnostic, options: .withoutOverwriting)) != nil
-                    let detail = preserved ? " 전사 SRT 원문을 \(diagnostic.lastPathComponent)에 보존했습니다." : ""
-                    throw PipelineFailure("\(index + 1)번째 청크 전사 결과를 읽지 못했습니다. \(error.localizedDescription)\(detail)")
+                    let detail = preserved ? String(localized: " 전사 SRT 원문을 \(diagnostic.lastPathComponent)에 보존했습니다.") : ""
+                    throw PipelineFailure(String(localized: "\(index + 1)번째 청크 전사 결과를 읽지 못했습니다. \(error.localizedDescription)\(detail)"))
                 }
                 if document.omittedCount > 0 { logDebug("Whisper chunk \(index + 1): omitted \(document.omittedCount) empty/zero-duration/out-of-range segments") }
                 let speech = AudioPreparation.speechSegments(in: result.stderr)
@@ -553,13 +558,13 @@ class TranscriptionEngine: ObservableObject {
             logDebug("Chunk \(index + 1)/\(chunks.count) extracted at \(chunk.start)s: \(cues.count) cumulative cues")
             reportTime(chunk.start + chunk.duration, false)
         }
-        guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
+        guard !token.isCancelled else { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
         let segments: [[String: Any]] = cues.map { ["start": $0.start, "end": $0.end, "text": $0.text] }
         let content = generateSrt(from: segments, delay: options.subtitleDelay, totalDuration: info.duration)
-        guard (try? SrtDocument(content)) != nil else { throw PipelineFailure("자막 내용 없음 — 음성 또는 필터 설정을 확인해주세요") }
+        guard (try? SrtDocument(content)) != nil else { throw PipelineFailure(String(localized: "자막 내용 없음 — 음성 또는 필터 설정을 확인해주세요")) }
         let destination = sidecarURL(file.url, language: language)
         try content.write(to: destination, atomically: true, encoding: .utf8)
-        onProgress(1, "전사·SRT 저장 완료 · \(language)")
+        onProgress(1, String(localized: "전사·SRT 저장 완료 · \(language)"))
         return SourceSubtitle(url: destination, language: language, created: true)
     }
 
@@ -574,7 +579,7 @@ class TranscriptionEngine: ObservableObject {
         case "mp4", "m4v", "mov": codec = "mov_text"
         case "mkv": codec = "srt"
         case "webm": codec = "webvtt"
-        default: throw PipelineFailure("이 영상 형식은 자막 내장을 지원하지 않습니다. 생성된 SRT 파일은 보존했습니다.")
+        default: throw PipelineFailure(String(localized: "이 영상 형식은 자막 내장을 지원하지 않습니다. 생성된 SRT 파일은 보존했습니다."))
         }
         let snapshot = try SafeFileReplacement.Snapshot(media)
         let candidate = media.deletingLastPathComponent().appendingPathComponent(".subtitle-\(UUID().uuidString).\(media.pathExtension)")
@@ -582,15 +587,15 @@ class TranscriptionEngine: ObservableObject {
         let result = ProcessRunner.run(ffmpeg, arguments: ["-nostdin", "-v", "error", "-y", "-i", media.path, "-i", srt.path,
             "-map", "0", "-map", "1:0", "-c", "copy", "-c:s:\(info.subtitles.count)", codec, "-max_interleave_delta", "0",
             "-metadata:s:s:\(info.subtitles.count)", "language=\(langCode3(language))", candidate.path], timeout: 1800, cancellation: token)
-        try checked(result, stage: "자막 내장 실패 — SRT 파일을 보존했습니다")
+        try checked(result, stage: String(localized: "자막 내장 실패 — SRT 파일을 보존했습니다"))
         let verified = try mediaInfo(candidate, ffprobe: ffprobe, token: token)
         guard verified.subtitles.count == info.subtitles.count + 1,
               verified.subtitles.contains(where: { $0.language == language }),
               verified.audioCount == info.audioCount, verified.videoCount == info.videoCount,
               abs(verified.duration - info.duration) < 2 else {
-            throw PipelineFailure("자막 내장 결과 검증 실패 — 원본 영상과 SRT 파일을 보존했습니다")
+            throw PipelineFailure(String(localized: "자막 내장 결과 검증 실패 — 원본 영상과 SRT 파일을 보존했습니다"))
         }
-        guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
+        guard !token.isCancelled else { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
         try SafeFileReplacement.replace(media, with: candidate, expected: snapshot)
         return true
     }
@@ -598,7 +603,10 @@ class TranscriptionEngine: ObservableObject {
     func translateFile(file: FileItem, source: SourceSubtitle, sourceEmbedded: Bool, ffmpeg: String, ffprobe: String,
                                options: Options, token: CancellationToken,
                                onStatusUpdate: @escaping (String) -> Void, onLangComplete: @escaping (String) -> Void,
-                               onCueProgress: @escaping (TranslationLanguage, Int, Int) -> Void = { _, _, _ in }) -> FileStatus {
+                               onCueProgress: @escaping (TranslationLanguage, Int, Int) -> Void = { _, _, _ in },
+                               onSavingStatus: ((String) -> Void)? = nil) -> FileStatus {
+        // Saving/embedding has no measurable fraction; callers may show it as indeterminate.
+        let onSavingStatus = onSavingStatus ?? onStatusUpdate
         var failures: [String] = []
         var cleanup: [URL] = []
         if source.created && sourceEmbedded { cleanup.append(source.url) }
@@ -608,17 +616,17 @@ class TranscriptionEngine: ObservableObject {
             let info = try mediaInfo(file.url, ffprobe: ffprobe, token: token)
             var pending: [TranslationLanguage] = []
             for lang in options.translationTargets.sorted(by: { $0.rawValue < $1.rawValue }) where lang.rawValue != source.language {
-                if token.isCancelled { throw PipelineFailure("작업이 중단되었습니다") }
+                if token.isCancelled { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
                 let destination = sidecarURL(file.url, language: lang.rawValue)
                 let exists = FileManager.default.fileExists(atPath: destination.path)
                 onCueProgress(lang, 0, cueCount)
                 if exists {
                     guard (try? SrtDocument(String(contentsOf: destination, encoding: .utf8))) != nil else {
-                        failures.append("\(lang.label): 기존 SRT 형식 오류"); continue
+                        failures.append(String(localized: "\(lang.label): 기존 SRT 형식 오류")); continue
                     }
                     onCueProgress(lang, cueCount, cueCount)
                     if options.embedSubtitle {
-                        onStatusUpdate("\(lang.label) 자막 내장·검증 중...")
+                        onSavingStatus(String(localized: "\(lang.label) 자막 내장·검증 중..."))
                         try embed(destination, language: lang.rawValue, into: file.url, ffmpeg: ffmpeg, ffprobe: ffprobe, token: token)
                     }
                     onLangComplete(lang.rawValue)
@@ -636,13 +644,13 @@ class TranscriptionEngine: ObservableObject {
             if !pending.isEmpty {
                 let translator = try makeTranslator(options: options, sourceLanguage: source.language, token: token)
                 let result = translator.translateSrt(srtContent: content, sourceLang: source.language, targetLangs: pending, onProgress: onStatusUpdate, onCueProgress: onCueProgress)
-                for (language, error) in result.failures { failures.append("\(language.label) 번역 실패: \(error)") }
+                for (language, error) in result.failures { failures.append(String(localized: "\(language.label) 번역 실패: \(error)")) }
                 for lang in pending {
-                    guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
+                    guard !token.isCancelled else { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
                     guard let translated = result.translations[lang] else { continue }
                     let destination = sidecarURL(file.url, language: lang.rawValue)
                     do {
-                        onStatusUpdate("\(lang.label) 자막 저장·내장 검증 중...")
+                        onSavingStatus(String(localized: "\(lang.label) 자막 저장·내장 검증 중..."))
                         try translated.write(to: destination, atomically: true, encoding: .utf8)
                         if options.embedSubtitle, try embed(destination, language: lang.rawValue, into: file.url, ffmpeg: ffmpeg, ffprobe: ffprobe, token: token) {
                             cleanup.append(destination)
@@ -651,7 +659,7 @@ class TranscriptionEngine: ObservableObject {
                     } catch { failures.append("\(lang.label): \(error.localizedDescription)") }
                 }
             }
-            guard !token.isCancelled else { throw PipelineFailure("작업이 중단되었습니다") }
+            guard !token.isCancelled else { throw PipelineFailure(String(localized: "작업이 중단되었습니다")) }
             if !failures.isEmpty { return .failed(error: failures.joined(separator: "\n")) }
             if !options.keepSrtFile {
                 for url in cleanup { try FileManager.default.removeItem(at: url) }
@@ -684,9 +692,9 @@ class TranscriptionEngine: ObservableObject {
         let mins = Int(remaining) / 60
         let secs = Int(remaining) % 60
         if mins > 0 {
-            return "약 \(mins)분 \(secs)초"
+            return String(localized: "약 \(mins)분 \(secs)초")
         } else {
-            return "약 \(secs)초"
+            return String(localized: "약 \(secs)초")
         }
     }
 

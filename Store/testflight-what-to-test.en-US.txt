@@ -1,4 +1,4 @@
-Please test transcription and subtitle translation on an Apple Silicon Mac running macOS 14 or later. The current interface is in Korean.
+Please test transcription and subtitle translation on an Apple Silicon Mac running macOS 14 or later. The interface follows the system language (English, Korean, Japanese, Simplified Chinese, French, German, Spanish, Brazilian Portuguese, Russian; others show English).
 
 1. Select a speech model that has not been installed, authorize a disposable test-media folder, and start transcription. The app should download the model automatically, show downloaded bytes/total size, then continue transcribing. Check the rotating activity indicator, transcribed audio/total time, estimated decoder progress and chunk number. Existing valid source SRT or embedded text subtitles should bypass model downloads.
 2. Subtitle timing (new in build 5): transcribe a video with music or silence before the first line. Cues should appear when speech starts, not at 0:00 or during preceding music. The speech-detection (VAD) model now installs with the speech model; if it cannot be installed, transcription should stop with a message instead of producing early subtitles. Subtitles already embedded by an earlier build are not regenerated automatically.
@@ -10,3 +10,5 @@ Please test transcription and subtitle translation on an Apple Silicon Mac runni
 8. On disposable copies of MP4/MOV/MKV/WebM videos, select video subtitle output, test subtitle embedding and verify playback. Blank or zero-duration recognizer segments should be omitted without failing the entire chunk. Genuine malformed timings should show the cue number and preserve a diagnostic SRT next to the media when folder access permits. The app replaces the input video after validating the output, so use copies for beta testing.
 
 Live ChatGPT authentication/inference, folder permission reuse across relaunch and visual animation are pending distributed-build verification. Please report the stage, error message and macOS version without sharing account credentials or private media.
+
+Build 9: check the interface in your system language (switch the app's language in System Settings › General › Language & Region › Applications to compare), and that closing the main window quits SubGen.
