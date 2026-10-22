@@ -55,17 +55,15 @@ struct ContentView: View {
 
             Divider()
 
-            ScrollView {
-                optionsSection
-            }
-            .frame(height: optionsExpanded ? 360 : 52)
+            optionsSection
+                .fixedSize(horizontal: false, vertical: true)
 
             Divider()
 
             actionSection
         }
         .frame(minWidth: 860, idealWidth: 940, maxWidth: .infinity,
-               minHeight: 760, idealHeight: 820, maxHeight: .infinity)
+               minHeight: 780, idealHeight: 840, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
         .alert(String(localized: "다운로드 실패"), isPresented: Binding(get: { toolChecker.installationError != nil }, set: { if !$0 { toolChecker.installationError = nil } })) {
             Button(String(localized: "확인")) { toolChecker.installationError = nil }
@@ -503,16 +501,6 @@ struct ContentView: View {
 
     private var optionsSection: some View {
         DisclosureGroup(isExpanded: $optionsExpanded) {
-            HStack {
-                Spacer()
-                Button(String(localized: "옵션 초기화")) {
-                    resetOptions()
-                }
-                .buttonStyle(.borderless)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .disabled(engine.isProcessing)
-            }
             HStack(alignment: .top, spacing: 16) {
                 // Left: 자막 생성 옵션
                 VStack(alignment: .leading, spacing: 12) {
@@ -605,9 +593,7 @@ struct ContentView: View {
                         .labelsHidden()
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(16)
-                .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
+                .optionCard()
                 .disabled(engine.isProcessing)
 
                 // Right: 번역 옵션
@@ -666,7 +652,7 @@ struct ContentView: View {
                                         .foregroundStyle(.green)
                                     Text(String(localized: "\(cliName) 설치됨"))
                                         .font(.caption)
-                                        .foregroundStyle(.green)
+                                        .foregroundStyle(.secondary)
                                 } else {
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundStyle(.red)
@@ -716,15 +702,26 @@ struct ContentView: View {
                     }
                     #endif
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(16)
-                .background(Color(nsColor: .controlBackgroundColor), in: RoundedRectangle(cornerRadius: 16))
+                .optionCard()
                 .disabled(engine.isProcessing)
             }
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.top, 8)
         } label: {
-            Label(String(localized: "작업 설정"), systemImage: "slider.horizontal.3")
-                .font(.headline)
+            HStack {
+                Label(String(localized: "작업 설정"), systemImage: "slider.horizontal.3")
+                    .font(.headline)
+                Spacer()
+                if optionsExpanded {
+                    Button(String(localized: "옵션 초기화")) {
+                        resetOptions()
+                    }
+                    .buttonStyle(.borderless)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .disabled(engine.isProcessing)
+                }
+            }
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 14)
@@ -797,7 +794,6 @@ struct ContentView: View {
         }
         .padding(.horizontal, 24)
         .padding(.vertical, 16)
-        .background(.bar)
     }
 
     // MARK: - Actions
@@ -1419,5 +1415,16 @@ struct FileRowView: View {
         let mins = Int(interval) / 60
         let secs = Int(interval) % 60
         return mins > 0 ? String(localized: "\(mins)분 \(secs)초") : String(localized: "\(secs)초")
+    }
+}
+
+private extension View {
+    /// Grouped settings card that reads as part of the window chrome in light and dark mode,
+    /// stretched so side-by-side cards share one height.
+    func optionCard() -> some View {
+        frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .padding(16)
+            .background(Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 12))
+            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(Color.primary.opacity(0.08)))
     }
 }
